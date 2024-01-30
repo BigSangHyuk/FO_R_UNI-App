@@ -1,22 +1,28 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import Signin from './auth/signin';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import SignIn from './auth/signin';
 
-export default function App() {
+const App = () => {
     return (
         <View style={styles.container}>
-            <Text>FO_R_UNI-App</Text>
-            <Signin />
-            <StatusBar style="auto" />
+            <SignIn style={styles.headerContainer} />
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
         justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+    },
+    headerContainer: {
+        backgroundColor: 'white',
+        justifyContent: 'space-around',
+        borderColor: 'black',
+        borderWidth: 1,
     },
 });
+
+export default App;

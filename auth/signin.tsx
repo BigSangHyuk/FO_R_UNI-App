@@ -1,57 +1,28 @@
-/* tslint:disable:no-unused-variable */
 import React from 'react';
-import { Button, Icon, WhiteSpace, WingBlank } from '@ant-design/react-native';
+import { Input, InputProps } from 'react-native-elements';
+import { ViewStyle, TextStyle } from 'react-native';
+import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-/* tslint:disable:no-console */
-export default () => (
-    <WingBlank>
-        <WhiteSpace />
-        <Button>default</Button>
-        <WhiteSpace />
-        <Button disabled>default disabled</Button>
-        <WhiteSpace />
+interface SignInProps extends InputProps {
+    style?: ViewStyle;
+}
 
-        <Button type="primary">primary</Button>
-        <WhiteSpace />
-        <Button type="primary" disabled>
-            primary disabled
-        </Button>
-        <WhiteSpace />
+const SignIn: React.FC<SignInProps> = ({ style }) => {
+    const disabledInputStyle: TextStyle = { backgroundColor: 'white' };
 
-        <Button type="warning">warning</Button>
-        <WhiteSpace />
-        <Button type="warning" disabled>
-            warning disabled
-        </Button>
-        <WhiteSpace />
+    return (
+        <Input
+            containerStyle={[style, {}]}
+            disabledInputStyle={disabledInputStyle}
+            inputContainerStyle={{}}
+            errorMessage="이메일 형식으로 써주세요."
+            leftIcon={<Icons name="account-outline" size={20} />}
+            leftIconContainerStyle={{}}
+            rightIcon={<Icons name="close" size={20} />}
+            rightIconContainerStyle={{}}
+            placeholder="E-mail"
+        />
+    );
+};
 
-        <Button loading>loading button</Button>
-
-        <Button activeStyle={false}>无点击反馈</Button>
-        <WhiteSpace />
-        <Button activeStyle={{ backgroundColor: 'red' }}>custom feedback style</Button>
-        <WhiteSpace />
-
-        <WingBlank
-            style={{
-                marginTop: 20,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-            }}
-        >
-            <Button type="ghost">ghost</Button>
-            <Button type="ghost" disabled>
-                ghost disabled
-            </Button>
-            <Button type="ghost" size="small">
-                ghost
-            </Button>
-        </WingBlank>
-        <WhiteSpace />
-
-        <Button type="primary">
-            <Icon name="login" />
-        </Button>
-    </WingBlank>
-);
+export default SignIn;
