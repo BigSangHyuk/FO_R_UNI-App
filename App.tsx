@@ -1,27 +1,23 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import SignIn from './auth/signin';
 
 const App = () => {
     return (
-        <View style={styles.container}>
-            <SignIn style={styles.headerContainer} />
-        </View>
+        <ScrollView style={styles.main}>
+            <StatusBar style="auto" />
+            <View>
+                <SignIn />
+            </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+    main: {
         backgroundColor: 'white',
-    },
-    headerContainer: {
-        backgroundColor: 'white',
-        justifyContent: 'space-around',
-        borderColor: 'black',
-        borderWidth: 1,
+        paddingHorizontal: 20,
     },
 });
 
