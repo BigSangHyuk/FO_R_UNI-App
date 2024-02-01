@@ -1,3 +1,6 @@
 {
+    "compilerOptions": {
+        "lib": ["dom", "ESNext"]
+    },
     "extends": "@tsconfig/react-native/tsconfig.json"
 }

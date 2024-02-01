@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent, useState, useEffect, useCallback } from 'react';
 import { Input, InputProps, Button, Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { TextStyle, ViewStyle, StyleSheet, View } from 'react-native';
@@ -9,6 +9,54 @@ interface SignInProps extends InputProps {
 
 const SignIn: React.FC<SignInProps> = ({ style }) => {
     const disabledInputStyle: TextStyle = { backgroundColor: 'white' };
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [confirm, setConfirm] = useState<string>('');
+    const [emailMessage, setEmailMessage] = useState<string>('');
+    const [passwordMessage, setPasswordMessage] = useState<string>('');
+    const [passwordConfirmMessage, setPasswordConfirmMessage] = useState<string>('');
+
+    const [isEmail, setIsEmail] = useState<Boolean>(false);
+    const [isPassword, setIsPassword] = useState<Boolean>(false);
+    const [isPasswordConfirm, setIsPasswordConfirm] = useState<Boolean>(false);
+
+    const onChangeEmail = useCallback((value: string) => {
+        const EmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        setEmail(value);
+        if (!EmailRegex.test(value)) {
+            setEmailMessage('이메일 형식이 아닙니다.');
+            setIsEmail(false);
+        } else {
+            setEmailMessage('');
+            setIsEmail(true);
+        }
+    }, []);
+
+    const onChangePassword = useCallback((value: string) => {
+        const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
+        setPassword(value);
+        if (!passwordRegex.test(value)) {
+            setPasswordMessage('숫자+영문자+특수문자 조합으로 8자리 이상!');
+            setIsPassword(false);
+        } else {
+            setPasswordMessage('안전한 비밀번호에요!');
+            setIsPassword(true);
+        }
+    }, []);
+
+    const onChangeConfirm = useCallback((value: string) => {
+        setConfirm(value);
+    }, []);
+
+    useEffect(() => {
+        if (password === confirm && password !== '' && confirm !== '') {
+            setPasswordConfirmMessage('비밀번호를 똑같이 입력했어요!');
+            setIsPasswordConfirm(true);
+        } else if (password !== '' && confirm !== '') {
+            setPasswordConfirmMessage('비밀번호가 틀려요. 다시 확인해주세요');
+            setIsPasswordConfirm(false);
+        }
+    }, [password, confirm]);
 
     return (
         <View>
@@ -32,24 +80,29 @@ const SignIn: React.FC<SignInProps> = ({ style }) => {
                 containerStyle={[style, styles.inputContainer]}
                 disabledInputStyle={disabledInputStyle}
                 inputContainerStyle={{}}
-                errorMessage="이메일 형식으로 써주세요."
+                onChangeText={onChangeEmail}
+                errorMessage={emailMessage}
                 placeholder="이메일"
             />
             <Input
                 containerStyle={[style, styles.inputContainer]}
                 disabledInputStyle={disabledInputStyle}
                 inputContainerStyle={{}}
-                errorMessage="비밀번호 형식을 확인해주세요"
+                onChangeText={onChangePassword}
+                errorMessage={passwordMessage}
                 placeholder="비밀번호"
+                secureTextEntry={true}
             />
             <Input
                 containerStyle={[style, styles.inputContainer]}
                 disabledInputStyle={disabledInputStyle}
                 inputContainerStyle={{}}
-                errorMessage="비밀번호가 일치하지 않습니다."
+                errorMessage={passwordConfirmMessage}
+                onChangeText={onChangeConfirm}
                 rightIcon={<Icons name="visibility" size={20} style={{ color: '#BDBDBD' }} />}
                 rightIconContainerStyle={{}}
                 placeholder="비밀번호 확인"
+                secureTextEntry={true}
             />
             <Button
                 buttonStyle={{ width: 330, marginTop: 70, borderRadius: 100, height: 50 }}
