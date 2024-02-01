@@ -132,9 +132,9 @@ const SignIn: React.FC<SignInProps> = ({ style }) => {
                 containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
                 disabledStyle={{
                     borderWidth: 2,
-                    borderColor: '#4EA2EF',
+                    borderColor: '#F6F6F6',
                 }}
-                disabledTitleStyle={{ color: '#00F' }}
+                disabledTitleStyle={{ color: 'white' }}
                 loadingProps={{ animating: false }}
                 loadingStyle={{}}
                 title="회원가입"
