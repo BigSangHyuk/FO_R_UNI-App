@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useState, useEffect, useCallback } from 'react';
 import { Input, InputProps, Button, Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import { TextStyle, ViewStyle, StyleSheet, View } from 'react-native';
+import { TextStyle, ViewStyle, StyleSheet, View, TouchableOpacity } from 'react-native';
 
 interface SignInProps extends InputProps {
     style?: ViewStyle;
@@ -78,6 +78,10 @@ const SignIn: React.FC<SignInProps> = ({ style }) => {
         }
     }, [isPassword, password, confirm]);
 
+    const togglePasswordVisibility = () => {
+        setIsshowPassword(!isshowPassword);
+    };
+
     return (
         <View>
             <Header
@@ -121,12 +125,17 @@ const SignIn: React.FC<SignInProps> = ({ style }) => {
                 inputContainerStyle={{}}
                 errorMessage={passwordConfirmMessage}
                 onChangeText={onChangeConfirm}
-                rightIcon={<Icons name="visibility" size={20} style={{ color: '#BDBDBD' }} />}
+                rightIcon={
+                    <TouchableOpacity onPress={togglePasswordVisibility} style={{ padding: 10 }}>
+                        <Icons name="visibility" size={20} style={{ color: '#BDBDBD' }} />
+                    </TouchableOpacity>
+                }
                 rightIconContainerStyle={{}}
                 placeholder="비밀번호 확인"
-                secureTextEntry={true}
+                secureTextEntry={!isshowPassword}
                 errorStyle={{ color: isPasswordConfirm ? 'blue' : 'red' }}
             />
+
             <Button
                 buttonStyle={{ width: 330, marginTop: 70, borderRadius: 100, height: 50 }}
                 containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
