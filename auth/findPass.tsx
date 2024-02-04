@@ -1,23 +1,20 @@
-import React, { useState, useCallback } from 'react';
+import React, { ChangeEvent, useState, useEffect, useCallback } from 'react';
 import { Input, InputProps, Button, Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import { TextStyle, ViewStyle, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
-import { NavigationProp } from '@react-navigation/native';
+import { TextStyle, ViewStyle, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 
-interface LogInProps extends InputProps {
+interface findPassProps extends InputProps {
     style?: ViewStyle;
     navigation: NavigationProp<any>;
 }
 
-const LogIn: React.FC<LogInProps> = ({ style, navigation }) => {
+const FindPass: React.FC<findPassProps> = ({ style, navigation }) => {
     const disabledInputStyle: TextStyle = { backgroundColor: 'white' };
     const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
+    const [nickName, setNickName] = useState<string>('');
     const [emailMessage, setEmailMessage] = useState<string>('');
-    const [passwordMessage, setPasswordMessage] = useState<string>('');
-    const [isshowPassword, setIsshowPassword] = useState<Boolean>(false);
     const [isEmail, setIsEmail] = useState<Boolean>(false);
-    const [isPassword, setIsPassword] = useState<Boolean>(false);
 
     const onChangeEmail = useCallback((value: string) => {
         const EmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -30,35 +27,17 @@ const LogIn: React.FC<LogInProps> = ({ style, navigation }) => {
             setEmailMessage('이메일 형식이 아닙니다.');
             setIsEmail(false);
         } else {
-            setEmailMessage('');
+            setEmailMessage('가입 가능한 이메일입니다.');
             setIsEmail(true);
         }
     }, []);
 
-    const onChangePassword = useCallback((value: string) => {
-        const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
-        setPassword(value);
-        if (value === '') {
-            setPasswordMessage('');
-            setIsPassword(false);
-        } else if (!passwordRegex.test(value)) {
-            setPasswordMessage('숫자+영문자+특수문자 조합으로 8자리 이상으로 입력해주세요.');
-            setIsPassword(false);
-        } else {
-            setPasswordMessage('');
-            setIsPassword(true);
-        }
+    const onChangeNickname = useCallback((value: string) => {
+        setNickName(value);
     }, []);
 
-    const togglePasswordVisibility = () => {
-        setIsshowPassword(!isshowPassword);
-    };
-
-    const handleSignUpPress = () => {
-        navigation.navigate('SignIn');
-    };
-    const handleFindPassPress = () => {
-        navigation.navigate('FindPass');
+    const handleGoBack = () => {
+        navigation.goBack();
     };
 
     return (
@@ -73,9 +52,14 @@ const LogIn: React.FC<LogInProps> = ({ style, navigation }) => {
                 backgroundColor="white"
                 barStyle="default"
                 centerComponent={{
-                    text: '로그인',
+                    text: '비밀번호 찾기',
                     style: { color: 'black', fontSize: 34, fontWeight: 'bold' },
                 }}
+                leftComponent={
+                    <TouchableOpacity onPress={handleGoBack}>
+                        <Icons name="arrow-back-ios" size={25} style={{ color: '#BDBDBD' }} />
+                    </TouchableOpacity>
+                }
                 leftContainerStyle={{ flex: 1, justifyContent: 'center' }}
             />
             <View style={{ marginTop: 32 }}>
@@ -92,27 +76,11 @@ const LogIn: React.FC<LogInProps> = ({ style, navigation }) => {
                     containerStyle={[style, styles.inputContainer]}
                     disabledInputStyle={disabledInputStyle}
                     inputContainerStyle={{}}
-                    onChangeText={onChangePassword}
-                    errorMessage={passwordMessage}
-                    placeholder="비밀번호"
-                    errorStyle={{ color: isPassword ? 'blue' : 'red' }}
-                    rightIcon={
-                        <TouchableOpacity onPress={togglePasswordVisibility} style={{ padding: 10 }}>
-                            <Icons name="visibility" size={20} style={{ color: '#BDBDBD' }} />
-                        </TouchableOpacity>
-                    }
-                    rightIconContainerStyle={{}}
-                    secureTextEntry={!isshowPassword}
+                    onChangeText={onChangeNickname}
+                    placeholder="닉네임"
                 />
             </View>
-            <View style={styles.textContainer}>
-                <TouchableOpacity onPress={handleSignUpPress}>
-                    <Text style={styles.text}>회원가입</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleFindPassPress}>
-                    <Text style={[styles.text, { marginLeft: 60 }]}>비밀번호 찾기</Text>
-                </TouchableOpacity>
-            </View>
+
             <Button
                 buttonStyle={{ width: 330, marginTop: 70, borderRadius: 100, height: 50 }}
                 containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
@@ -123,10 +91,10 @@ const LogIn: React.FC<LogInProps> = ({ style, navigation }) => {
                 disabledTitleStyle={{ color: 'white' }}
                 loadingProps={{ animating: false }}
                 loadingStyle={{}}
-                title="로그인"
+                title="인증 메일 전송"
                 titleProps={{}}
                 titleStyle={{ textAlign: 'center' }}
-                disabled={!isEmail || !isPassword}
+                disabled={!isEmail}
             />
         </View>
     );
@@ -158,17 +126,6 @@ const styles = StyleSheet.create({
     closeIcon: {
         marginLeft: 10,
     },
-    textContainer: {
-        marginTop: 30,
-        alignItems: 'center',
-        flexDirection: 'row',
-        justifyContent: 'center',
-    },
-    text: {
-        color: '#4EA2EF',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
 });
 
-export default LogIn;
+export default FindPass;
