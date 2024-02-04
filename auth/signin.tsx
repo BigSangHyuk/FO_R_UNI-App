@@ -2,12 +2,14 @@ import React, { ChangeEvent, useState, useEffect, useCallback } from 'react';
 import { Input, InputProps, Button, Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { TextStyle, ViewStyle, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 interface SignInProps extends InputProps {
     style?: ViewStyle;
 }
 
 const SignIn: React.FC<SignInProps> = ({ style }) => {
+    const navigation = useNavigation();
     const disabledInputStyle: TextStyle = { backgroundColor: 'white' };
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -81,6 +83,9 @@ const SignIn: React.FC<SignInProps> = ({ style }) => {
     const togglePasswordVisibility = () => {
         setIsshowPassword(!isshowPassword);
     };
+    const handleGoBack = () => {
+        navigation.goBack();
+    };
 
     return (
         <View>
@@ -88,7 +93,7 @@ const SignIn: React.FC<SignInProps> = ({ style }) => {
                 containerStyle={{
                     borderBottomWidth: 0,
                     backgroundColor: 'white',
-                    marginTop: 70,
+                    marginTop: 20,
                     alignItems: 'center',
                 }}
                 backgroundColor="white"
@@ -97,7 +102,11 @@ const SignIn: React.FC<SignInProps> = ({ style }) => {
                     text: '가입하기',
                     style: { color: 'black', fontSize: 34, fontWeight: 'bold' },
                 }}
-                leftComponent={{ icon: 'close', color: '#BDBDBD' }}
+                leftComponent={
+                    <TouchableOpacity onPress={handleGoBack}>
+                        <Icons name="close" size={20} style={{ color: '#BDBDBD' }} />
+                    </TouchableOpacity>
+                }
                 leftContainerStyle={{ flex: 1, justifyContent: 'center' }}
             />
             <View style={{ marginTop: 32 }}>

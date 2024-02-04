@@ -2,12 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Input, InputProps, Button, Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { TextStyle, ViewStyle, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { NavigationProp } from '@react-navigation/native';
 
 interface SignInProps extends InputProps {
     style?: ViewStyle;
+    navigation: NavigationProp<any>;
 }
 
-const LogIn: React.FC<SignInProps> = ({ style }) => {
+const LogIn: React.FC<SignInProps> = ({ style, navigation }) => {
     const disabledInputStyle: TextStyle = { backgroundColor: 'white' };
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -52,13 +54,17 @@ const LogIn: React.FC<SignInProps> = ({ style }) => {
         setIsshowPassword(!isshowPassword);
     };
 
+    const handleSignUpPress = () => {
+        navigation.navigate('SignIn');
+    };
+
     return (
-        <View>
+        <View style={styles.main}>
             <Header
                 containerStyle={{
                     borderBottomWidth: 0,
                     backgroundColor: 'white',
-                    marginTop: 60,
+                    marginTop: 20,
                     alignItems: 'center',
                 }}
                 backgroundColor="white"
@@ -97,7 +103,9 @@ const LogIn: React.FC<SignInProps> = ({ style }) => {
                 />
             </View>
             <View style={styles.textContainer}>
-                <Text style={styles.text}>회원가입</Text>
+                <TouchableOpacity onPress={handleSignUpPress}>
+                    <Text style={styles.text}>회원가입</Text>
+                </TouchableOpacity>
                 <Text style={[styles.text, { marginLeft: 60 }]}>비밀번호 찾기</Text>
             </View>
             <Button
@@ -120,6 +128,7 @@ const LogIn: React.FC<SignInProps> = ({ style }) => {
 };
 
 const styles = StyleSheet.create({
+    main: {},
     headerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
