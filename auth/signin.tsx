@@ -104,7 +104,7 @@ const SignIn: React.FC<SignInProps> = ({ style }) => {
                 }}
                 leftComponent={
                     <TouchableOpacity onPress={handleGoBack}>
-                        <Icons name="close" size={20} style={{ color: '#BDBDBD' }} />
+                        <Icons name="arrow-back-ios" size={25} style={{ color: '#BDBDBD' }} />
                     </TouchableOpacity>
                 }
                 leftContainerStyle={{ flex: 1, justifyContent: 'center' }}
