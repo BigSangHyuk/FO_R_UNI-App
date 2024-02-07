@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LogIn from './auth/login';
 import SignIn from './auth/signin';
 import FindPass from './auth/findPass';
+import Info from './auth/Info';
 
 const Stack = createNativeStackNavigator();
 
@@ -12,6 +13,7 @@ const App = () => {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.container}>
+                {/* <Info/> */}
                 <NavigationContainer
                     theme={{
                         ...DefaultTheme,
@@ -21,7 +23,12 @@ const App = () => {
                         },
                     }}
                 >
-                    <Stack.Navigator initialRouteName="LogIn">
+                    <Stack.Navigator initialRouteName="Info">
+                        <Stack.Screen
+                            name="Info"
+                            component={Info}
+                            options={{ headerShown: false, contentStyle: { paddingHorizontal: 20 } }}
+                        />
                         <Stack.Screen
                             name="LogIn"
                             component={LogIn}
