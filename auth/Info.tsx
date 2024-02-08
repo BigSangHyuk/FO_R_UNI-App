@@ -14,17 +14,19 @@ interface Department {
 }
 
 const data: Department[] = [
-    { label: '국어국문학과', value: '1' },
-    { label: '영어영문학과', value: '2' },
-    { label: '독어독문학과', value: '3' },
-    { label: '불어불문학과', value: '4' },
-    { label: '일본지역문화학과', value: '5' },
-    { label: '중어중국학과', value: '6' },
-    { label: '수학과', value: '7' },
-    { label: '물리학과', value: '8' },
-    { label: '화학과', value: '9' },
-    { label: '패션산업학과', value: '10' },
-    { label: '해양학과', value: '11' },
+    { label: '인문대학', value: '인문대학' },
+    { label: '자연과학대학', value: '자연과학대학' },
+    { label: '사회과학대학', value: '사회과학대학' },
+    { label: '글로벌정경대학', value: '글로벌정경대학' },
+    { label: '공과대학', value: '공과대학' },
+    { label: '정보기술대학', value: '정보기술대학' },
+    { label: '경영대학', value: '경영대학' },
+    { label: '예술체육대학', value: '예술체육대학' },
+    { label: '사범대학', value: '사범대학' },
+    { label: '도시과학대학', value: '도시과학대학' },
+    { label: '생명과학기술대학', value: '생명과학기술대학' },
+    { label: '동북아국제통상학부', value: '동북아국제통상학부' },
+    { label: '법학부', value: '법학부' },
 ];
 
 const Info: React.FC<InfoProps> = ({ navigation }) => {
@@ -76,7 +78,7 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
             </View>
             <View style={{ marginTop: 32 }}>
                 <TouchableOpacity onPress={handleDropdownToggle} style={styles.dropdownToggle}>
-                    <Text style={styles.dropdownText}>{depart || 'Select item'}</Text>
+                    <Text style={styles.dropdownText}>{depart || '학과를 선택해주세요'}</Text>
                 </TouchableOpacity>
                 {isDropdownOpen && (
                     <ScrollView style={styles.dropdownList}>
@@ -93,7 +95,7 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
                 )}
             </View>
 
-            <Button
+            {/* <Button
                 buttonStyle={{ width: 330, marginTop: 170, borderRadius: 100, height: 50 }}
                 containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
                 disabledStyle={{
@@ -106,7 +108,7 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
                 title="시작하기"
                 titleProps={{}}
                 titleStyle={{ textAlign: 'center' }}
-            />
+            /> */}
         </View>
     );
 };
@@ -122,6 +124,8 @@ const styles = StyleSheet.create({
         marginTop: 16,
     },
     dropdownToggle: {
+        backgroundColor: '#F6F6F6',
+        color: 'ADB3BC',
         height: 50,
         borderColor: 'gray',
         borderWidth: 0.5,
@@ -131,17 +135,19 @@ const styles = StyleSheet.create({
     },
     dropdownText: {
         fontSize: 16,
+        color: '#ADB3BC',
     },
     dropdownList: {
-        maxHeight: 150,
+        maxHeight: 130,
         borderColor: 'gray',
+        backgroundColor: '#F6F6F6',
         borderWidth: 0.5,
         borderRadius: 8,
         position: 'absolute',
-        top: 50, // Adjust based on your UI
+        top: 50,
         width: '100%',
-        backgroundColor: 'white',
         zIndex: 999,
+        flex: 1,
     },
     dropdownItem: {
         paddingHorizontal: 8,
