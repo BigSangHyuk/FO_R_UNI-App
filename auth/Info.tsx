@@ -3,31 +3,26 @@ import { View, StyleSheet, TouchableOpacity, Text, ScrollView } from 'react-nati
 import { Input, Button, Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import {
+    Department,
+    Humanity,
+    NaturalScience,
+    SocialScience,
+    GlobalEconomics,
+    Engineering,
+    InformationTechnology,
+    Business,
+    ArtPhysical,
+    Education,
+    UrbanScience,
+    LifeScience,
+    NortheastAsia,
+    Law,
+} from '../data/department';
 
 interface InfoProps {
     navigation: NavigationProp<any>;
 }
-
-interface Department {
-    label: string;
-    value: string;
-}
-
-const data: Department[] = [
-    { label: '인문대학', value: '인문대학' },
-    { label: '자연과학대학', value: '자연과학대학' },
-    { label: '사회과학대학', value: '사회과학대학' },
-    { label: '글로벌정경대학', value: '글로벌정경대학' },
-    { label: '공과대학', value: '공과대학' },
-    { label: '정보기술대학', value: '정보기술대학' },
-    { label: '경영대학', value: '경영대학' },
-    { label: '예술체육대학', value: '예술체육대학' },
-    { label: '사범대학', value: '사범대학' },
-    { label: '도시과학대학', value: '도시과학대학' },
-    { label: '생명과학기술대학', value: '생명과학기술대학' },
-    { label: '동북아국제통상학부', value: '동북아국제통상학부' },
-    { label: '법학부', value: '법학부' },
-];
 
 const Info: React.FC<InfoProps> = ({ navigation }) => {
     const [nickName, setNickName] = useState<string>('');
@@ -82,7 +77,7 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
                 </TouchableOpacity>
                 {isDropdownOpen && (
                     <ScrollView style={styles.dropdownList}>
-                        {data.map((item) => (
+                        {Department.map((item) => (
                             <TouchableOpacity
                                 key={item.value}
                                 style={styles.dropdownItem}
