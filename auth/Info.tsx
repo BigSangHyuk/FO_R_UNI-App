@@ -28,7 +28,8 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
     const [nickName, setNickName] = useState<string>('');
     const [uni, setUni] = useState<string | null>(null);
     const [depart, setDepart] = useState<string | null>(null);
-    const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+    const [isUniOpen, setIsUniOpen] = useState<boolean>(false);
+    const [isDepartOpen, setIsDepartOpen] = useState<boolean>(false);
 
     const onChangeNickname = useCallback((value: string) => {
         setNickName(value);
@@ -38,17 +39,57 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
         navigation.goBack();
     };
 
-    const handleDropdownToggle = () => {
-        setIsDropdownOpen(!isDropdownOpen);
+    const handleUniToggle = () => {
+        setIsUniOpen(!isUniOpen);
     };
 
-    const handleDropdownSelect = (value: string) => {
+    const handleDepartToggle = () => {
+        setIsDepartOpen(!isDepartOpen);
+    };
+
+    const handleUniSelect = (value: string) => {
         setUni(value);
-        setIsDropdownOpen(false);
+        setIsUniOpen(false);
+    };
+
+    const handleDepartSelect = (value: string) => {
+        setDepart(value);
+        setIsDepartOpen(false);
     };
 
     const handleBlur = () => {
-        setIsDropdownOpen(false);
+        setIsUniOpen(false);
+    };
+
+    const getDepartmentsByUni = (selectedUni: string | null) => {
+        switch (selectedUni) {
+            case '인문대학':
+                return Humanity;
+            case '자연과학대학':
+                return NaturalScience;
+            case '사회과학대학':
+                return SocialScience;
+            case '글로벌정경대학':
+                return GlobalEconomics;
+            case '공과대학':
+                return Engineering;
+            case '정보기술대학':
+                return InformationTechnology;
+            case '경영대학':
+                return Business;
+            case '예술체육대학':
+                return ArtPhysical;
+            case '사범대학':
+                return Education;
+            case '도시과학대학':
+                return UrbanScience;
+            case '생명과학기술대학':
+                return LifeScience;
+            case '동북아국제통상학부':
+                return NortheastAsia;
+            case '법학부':
+                return Law;
+        }
     };
 
     return (
@@ -82,20 +123,43 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
                     />
                 </View>
                 <View style={{ marginTop: 32 }}>
-                    <TouchableOpacity onPress={handleDropdownToggle} style={styles.dropdownToggle}>
+                    <TouchableOpacity onPress={handleUniToggle} style={styles.dropdownToggle}>
                         <Text style={[styles.dropdownText, { color: uni ? 'black' : '#ADB3BC' }]}>
                             {uni || '학부 선택'}
                         </Text>
                         <Icons name="arrow-drop-down" size={25} style={{ color: '#BDBDBD' }} />
                     </TouchableOpacity>
 
-                    {isDropdownOpen && (
+                    {isUniOpen && (
                         <ScrollView style={styles.dropdownList}>
                             {UNI.map((item) => (
                                 <TouchableOpacity
                                     key={item.value}
                                     style={styles.dropdownItem}
-                                    onPress={() => handleDropdownSelect(item.value)}
+                                    onPress={() => handleUniSelect(item.value)}
+                                >
+                                    <Text>{item.value}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    )}
+                </View>
+
+                <View style={{ marginTop: 32 }}>
+                    <TouchableOpacity onPress={handleDepartToggle} style={styles.dropdownToggle}>
+                        <Text style={[styles.dropdownText, { color: depart ? 'black' : '#ADB3BC' }]}>
+                            {depart || '과 선택'}
+                        </Text>
+                        <Icons name="arrow-drop-down" size={25} style={{ color: '#BDBDBD' }} />
+                    </TouchableOpacity>
+
+                    {isDepartOpen && (
+                        <ScrollView style={styles.dropdownList}>
+                            {getDepartmentsByUni(uni)?.map((item) => (
+                                <TouchableOpacity
+                                    key={item.value}
+                                    style={styles.dropdownItem}
+                                    onPress={() => handleDepartSelect(item.value)}
                                 >
                                     <Text>{item.label}</Text>
                                 </TouchableOpacity>
