@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Input, Button, Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -67,6 +67,7 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
     const handleBlur = () => {
         setIsUniOpen(false);
         setIsDepartOpen(false);
+        Keyboard.dismiss();
     };
 
     const getDepartmentsByUni = (selectedUni: string | null) => {
@@ -128,6 +129,7 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
                         containerStyle={[styles.inputContainer]}
                         onChangeText={onChangeNickname}
                         placeholder="닉네임"
+                        keyboardType="default"
                     />
                 </View>
                 <View style={{ marginTop: 32, zIndex: 1 }}>
@@ -177,21 +179,23 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
                     </View>
                 )}
                 <View style={{ zIndex: -1, marginTop: 100 }}>
-                    <Button
-                        buttonStyle={{ width: 330, borderRadius: 120, height: 50 }}
-                        containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
-                        disabledStyle={{
-                            borderWidth: 2,
-                            borderColor: '#F6F6F6',
-                        }}
-                        disabledTitleStyle={{ color: 'white' }}
-                        loadingProps={{ animating: false }}
-                        loadingStyle={{}}
-                        title="시작하기"
-                        titleProps={{}}
-                        titleStyle={{ textAlign: 'center' }}
-                        disabled={!selectDepart || !nickName || !selectUni}
-                    />
+                    {selectUni && selectDepart && nickName && (
+                        <Button
+                            buttonStyle={{ width: 330, borderRadius: 120, height: 50 }}
+                            containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
+                            disabledStyle={{
+                                borderWidth: 2,
+                                borderColor: '#F6F6F6',
+                            }}
+                            disabledTitleStyle={{ color: 'white' }}
+                            loadingProps={{ animating: false }}
+                            loadingStyle={{}}
+                            title="시작하기"
+                            titleProps={{}}
+                            titleStyle={{ textAlign: 'center' }}
+                            disabled={!selectDepart || !nickName || !selectUni}
+                        />
+                    )}
                 </View>
             </View>
         </TouchableWithoutFeedback>
