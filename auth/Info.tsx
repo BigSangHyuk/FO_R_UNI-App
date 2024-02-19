@@ -28,6 +28,7 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
     const [nickName, setNickName] = useState<string>('');
     const [uni, setUni] = useState<string | null>(null);
     const [depart, setDepart] = useState<string | null>(null);
+    const [selectUni, setSelectUni] = useState<boolean>(false);
     const [isUniOpen, setIsUniOpen] = useState<boolean>(false);
     const [isDepartOpen, setIsDepartOpen] = useState<boolean>(false);
 
@@ -41,6 +42,7 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
 
     const handleUniToggle = () => {
         setIsUniOpen(!isUniOpen);
+        setIsDepartOpen(false);
     };
 
     const handleDepartToggle = () => {
@@ -49,7 +51,10 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
 
     const handleUniSelect = (value: string) => {
         setUni(value);
+        setDepart(null);
         setIsUniOpen(false);
+        setSelectUni(true);
+        setIsDepartOpen(false);
     };
 
     const handleDepartSelect = (value: string) => {
@@ -122,7 +127,7 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
                         placeholder="닉네임"
                     />
                 </View>
-                <View style={{ marginTop: 32 }}>
+                <View style={{ marginTop: 32, zIndex: 1 }}>
                     <TouchableOpacity onPress={handleUniToggle} style={styles.dropdownToggle}>
                         <Text style={[styles.dropdownText, { color: uni ? 'black' : '#ADB3BC' }]}>
                             {uni || '학부 선택'}
@@ -144,29 +149,30 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
                         </ScrollView>
                     )}
                 </View>
+                {!selectUni || (
+                    <View style={{ marginTop: 32, zIndex: 0 }}>
+                        <TouchableOpacity onPress={handleDepartToggle} style={styles.dropdownToggle}>
+                            <Text style={[styles.dropdownText, { color: depart ? 'black' : '#ADB3BC' }]}>
+                                {depart || '과 선택'}
+                            </Text>
+                            <Icons name="arrow-drop-down" size={25} style={{ color: '#BDBDBD' }} />
+                        </TouchableOpacity>
 
-                <View style={{ marginTop: 32 }}>
-                    <TouchableOpacity onPress={handleDepartToggle} style={styles.dropdownToggle}>
-                        <Text style={[styles.dropdownText, { color: depart ? 'black' : '#ADB3BC' }]}>
-                            {depart || '과 선택'}
-                        </Text>
-                        <Icons name="arrow-drop-down" size={25} style={{ color: '#BDBDBD' }} />
-                    </TouchableOpacity>
-
-                    {isDepartOpen && (
-                        <ScrollView style={styles.dropdownList}>
-                            {getDepartmentsByUni(uni)?.map((item) => (
-                                <TouchableOpacity
-                                    key={item.value}
-                                    style={styles.dropdownItem}
-                                    onPress={() => handleDepartSelect(item.value)}
-                                >
-                                    <Text>{item.label}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </ScrollView>
-                    )}
-                </View>
+                        {isDepartOpen && (
+                            <ScrollView style={styles.dropdownList}>
+                                {getDepartmentsByUni(uni)?.map((item) => (
+                                    <TouchableOpacity
+                                        key={item.value}
+                                        style={styles.dropdownItem}
+                                        onPress={() => handleDepartSelect(item.value)}
+                                    >
+                                        <Text>{item.label}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
+                        )}
+                    </View>
+                )}
 
                 {/* <Button
                 buttonStyle={{ width: 330, marginTop: 170, borderRadius: 100, height: 50 }}
