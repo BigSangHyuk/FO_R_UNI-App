@@ -29,6 +29,7 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
     const [uni, setUni] = useState<string | null>(null);
     const [depart, setDepart] = useState<string | null>(null);
     const [selectUni, setSelectUni] = useState<boolean>(false);
+    const [selectDepart, setSelectDepart] = useState<boolean>(false);
     const [isUniOpen, setIsUniOpen] = useState<boolean>(false);
     const [isDepartOpen, setIsDepartOpen] = useState<boolean>(false);
 
@@ -60,10 +61,12 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
     const handleDepartSelect = (value: string) => {
         setDepart(value);
         setIsDepartOpen(false);
+        setSelectDepart(true);
     };
 
     const handleBlur = () => {
         setIsUniOpen(false);
+        setIsDepartOpen(false);
     };
 
     const getDepartmentsByUni = (selectedUni: string | null) => {
@@ -173,21 +176,23 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
                         )}
                     </View>
                 )}
-
-                {/* <Button
-                buttonStyle={{ width: 330, marginTop: 170, borderRadius: 100, height: 50 }}
-                containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
-                disabledStyle={{
-                    borderWidth: 2,
-                    borderColor: '#F6F6F6',
-                }}
-                disabledTitleStyle={{ color: 'white' }}
-                loadingProps={{ animating: false }}
-                loadingStyle={{}}
-                title="시작하기"
-                titleProps={{}}
-                titleStyle={{ textAlign: 'center' }}
-            /> */}
+                <View style={{ zIndex: -1, marginTop: 100 }}>
+                    <Button
+                        buttonStyle={{ width: 330, borderRadius: 120, height: 50 }}
+                        containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
+                        disabledStyle={{
+                            borderWidth: 2,
+                            borderColor: '#F6F6F6',
+                        }}
+                        disabledTitleStyle={{ color: 'white' }}
+                        loadingProps={{ animating: false }}
+                        loadingStyle={{}}
+                        title="시작하기"
+                        titleProps={{}}
+                        titleStyle={{ textAlign: 'center' }}
+                        disabled={!selectDepart || !nickName || !selectUni}
+                    />
+                </View>
             </View>
         </TouchableWithoutFeedback>
     );
