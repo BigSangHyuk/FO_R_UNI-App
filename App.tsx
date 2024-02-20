@@ -4,16 +4,15 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LogIn from './auth/login';
 import SignIn from './auth/signin';
-import FindPass from './auth/findPass';
-import Info from './auth/Info';
-
+import FindPass from './auth/findpass';
+import Info from './auth/info';
+import Mypage from './pages/mypage';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.container}>
-                {/* <Info/> */}
                 <NavigationContainer
                     theme={{
                         ...DefaultTheme,
@@ -23,7 +22,7 @@ const App = () => {
                         },
                     }}
                 >
-                    <Stack.Navigator initialRouteName="Info">
+                    <Stack.Navigator initialRouteName="LogIn">
                         <Stack.Screen
                             name="Info"
                             component={Info}
@@ -42,6 +41,11 @@ const App = () => {
                         <Stack.Screen
                             name="FindPass"
                             component={FindPass}
+                            options={{ headerShown: false, contentStyle: { paddingHorizontal: 20 } }}
+                        />
+                        <Stack.Screen
+                            name="MyPage"
+                            component={Mypage}
                             options={{ headerShown: false, contentStyle: { paddingHorizontal: 20 } }}
                         />
                     </Stack.Navigator>
