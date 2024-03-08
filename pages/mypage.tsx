@@ -30,7 +30,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                 }}
                 leftComponent={
                     <TouchableOpacity onPress={handleGoBack}>
-                        <Icons name="menu" size={25} style={{ color: '#BDBDBD' }} />
+                        <Icons name="menu" size={25} style={{ color: '#000000' }} />
                     </TouchableOpacity>
                 }
                 leftContainerStyle={{ flex: 1, justifyContent: 'center' }}
