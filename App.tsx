@@ -22,7 +22,7 @@ const App = () => {
                         },
                     }}
                 >
-                    <Stack.Navigator initialRouteName="LogIn">
+                    <Stack.Navigator initialRouteName="MyPage">
                         <Stack.Screen
                             name="Info"
                             component={Info}
