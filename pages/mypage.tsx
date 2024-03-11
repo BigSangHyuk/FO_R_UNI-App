@@ -35,8 +35,33 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                 }
                 leftContainerStyle={{ flex: 1, justifyContent: 'center' }}
             />
+            <View style={{ alignItems: 'center' }}>
+                <View style={styles.profileContainer}></View>
+            </View>
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    profileContainer: {
+        width: 158,
+        height: 158,
+        borderRadius: 158,
+        borderWidth: 4,
+        borderColor: 'white',
+        marginTop: 32,
+        backgroundColor: 'black',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    infoContainer: {
+        width: 133,
+        height: 72,
+    },
+    depart: {
+        width: 89,
+        height: 19,
+    },
+});
 
 export default Mypage;
