@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Animated, FlatList } from 'react-native';
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -24,6 +24,13 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     const handleGoBack = () => {
         navigation.goBack();
     };
+
+    const data = [
+        { title: 'Item 1', duration: '9월 13일' },
+        { title: 'Item 2', duration: '60min' },
+        { title: 'Item 3', duration: '30min' },
+        { title: 'Item 4', duration: '15min' },
+    ];
 
     return (
         <View>
@@ -72,9 +79,25 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                             },
                         ]}
                     >
-                        <Text>{isToggled ? '내가 댓글 남긴 글' : '좋아요 한 댓글'}</Text>
+                        <Text style={{ fontSize: 16, fontWeight: '600' }}>
+                            {isToggled ? '내가 댓글 남긴 글' : '좋아요 한 댓글'}
+                        </Text>
                     </Animated.View>
                 </TouchableOpacity>
+            </View>
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <View style={styles.listContainer}>
+                    <FlatList
+                        data={data}
+                        renderItem={({ item }) => (
+                            <View style={styles.item}>
+                                <Text style={styles.itemTitle}>{item.title}</Text>
+                                <Text style={styles.itemDuration}>{item.duration}</Text>
+                            </View>
+                        )}
+                        keyExtractor={(item) => item.title}
+                    />
+                </View>
             </View>
         </View>
     );
@@ -120,10 +143,34 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    listContainer: {
+        width: 358,
+        height: 331,
+        backgroundColor: '#F6F6F6',
+        marginTop: 17,
+    },
+    list: {
+        width: 323,
+        height: 35,
+        alignItems: 'center',
+        justifyContent: 'center',
         fontSize: 16,
     },
-    togglelabel: {
-        marginRight: 10,
+    item: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+        justifyContent: 'space-between',
+    },
+    itemTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    itemDuration: {
+        fontSize: 14,
     },
 });
 
