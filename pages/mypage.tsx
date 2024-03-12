@@ -25,11 +25,17 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
         navigation.goBack();
     };
 
-    const data = [
+    const like = [
         { title: 'Item 1', duration: '9월 13일' },
         { title: 'Item 2', duration: '60min' },
         { title: 'Item 3', duration: '30min' },
         { title: 'Item 4', duration: '15min' },
+    ];
+    const comment = [
+        { title: 'Item 5', duration: '3월 11일' },
+        { title: 'Item 6', duration: '60min' },
+        { title: 'Item 7', duration: '30min' },
+        { title: 'Item 8', duration: '15min' },
     ];
 
     return (
@@ -87,16 +93,29 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
             </View>
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <View style={styles.listContainer}>
-                    <FlatList
-                        data={data}
-                        renderItem={({ item }) => (
-                            <View style={styles.item}>
-                                <Text style={styles.itemTitle}>{item.title}</Text>
-                                <Text style={styles.itemDuration}>{item.duration}</Text>
-                            </View>
-                        )}
-                        keyExtractor={(item) => item.title}
-                    />
+                    {isToggled ? (
+                        <FlatList
+                            data={comment}
+                            renderItem={({ item }) => (
+                                <View style={styles.item}>
+                                    <Text style={styles.itemTitle}>○ {item.title}</Text>
+                                    <Text style={styles.itemDuration}>{item.duration}</Text>
+                                </View>
+                            )}
+                            keyExtractor={(item) => item.title}
+                        />
+                    ) : (
+                        <FlatList
+                            data={like}
+                            renderItem={({ item }) => (
+                                <View style={styles.item}>
+                                    <Text style={styles.itemTitle}>○ {item.title}</Text>
+                                    <Text style={styles.itemDuration}>{item.duration}</Text>
+                                </View>
+                            )}
+                            keyExtractor={(item) => item.title}
+                        />
+                    )}
                 </View>
             </View>
         </View>
