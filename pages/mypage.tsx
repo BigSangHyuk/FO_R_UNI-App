@@ -1,19 +1,30 @@
-import { ChangeEvent, useState, useEffect, useCallback } from 'react';
-import { Input, InputProps, Button, Header } from 'react-native-elements';
+import React, { useState, useRef } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import { TextStyle, ViewStyle, StyleSheet, View, TouchableOpacity, Text, Switch } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import React from 'react';
 
 interface MypageProps {
     navigation: NavigationProp<any>;
 }
 
-
 const Mypage: React.FC<MypageProps> = ({ navigation }) => {
+    const [isToggled, setIsToggled] = useState<boolean>(false);
+    const slideAnimation = useRef(new Animated.Value(0)).current;
+
+    const handleToggle = () => {
+        setIsToggled((previousState) => !previousState);
+        Animated.timing(slideAnimation, {
+            toValue: isToggled ? 0 : 1,
+            duration: 400,
+            useNativeDriver: false,
+        }).start();
+    };
+
     const handleGoBack = () => {
         navigation.goBack();
     };
+
     return (
         <View>
             <Header
@@ -45,6 +56,25 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                         <Icons name="edit" size={15}></Icons>
                     </View>
                 </View>
+                <TouchableOpacity style={styles.toggleContainer} onPress={handleToggle}>
+                    <Animated.View
+                        style={[
+                            styles.toggle,
+                            {
+                                transform: [
+                                    {
+                                        translateX: slideAnimation.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [0, 171.5],
+                                        }),
+                                    },
+                                ],
+                            },
+                        ]}
+                    >
+                        <Text>{isToggled ? '내가 댓글 남긴 글' : '좋아요 한 댓글'}</Text>
+                    </Animated.View>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -73,6 +103,27 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         textAlign: 'center',
+    },
+    toggleContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: 343,
+        height: 50,
+        marginTop: 17,
+        borderRadius: 30,
+        backgroundColor: '#F6F6F6',
+    },
+    toggle: {
+        width: 171.5,
+        height: 46,
+        backgroundColor: 'white',
+        borderRadius: 30,
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 16,
+    },
+    togglelabel: {
+        marginRight: 10,
     },
 });
 
