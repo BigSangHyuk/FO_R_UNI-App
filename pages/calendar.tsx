@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Animated, FlatList } from 're
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { CalendarList, DateData, LocaleConfig } from 'react-native-calendars';
+import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
 import moment from 'moment';
 
 LocaleConfig.locales['en'] = {
@@ -30,13 +30,17 @@ LocaleConfig.defaultLocale = 'en';
 const CalendarComponent: FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const [selectedMonth, setSelectedMonth] = useState<string>(moment().format('M월'));
-    const [selectedDates, setSelectedDates] = useState<{ [date: string]: { selected: boolean } }>({});
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const handleMonthChange = (month: DateData) => {
         setSelectedMonth(moment(month.dateString).format('M월'));
     };
 
     const handleOpenMenu = () => {
         setIsMenuOpen((prev) => !prev);
+    };
+
+    const handleDayPress = (day: DateData) => {
+        setSelectedDate(day.dateString);
     };
 
     const calendarTheme: any = {
@@ -49,7 +53,7 @@ const CalendarComponent: FC = () => {
             },
         },
         todayTextColor: '#4DBFFF',
-        textDayFontSize: 20,
+        textDayFontSize: 16,
         textDayFontWeight: '600',
         textMonthFontSize: 20,
         textMonthFontWeight: '',
@@ -78,19 +82,22 @@ const CalendarComponent: FC = () => {
                 }
                 leftContainerStyle={{ flex: 1, justifyContent: 'center' }}
             />
-            <CalendarList
-                style={styles.calendar}
-                horizontal
-                theme={calendarTheme}
-                hideExtraDays={true}
-                onMonthChange={(month: any) => {
-                    handleMonthChange(month);
-                }}
-                monthFormat=""
-                renderArrow={(direction: string) =>
-                    direction === 'left' ? <Icons name="left" size={20} /> : <Icons name="right" size={20} />
-                }
-            />
+            <View>
+                <Calendar
+                    style={styles.calendar}
+                    theme={calendarTheme}
+                    hideExtraDays={true}
+                    onMonthChange={(month: any) => {
+                        handleMonthChange(month);
+                    }}
+                    monthFormat=""
+                    renderArrow={(direction: string) =>
+                        direction === 'left' ? <Icons name="left" size={20} /> : <Icons name="right" size={20} />
+                    }
+                    markedDates={selectedDate ? { [selectedDate]: { selected: true, selectedColor: '#4DBFFF' } } : {}}
+                    onDayPress={handleDayPress}
+                />
+            </View>
         </View>
     );
 };
