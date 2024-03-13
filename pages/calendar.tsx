@@ -34,24 +34,26 @@ const CalendarComponent: FC = () => {
     const handleMonthChange = (month: DateData) => {
         setSelectedMonth(moment(month.dateString).format('M월'));
     };
+
     const handleOpenMenu = () => {
         setIsMenuOpen((prev) => !prev);
     };
-    const dayHeaderStyles = {
-        dayTextAtIndex0: {
-            color: 'red',
-        },
-        dayTextAtIndex1: {
-            color: 'blue',
-        },
-    };
 
-    const calendarTheme = {
-        stylesheet: {
-            calendar: {
-                header: dayHeaderStyles,
+    const calendarTheme: any = {
+        'stylesheet.calendar.header': {
+            dayTextAtIndex0: {
+                color: '#FF0000',
+            },
+            dayTextAtIndex6: {
+                color: '#4169e1',
             },
         },
+        todayTextColor: '#4DBFFF',
+        textDayFontSize: 20,
+        textDayFontWeight: '600',
+        textMonthFontSize: 20,
+        textMonthFontWeight: '',
+        textSectionTitleColor: 'rgba(138, 138, 138, 1)',
     };
 
     return (
@@ -80,11 +82,11 @@ const CalendarComponent: FC = () => {
                 style={styles.calendar}
                 theme={calendarTheme}
                 hideExtraDays={true}
-                onMonthChange={(month) => {
+                onMonthChange={(month: any) => {
                     handleMonthChange(month);
                 }}
                 monthFormat=""
-                renderArrow={(direction) =>
+                renderArrow={(direction: string) =>
                     direction === 'left' ? <Icons name="left" size={20} /> : <Icons name="right" size={20} />
                 }
             />
