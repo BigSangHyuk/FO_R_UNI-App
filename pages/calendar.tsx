@@ -37,6 +37,22 @@ const CalendarComponent: FC = () => {
     const handleOpenMenu = () => {
         setIsMenuOpen((prev) => !prev);
     };
+    const dayHeaderStyles = {
+        dayTextAtIndex0: {
+            color: 'red',
+        },
+        dayTextAtIndex1: {
+            color: 'blue',
+        },
+    };
+
+    const calendarTheme = {
+        stylesheet: {
+            calendar: {
+                header: dayHeaderStyles,
+            },
+        },
+    };
 
     return (
         <View>
@@ -62,14 +78,7 @@ const CalendarComponent: FC = () => {
             />
             <Calendar
                 style={styles.calendar}
-                theme={{
-                    todayTextColor: 'black',
-                    textDayFontSize: 20,
-                    textDayFontWeight: 'bold',
-                    textMonthFontSize: 20,
-                    textMonthFontWeight: 'bold',
-                    textSectionTitleColor: 'rgba(138, 138, 138, 1)',
-                }}
+                theme={calendarTheme}
                 hideExtraDays={true}
                 onMonthChange={(month) => {
                     handleMonthChange(month);
@@ -78,10 +87,6 @@ const CalendarComponent: FC = () => {
                 renderArrow={(direction) =>
                     direction === 'left' ? <Icons name="left" size={20} /> : <Icons name="right" size={20} />
                 }
-                calendarDayStyle={{
-                    Su: { color: 'red' },
-                    Sa: { color: 'blue' },
-                }}
             />
         </View>
     );
