@@ -7,7 +7,7 @@ import SignIn from './auth/signin';
 import FindPass from './auth/findpass';
 import Info from './auth/info';
 import Mypage from './pages/mypage';
-import calendar from './pages/calendar';
+import CalendarComponent from './pages/calendar';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -51,7 +51,7 @@ const App = () => {
                         />
                         <Stack.Screen
                             name="calendar"
-                            component={calendar}
+                            component={CalendarComponent}
                             options={{ headerShown: false, contentStyle: { paddingHorizontal: 20 } }}
                         />
                     </Stack.Navigator>

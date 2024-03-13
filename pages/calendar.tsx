@@ -3,10 +3,37 @@ import { View, Text, TouchableOpacity, StyleSheet, Animated, FlatList } from 're
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { Calendar } from 'react-native-calendars';
+import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
+import moment from 'moment';
 
-const calendar: FC = () => {
+LocaleConfig.locales['en'] = {
+    monthNames: [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+    ],
+    monthNamesShort: ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'],
+    dayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    dayNamesShort: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+};
+LocaleConfig.defaultLocale = 'en';
+
+const CalendarComponent: FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+    const [selectedMonth, setSelectedMonth] = useState<string>(moment().format('M월'));
+
+    const handleMonthChange = (month: DateData) => {
+        setSelectedMonth(moment(month.dateString).format('M월'));
+    };
     const handleOpenMenu = () => {
         setIsMenuOpen((prev) => !prev);
     };
@@ -23,7 +50,7 @@ const calendar: FC = () => {
                 backgroundColor="white"
                 barStyle="default"
                 centerComponent={{
-                    text: '내 정보',
+                    text: selectedMonth,
                     style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
                 }}
                 leftComponent={
@@ -44,13 +71,17 @@ const calendar: FC = () => {
                     textSectionTitleColor: 'rgba(138, 138, 138, 1)',
                 }}
                 hideExtraDays={true}
-                monthFormat={'M월'}
                 onMonthChange={(month) => {
-                    console.log(month);
+                    handleMonthChange(month);
                 }}
+                monthFormat=""
                 renderArrow={(direction) =>
                     direction === 'left' ? <Icons name="left" size={20} /> : <Icons name="right" size={20} />
                 }
+                calendarDayStyle={{
+                    Su: { color: 'red' },
+                    Sa: { color: 'blue' },
+                }}
             />
         </View>
     );
@@ -62,7 +93,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#E9E9E9',
         borderRadius: 20,
+        marginTop: 32,
     },
 });
 
-export default calendar;
+export default CalendarComponent;
