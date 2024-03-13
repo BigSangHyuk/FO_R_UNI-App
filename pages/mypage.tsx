@@ -10,6 +10,7 @@ interface MypageProps {
 
 const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     const [isToggled, setIsToggled] = useState<boolean>(false);
+    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const slideAnimation = useRef(new Animated.Value(0)).current;
 
     const handleToggle = () => {
@@ -21,8 +22,8 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
         }).start();
     };
 
-    const handleGoBack = () => {
-        navigation.goBack();
+    const handleOpenMenu = () => {
+        setIsMenuOpen((prev) => !prev);
     };
 
     const like = [
@@ -54,7 +55,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                     style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
                 }}
                 leftComponent={
-                    <TouchableOpacity onPress={handleGoBack}>
+                    <TouchableOpacity onPress={handleOpenMenu}>
                         <Icons name="menu" size={25} style={{ color: '#000000' }} />
                     </TouchableOpacity>
                 }

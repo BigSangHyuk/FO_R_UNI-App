@@ -7,6 +7,7 @@ import SignIn from './auth/signin';
 import FindPass from './auth/findpass';
 import Info from './auth/info';
 import Mypage from './pages/mypage';
+import calendar from './pages/calendar';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -22,7 +23,7 @@ const App = () => {
                         },
                     }}
                 >
-                    <Stack.Navigator initialRouteName="MyPage">
+                    <Stack.Navigator initialRouteName="calendar">
                         <Stack.Screen
                             name="Info"
                             component={Info}
@@ -46,6 +47,11 @@ const App = () => {
                         <Stack.Screen
                             name="MyPage"
                             component={Mypage}
+                            options={{ headerShown: false, contentStyle: { paddingHorizontal: 20 } }}
+                        />
+                        <Stack.Screen
+                            name="calendar"
+                            component={calendar}
                             options={{ headerShown: false, contentStyle: { paddingHorizontal: 20 } }}
                         />
                     </Stack.Navigator>
