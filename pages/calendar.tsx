@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Animated, FlatList } from 're
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
+import { CalendarList, DateData, LocaleConfig } from 'react-native-calendars';
 import moment from 'moment';
 
 LocaleConfig.locales['en'] = {
@@ -30,7 +30,7 @@ LocaleConfig.defaultLocale = 'en';
 const CalendarComponent: FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const [selectedMonth, setSelectedMonth] = useState<string>(moment().format('M월'));
-
+    const [selectedDates, setSelectedDates] = useState<{ [date: string]: { selected: boolean } }>({});
     const handleMonthChange = (month: DateData) => {
         setSelectedMonth(moment(month.dateString).format('M월'));
     };
@@ -78,8 +78,9 @@ const CalendarComponent: FC = () => {
                 }
                 leftContainerStyle={{ flex: 1, justifyContent: 'center' }}
             />
-            <Calendar
+            <CalendarList
                 style={styles.calendar}
+                horizontal
                 theme={calendarTheme}
                 hideExtraDays={true}
                 onMonthChange={(month: any) => {
