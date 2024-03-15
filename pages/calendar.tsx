@@ -92,7 +92,11 @@ const CalendarComponent: FC = () => {
                     }}
                     monthFormat=""
                     renderArrow={(direction: string) =>
-                        direction === 'left' ? <Icons name="left" size={20} /> : <Icons name="right" size={20} />
+                        direction === 'left' ? (
+                            <Icons name="chevron-left" size={20} />
+                        ) : (
+                            <Icons name="chevron-right" size={20} />
+                        )
                     }
                     markedDates={selectedDate ? { [selectedDate]: { selected: true, selectedColor: '#4DBFFF' } } : {}}
                     onDayPress={handleDayPress}
