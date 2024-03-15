@@ -49,7 +49,7 @@ const CalendarComponent: FC = () => {
                 color: '#FF0000',
             },
             dayTextAtIndex6: {
-                color: '#4169e1',
+                color: '#0064FF',
             },
         },
         todayTextColor: '#4DBFFF',
