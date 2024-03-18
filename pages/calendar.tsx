@@ -27,7 +27,7 @@ LocaleConfig.locales['en'] = {
 LocaleConfig.defaultLocale = 'en';
 
 interface MarkedDates {
-    [key: string]: { marked: boolean };
+    [key: string]: { marked?: boolean; dots?: { color: string; selectedDotColor: string }[] };
 }
 
 interface Post {
@@ -45,6 +45,7 @@ const CalendarComponent: FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
 
     useEffect(() => {
+        // Simulating fetching posts from server
         const fetchedPosts: Post[] = [
             {
                 id: 1,
@@ -63,7 +64,11 @@ const CalendarComponent: FC = () => {
 
         const markedDatesObj: MarkedDates = {};
         fetchedPosts.forEach((post) => {
-            markedDatesObj[moment(post.date).format('YYYY-MM-DD')] = { marked: true };
+            const formattedDate = moment(post.date).format('YYYY-MM-DD');
+            markedDatesObj[formattedDate] = {
+                marked: true,
+                dots: [{ color: '#4DBFFF', selectedDotColor: '#4DBFFF' }],
+            };
         });
         setMarkedDates(markedDatesObj);
     }, []);
@@ -82,9 +87,8 @@ const CalendarComponent: FC = () => {
 
     const renderItem = ({ item }: { item: Post }) => (
         <View style={styles.item}>
-            <Text>{item.date}</Text>
             <Text>{item.title}</Text>
-            <Text>{item.contents}</Text>
+            <Text>{moment(item.date).format('M월D일')}</Text>
         </View>
     );
 
@@ -94,7 +98,7 @@ const CalendarComponent: FC = () => {
                 color: '#FF0000',
             },
             dayTextAtIndex6: {
-                color: '#0064FF',
+                color: '#4169e1',
             },
         },
         todayTextColor: '#4DBFFF',
@@ -137,11 +141,7 @@ const CalendarComponent: FC = () => {
                     }}
                     monthFormat=""
                     renderArrow={(direction: string) =>
-                        direction === 'left' ? (
-                            <Icons name="chevron-left" size={20} />
-                        ) : (
-                            <Icons name="chevron-right" size={20} />
-                        )
+                        direction === 'left' ? <Icons name="left" size={20} /> : <Icons name="right" size={20} />
                     }
                     markedDates={{
                         ...markedDates,
@@ -166,30 +166,33 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     calendar: {
-        paddingBottom: 30,
         borderWidth: 1,
         borderColor: '#E9E9E9',
         borderRadius: 20,
         marginTop: 32,
     },
     postsContainer: {
-        flex: 1,
-        marginTop: 20,
+        width: '100%',
+        height: 331,
+        backgroundColor: 'white',
+        marginTop: 17,
+        borderRadius: 10,
+        padding: 10,
     },
     item: {
-        backgroundColor: '#fff',
-        padding: 20,
-        marginVertical: 8,
-        marginHorizontal: 16,
-        borderRadius: 10,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+        justifyContent: 'space-between',
+    },
+    itemTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    itemDuration: {
+        fontSize: 14,
     },
 });
 
