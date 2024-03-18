@@ -1,9 +1,11 @@
 import React, { useState, FC, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, FlatList, Alert } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, FlatList, Alert, } from 'react-native';
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
+import SideBar from '../menus/sidebar';
 import moment from 'moment';
+import { useLinkProps } from '@react-navigation/native';
 
 LocaleConfig.locales['en'] = {
     monthNames: [
@@ -79,6 +81,9 @@ const CalendarComponent: FC = () => {
     const handleOpenMenu = () => {
         setIsMenuOpen((prev) => !prev);
     };
+    const closeMenu = () => {
+        setIsMenuOpen(false);
+    };
 
     const handleDayPress = (day: DateData) => {
         setSelectedDate(day.dateString);
@@ -135,12 +140,14 @@ const CalendarComponent: FC = () => {
 
     return (
         <View style={styles.container}>
+            {isMenuOpen && <SideBar />}
             <Header
                 containerStyle={{
                     borderBottomWidth: 0,
                     backgroundColor: 'white',
                     marginTop: 20,
                     alignItems: 'center',
+                    paddingHorizontal: 20,
                 }}
                 backgroundColor="white"
                 barStyle="default"
@@ -189,6 +196,7 @@ const styles = StyleSheet.create({
     },
     calendarContainer: {
         flex: 1,
+        paddingHorizontal: 20,
     },
     calendar: {
         borderWidth: 1,
@@ -203,6 +211,7 @@ const styles = StyleSheet.create({
         marginTop: 17,
         borderRadius: 10,
         padding: 10,
+        paddingHorizontal: 20,
     },
     item: {
         flexDirection: 'row',

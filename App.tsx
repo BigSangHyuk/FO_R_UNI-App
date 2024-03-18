@@ -52,7 +52,7 @@ const App = () => {
                         <Stack.Screen
                             name="calendar"
                             component={CalendarComponent}
-                            options={{ headerShown: false, contentStyle: { paddingHorizontal: 20 } }}
+                            options={{ headerShown: false}}
                         />
                     </Stack.Navigator>
                 </NavigationContainer>
