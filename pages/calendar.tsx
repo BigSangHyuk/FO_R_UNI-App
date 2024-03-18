@@ -86,7 +86,7 @@ const CalendarComponent: FC = () => {
     };
 
     const handleDayPress = (day: DateData) => {
-        setSelectedDate(day.dateString);
+        setSelectedDate((prevSelectedDate) => (prevSelectedDate === day.dateString ? null : day.dateString));
     };
 
     const handleLongPress = () => {
@@ -205,7 +205,6 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     calendar: {
-        // borderWidth: 1,
         borderColor: '#E9E9E9',
         borderRadius: 20,
         marginTop: 32,
