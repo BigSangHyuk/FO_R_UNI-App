@@ -45,7 +45,6 @@ const CalendarComponent: FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
 
     useEffect(() => {
-        // Simulating fetching posts from server
         const fetchedPosts: Post[] = [
             {
                 id: 1,
