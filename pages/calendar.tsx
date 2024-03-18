@@ -1,8 +1,8 @@
 import React, { useState, FC, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, FlatList, Alert, } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, FlatList, Alert } from 'react-native';
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
+import { CalendarList, DateData, LocaleConfig } from 'react-native-calendars';
 import SideBar from '../menus/sidebar';
 import moment from 'moment';
 import { useLinkProps } from '@react-navigation/native';
@@ -163,7 +163,7 @@ const CalendarComponent: FC = () => {
                 leftContainerStyle={{ flex: 1, justifyContent: 'center' }}
             />
             <View style={styles.calendarContainer}>
-                <Calendar
+                <CalendarList
                     style={styles.calendar}
                     theme={calendarTheme}
                     hideExtraDays={true}
@@ -181,6 +181,8 @@ const CalendarComponent: FC = () => {
                     onDayPress={handleDayPress}
                     onDayLongPress={handleLongPress}
                     markingType={'multi-dot'}
+                    horizontal={true}
+                    pagingEnabled={true}
                 />
             </View>
             <View style={styles.postsContainer}>
@@ -196,10 +198,9 @@ const styles = StyleSheet.create({
     },
     calendarContainer: {
         flex: 1,
-        paddingHorizontal: 20,
     },
     calendar: {
-        borderWidth: 1,
+        // borderWidth: 1,
         borderColor: '#E9E9E9',
         borderRadius: 20,
         marginTop: 32,
