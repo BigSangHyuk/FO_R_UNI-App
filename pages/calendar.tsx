@@ -1,5 +1,5 @@
 import React, { useState, FC, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, FlatList } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, FlatList, Alert } from 'react-native';
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
@@ -45,7 +45,6 @@ const CalendarComponent: FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
 
     useEffect(() => {
-        // Simulating fetching posts from server
         const fetchedPosts: Post[] = [
             {
                 id: 1,
@@ -83,6 +82,31 @@ const CalendarComponent: FC = () => {
 
     const handleDayPress = (day: DateData) => {
         setSelectedDate(day.dateString);
+    };
+
+    const handleLongPress = () => {
+        if (selectedDate) {
+            Alert.alert(
+                '일정 등록',
+                `일정을 등록하시겠습니까? (${moment(selectedDate).format('YYYY-MM-DD')})`,
+                [
+                    {
+                        text: '취소',
+                        style: 'cancel',
+                    },
+                    {
+                        text: '확인',
+                        onPress: () => {
+                            // 여기에 일정 등록 로직을 추가하세요.
+                            // 사용자로부터 일정 정보를 입력 받아 처리할 수 있습니다.
+                            // 예: 일정 모달을 열거나, 다른 화면으로 이동하여 일정을 입력 받습니다.
+                            console.log('일정이 등록되었습니다:', selectedDate);
+                        },
+                    },
+                ],
+                { cancelable: false }
+            );
+        }
     };
 
     const renderItem = ({ item }: { item: Post }) => (
@@ -148,6 +172,7 @@ const CalendarComponent: FC = () => {
                         ...(selectedDate && { [selectedDate]: { selected: true, selectedColor: '#4DBFFF' } }),
                     }}
                     onDayPress={handleDayPress}
+                    onDayLongPress={handleLongPress}
                     markingType={'multi-dot'}
                 />
             </View>
