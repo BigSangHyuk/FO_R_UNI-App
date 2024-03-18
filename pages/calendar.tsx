@@ -95,7 +95,7 @@ const CalendarComponent: FC = () => {
                 color: '#FF0000',
             },
             dayTextAtIndex6: {
-                color: '#4169e1',
+                color: '#0064FF',
             },
         },
         todayTextColor: '#4DBFFF',
@@ -138,7 +138,11 @@ const CalendarComponent: FC = () => {
                     }}
                     monthFormat=""
                     renderArrow={(direction: string) =>
-                        direction === 'left' ? <Icons name="left" size={20} /> : <Icons name="right" size={20} />
+                        direction === 'left' ? (
+                            <Icons name="chevron-left" size={20} />
+                        ) : (
+                            <Icons name="chevron-right" size={20} />
+                        )
                     }
                     markedDates={{
                         ...markedDates,
