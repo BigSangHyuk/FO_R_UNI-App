@@ -120,6 +120,7 @@ const CalendarComponent: FC = () => {
             <Text>{moment(item.date).format('M월D일')}</Text>
         </View>
     );
+    const selectedDatePosts = posts.filter((post) => post.date === selectedDate);
 
     const calendarTheme: any = {
         'stylesheet.calendar.header': {
@@ -186,7 +187,11 @@ const CalendarComponent: FC = () => {
                 />
             </View>
             <View style={styles.postsContainer}>
-                <FlatList data={posts} renderItem={renderItem} keyExtractor={(item) => item.id.toString()} />
+                <FlatList
+                    data={selectedDatePosts}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id.toString()}
+                />
             </View>
         </View>
     );
