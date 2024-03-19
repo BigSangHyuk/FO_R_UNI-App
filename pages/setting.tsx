@@ -94,6 +94,7 @@ const Setting: FC = () => {
                     <Text style={styles.item}>About us</Text>
                     <Icon name="down" size={25} onPress={toggleAbout} />
                 </View>
+                <View></View>
                 {about && (
                     <View style={styles.aboutContainer}>
                         <Text style={styles.aboutText}>컴퓨터 공학부 고재현</Text>
@@ -103,9 +104,7 @@ const Setting: FC = () => {
                     </View>
                 )}
             </View>
-            <Text
-                style={{ textAlign: 'center', fontFamily: 'Inter', fontSize: 10, fontWeight: 'bold', marginTop: 422 }}
-            >
+            <Text style={{ textAlign: 'center', fontFamily: 'Inter', fontSize: 10, fontWeight: 'bold', marginTop: 12 }}>
                 FO_R_UNI version 1.0.1
             </Text>
         </View>
