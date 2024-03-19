@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Animated, FlatList } from 're
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-
+import Navigation from '../menus/navigation';
 interface MypageProps {
     navigation: NavigationProp<any>;
 }
@@ -54,12 +54,6 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                     text: '내 정보',
                     style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
                 }}
-                leftComponent={
-                    <TouchableOpacity onPress={handleOpenMenu}>
-                        <Icons name="menu" size={25} style={{ color: '#000000' }} />
-                    </TouchableOpacity>
-                }
-                leftContainerStyle={{ flex: 1, justifyContent: 'center' }}
             />
             <View style={{ alignItems: 'center' }}>
                 <View style={styles.profileContainer} />

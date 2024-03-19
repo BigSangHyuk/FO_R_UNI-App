@@ -2,10 +2,9 @@ import React, { useState, FC, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, FlatList, Alert } from 'react-native';
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import { CalendarList, DateData, LocaleConfig } from 'react-native-calendars';
-import SideBar from '../menus/sidebar';
+import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
 import moment from 'moment';
-import { useLinkProps } from '@react-navigation/native';
+import Navigation from '../menus/navigation';
 
 LocaleConfig.locales['en'] = {
     monthNames: [
@@ -141,7 +140,6 @@ const CalendarComponent: FC = () => {
 
     return (
         <View style={styles.container}>
-            {isMenuOpen && <SideBar />}
             <Header
                 containerStyle={{
                     borderBottomWidth: 0,
@@ -156,15 +154,9 @@ const CalendarComponent: FC = () => {
                     text: selectedMonth,
                     style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
                 }}
-                leftComponent={
-                    <TouchableOpacity onPress={handleOpenMenu}>
-                        <Icons name="menu" size={25} style={{ color: '#000000' }} />
-                    </TouchableOpacity>
-                }
-                leftContainerStyle={{ flex: 1, justifyContent: 'center' }}
             />
             <View style={styles.calendarContainer}>
-                <CalendarList
+                <Calendar
                     style={styles.calendar}
                     theme={calendarTheme}
                     hideExtraDays={true}
