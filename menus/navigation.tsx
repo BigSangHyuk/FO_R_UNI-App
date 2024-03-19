@@ -21,21 +21,21 @@ function Navigation() {
         >
             <Tab.Navigator initialRouteName="Setting">
                 <Tab.Screen
-                    name="Calendar"
-                    component={CalendarComponent}
-                    options={{
-                        title: '달력',
-                        headerShown: false,
-                        tabBarIcon: ({ color, size }) => <Icon name="calendar" color={color} size={size} />,
-                    }}
-                />
-                <Tab.Screen
                     name="Mypage"
                     component={Mypage}
                     options={{
                         title: '내 정보',
                         headerShown: false,
                         tabBarIcon: ({ color, size }) => <Icon name="account_circle" color={color} size={size} />,
+                    }}
+                />
+                <Tab.Screen
+                    name="Calendar"
+                    component={CalendarComponent}
+                    options={{
+                        title: '달력',
+                        headerShown: false,
+                        tabBarIcon: ({ color, size }) => <Icon name="calendar" color={color} size={size} />,
                     }}
                 />
                 <Tab.Screen
