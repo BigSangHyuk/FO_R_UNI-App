@@ -1,10 +1,10 @@
 import React from 'react';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CalendarComponent from '../pages/calendar';
 import Mypage from '../pages/mypage';
+import Setting from '../pages/setting';
 
 const Tab = createBottomTabNavigator();
 
@@ -19,7 +19,7 @@ function Navigation() {
                 },
             }}
         >
-            <Tab.Navigator initialRouteName="Calendar">
+            <Tab.Navigator initialRouteName="Setting">
                 <Tab.Screen
                     name="Calendar"
                     component={CalendarComponent}
@@ -35,7 +35,16 @@ function Navigation() {
                     options={{
                         title: '내 정보',
                         headerShown: false,
-                        tabBarIcon: ({ color, size }) => <Icon name="profile" color={color} size={size} />,
+                        tabBarIcon: ({ color, size }) => <Icon name="account_circle" color={color} size={size} />,
+                    }}
+                />
+                <Tab.Screen
+                    name="Setting"
+                    component={Setting}
+                    options={{
+                        title: '설정',
+                        headerShown: false,
+                        tabBarIcon: ({ color, size }) => <Icon name="setting" color={color} size={size} />,
                     }}
                 />
             </Tab.Navigator>
