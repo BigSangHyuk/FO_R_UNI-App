@@ -42,7 +42,7 @@ const Setting: FC = () => {
                 }}
                 rightComponent={
                     <View style={styles.rightContainer}>
-                        <Text style={styles.rightText}>문의하기</Text>
+                        <Text style={styles.rightText}>로그아웃</Text>
                     </View>
                 }
             />
@@ -88,6 +88,11 @@ const Setting: FC = () => {
                         />
                         <Text style={{ fontSize: 14, fontWeight: 'bold' }}>On</Text>
                     </View>
+                </View>
+                <View style={styles.separator} />
+                <View style={styles.itemContainer}>
+                    <Text style={styles.item}>문의하기</Text>
+                    <Icon name="contact-support" size={25} onPress={toggleAbout} />
                 </View>
                 <View style={styles.separator} />
                 <View style={styles.itemContainer}>
