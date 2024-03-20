@@ -10,7 +10,6 @@ interface MypageProps {
 
 const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     const [isToggled, setIsToggled] = useState<boolean>(false);
-    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const slideAnimation = useRef(new Animated.Value(0)).current;
 
     const handleToggle = () => {
@@ -20,10 +19,6 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
             duration: 400,
             useNativeDriver: false,
         }).start();
-    };
-
-    const handleOpenMenu = () => {
-        setIsMenuOpen((prev) => !prev);
     };
 
     const like = [
