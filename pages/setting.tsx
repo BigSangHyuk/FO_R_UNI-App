@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { View, Text, StyleSheet, Switch } from 'react-native';
 import { Header } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icons from 'react-native-vector-icons/MaterialIcons';
 
 const Setting: FC = () => {
     const [pushEnabled, setPushEnabled] = useState<boolean>(true);
@@ -92,12 +92,12 @@ const Setting: FC = () => {
                 <View style={styles.separator} />
                 <View style={styles.itemContainer}>
                     <Text style={styles.item}>문의하기</Text>
-                    <Icon name="contact-support" size={25} onPress={toggleAbout} />
+                    <Icons name="contact-support" size={25} onPress={toggleAbout} />
                 </View>
                 <View style={styles.separator} />
                 <View style={styles.itemContainer}>
                     <Text style={styles.item}>About us</Text>
-                    <Icon name="down" size={25} onPress={toggleAbout} />
+                    <Icons name="keyboard-arrow-down" size={25} onPress={toggleAbout} />
                 </View>
                 <View></View>
                 {about && (

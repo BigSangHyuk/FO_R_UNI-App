@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, StyleSheet, Animated, FlatList } from 're
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import Navigation from '../menus/navigation';
 interface MypageProps {
     navigation: NavigationProp<any>;
 }
@@ -54,7 +53,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                 <View style={styles.profileContainer} />
                 <View style={styles.infoContainer}>
                     <Text style={{ fontSize: 30, textAlign: 'center', fontWeight: '600' }}>장려상혁</Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
                         <Text style={styles.depart}>컴퓨터공학부</Text>
                         <Icons name="edit" size={15}></Icons>
                     </View>
@@ -135,6 +134,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         textAlign: 'center',
+        marginLeft: 15,
     },
     toggleContainer: {
         flexDirection: 'row',
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         width: 358,
-        height: 331,
+        height: 240,
         backgroundColor: '#F6F6F6',
         marginTop: 17,
     },
