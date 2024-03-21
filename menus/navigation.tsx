@@ -5,7 +5,7 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import CalendarComponent from '../pages/calendar';
 import Mypage from '../pages/mypage';
 import Setting from '../pages/setting';
-
+import UnClassify from '../pages/unclassify';
 const Tab = createBottomTabNavigator();
 
 function Navigation() {
@@ -18,6 +18,15 @@ function Navigation() {
                     title: '내 정보',
                     headerShown: false,
                     tabBarIcon: ({ color, size }) => <Icons name="account-circle" color={color} size={size} />,
+                }}
+            />
+            <Tab.Screen
+                name="Unclassify"
+                component={UnClassify}
+                options={{
+                    title: '미분류글',
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => <Icons name="list" color={color} size={size} />,
                 }}
             />
             <Tab.Screen

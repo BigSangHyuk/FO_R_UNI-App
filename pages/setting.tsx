@@ -32,7 +32,6 @@ const Setting: FC = () => {
     };
 
     const handleSendFeedback = () => {
-        // Handle feedback submission logic here
         console.log('Feedback submitted:', feedback);
     };
 

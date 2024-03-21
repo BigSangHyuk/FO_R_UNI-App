@@ -132,6 +132,7 @@ const LogIn: React.FC<LogInProps> = ({ navigation, handleLogin }) => {
                 title="로그인"
                 disabled={!isEmail || !isPassword}
                 onPress={signIn}
+                style={styles.button}
             />
         </View>
     );
@@ -148,6 +149,11 @@ const styles = StyleSheet.create({
         color: '#4EA2EF',
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    button: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 
