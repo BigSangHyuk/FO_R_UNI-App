@@ -109,7 +109,7 @@ const Setting: FC = () => {
                     </View>
                 )}
             </View>
-            <Text style={{ textAlign: 'center', fontFamily: 'Inter', fontSize: 10, fontWeight: 'bold', marginTop: 12 }}>
+            <Text style={{ textAlign: 'center', fontSize: 10, fontWeight: 'bold', marginTop: 12 }}>
                 FO_R_UNI version 1.0.1
             </Text>
         </View>
