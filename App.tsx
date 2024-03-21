@@ -11,7 +11,8 @@ import Navigation from './menus/navigation';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
+
     const handleLogin = () => {
         setIsLoggedIn(true);
     };
@@ -19,7 +20,7 @@ const App = () => {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.container}>
-                {/* <NavigationContainer
+                <NavigationContainer
                     theme={{
                         ...DefaultTheme,
                         colors: {
@@ -28,23 +29,24 @@ const App = () => {
                         },
                     }}
                 >
-                    {isLoggedIn ? (
-                        <Navigation />
-                    ) : (
-                        <Stack.Navigator>
-                            <Stack.Screen
-                                name="LogIn"
-                                component={LogIn}
-                                options={{ headerShown: false }}
-                                initialParams={{ handleLogin }}
-                            />
-                            <Stack.Screen name="Info" component={Info} options={{ headerShown: false }} />
-                            <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
-                            <Stack.Screen name="FindPass" component={FindPass} options={{ headerShown: false }} />
-                        </Stack.Navigator>
-                    )}
-                </NavigationContainer> */}
-                <Navigation />
+                    <Stack.Navigator>
+                        {isLoggedIn ? (
+                            <Stack.Screen name="Navigation" component={Navigation} options={{ headerShown: false }} />
+                        ) : (
+                            <>
+                                <Stack.Screen
+                                    name="LogIn"
+                                    component={LogIn}
+                                    options={{ headerShown: false }}
+                                    initialParams={{ handleLogin }}
+                                />
+                                <Stack.Screen name="Info" component={Info} options={{ headerShown: false }} />
+                                <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
+                                <Stack.Screen name="FindPass" component={FindPass} options={{ headerShown: false }} />
+                            </>
+                        )}
+                    </Stack.Navigator>
+                </NavigationContainer>
             </View>
         </TouchableWithoutFeedback>
     );
@@ -53,7 +55,6 @@ const App = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
     },
 });
 

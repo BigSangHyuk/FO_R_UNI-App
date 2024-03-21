@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
-import { View, Text, StyleSheet, Switch } from 'react-native';
-import { Header } from 'react-native-elements';
+import { View, Text, StyleSheet, Switch, TextInput } from 'react-native';
+import { Header, Button } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 
 const Setting: FC = () => {
@@ -8,6 +8,8 @@ const Setting: FC = () => {
     const [darkModeEnabled, setDarkModeEnabled] = useState<boolean>(false);
     const [english, setEnglish] = useState<boolean>(false);
     const [about, setAbout] = useState<boolean>(false);
+    const [contact, setContact] = useState<boolean>(false);
+    const [feedback, setFeedback] = useState<string>('');
 
     const togglePushSwitch = () => {
         setPushEnabled((prevState) => !prevState);
@@ -23,6 +25,15 @@ const Setting: FC = () => {
 
     const toggleAbout = () => {
         setAbout((prevState) => !prevState);
+    };
+
+    const toggleContact = () => {
+        setContact((prev) => !prev);
+    };
+
+    const handleSendFeedback = () => {
+        // Handle feedback submission logic here
+        console.log('Feedback submitted:', feedback);
     };
 
     return (
@@ -92,8 +103,22 @@ const Setting: FC = () => {
                 <View style={styles.separator} />
                 <View style={styles.itemContainer}>
                     <Text style={styles.item}>문의하기</Text>
-                    <Icons name="contact-support" size={25} onPress={toggleAbout} />
+                    <Icons name="contact-support" size={25} onPress={toggleContact} />
                 </View>
+                {contact && (
+                    <View style={styles.aboutContainer}>
+                        <View style={styles.feedbackContainer}>
+                            <TextInput
+                                style={styles.feedbackInput}
+                                placeholder="어떤점이 불편하세요?"
+                                value={feedback}
+                                onChangeText={(text) => setFeedback(text)}
+                                multiline
+                            />
+                            <Button title="전송" onPress={handleSendFeedback} buttonStyle={styles.sendButton} />
+                        </View>
+                    </View>
+                )}
                 <View style={styles.separator} />
                 <View style={styles.itemContainer}>
                     <Text style={styles.item}>About us</Text>
@@ -157,6 +182,23 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'normal',
         marginTop: 3,
+    },
+    feedbackContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    feedbackInput: {
+        borderWidth: 1,
+        borderColor: '#000',
+        borderRadius: 5,
+        padding: 5,
+        marginTop: 5,
+        width: '80%',
+    },
+    sendButton: {
+        marginLeft: 10,
+        backgroundColor: '#46BD7B',
+        borderRadius: 5,
     },
 });
 
