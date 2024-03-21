@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LogIn from './auth/login';
 import SignIn from './auth/signin';
@@ -10,8 +10,12 @@ import Navigation from './menus/navigation';
 
 const Stack = createNativeStackNavigator();
 
-const App = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+interface AppProps {
+    navigation: NavigationProp<any>;
+}
+
+const App = ({ navigation }: AppProps) => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const handleLogin = () => {
         setIsLoggedIn(true);
@@ -33,18 +37,15 @@ const App = () => {
                         {isLoggedIn ? (
                             <Stack.Screen name="Navigation" component={Navigation} options={{ headerShown: false }} />
                         ) : (
-                            <>
-                                <Stack.Screen
-                                    name="LogIn"
-                                    component={LogIn}
-                                    options={{ headerShown: false }}
-                                    initialParams={{ handleLogin }}
-                                />
-                                <Stack.Screen name="Info" component={Info} options={{ headerShown: false }} />
-                                <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
-                                <Stack.Screen name="FindPass" component={FindPass} options={{ headerShown: false }} />
-                            </>
+                            <Stack.Screen
+                                name="LogIn"
+                                component={() => <LogIn handleLogin={handleLogin} navigation={navigation} />} // navigation prop 전달
+                                options={{ headerShown: false }}
+                            />
                         )}
+                        <Stack.Screen name="Info" component={Info} options={{ headerShown: false }} />
+                        <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
+                        <Stack.Screen name="FindPass" component={FindPass} options={{ headerShown: false }} />
                     </Stack.Navigator>
                 </NavigationContainer>
             </View>

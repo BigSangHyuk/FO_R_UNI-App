@@ -1,23 +1,23 @@
 import React, { useState, useCallback } from 'react';
-import { Input, InputProps, Button, Header } from 'react-native-elements';
+import { Input, Button, Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import { TextStyle, ViewStyle, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, TextStyle } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
+import Http from '../address/backend_url';
 
-interface LogInProps extends InputProps {
-    style?: ViewStyle;
+interface LogInProps {
     navigation: NavigationProp<any>;
+    handleLogin: () => void;
 }
 
-const LogIn: React.FC<LogInProps> = ({ style, navigation }) => {
-    const disabledInputStyle: TextStyle = { backgroundColor: 'white' };
+const LogIn: React.FC<LogInProps> = ({ navigation, handleLogin }) => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [emailMessage, setEmailMessage] = useState<string>('');
     const [passwordMessage, setPasswordMessage] = useState<string>('');
-    const [isshowPassword, setIsshowPassword] = useState<Boolean>(false);
-    const [isEmail, setIsEmail] = useState<Boolean>(false);
-    const [isPassword, setIsPassword] = useState<Boolean>(false);
+    const [isshowPassword, setIsshowPassword] = useState<boolean>(false);
+    const [isEmail, setIsEmail] = useState<boolean>(false);
+    const [isPassword, setIsPassword] = useState<boolean>(false);
 
     const onChangeEmail = useCallback((value: string) => {
         const EmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -57,8 +57,29 @@ const LogIn: React.FC<LogInProps> = ({ style, navigation }) => {
     const handleSignUpPress = () => {
         navigation.navigate('SignIn');
     };
+
     const handleFindPassPress = () => {
         navigation.navigate('FindPass');
+    };
+
+    const signIn = async () => {
+        try {
+            const res = await fetch(Http + `/sign-in`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+            if (res.status === 200) {
+                console.log('로그인 시도');
+                const data = await res.json();
+                sessionStorage.setItem('token', data.token);
+                handleLogin();
+            }
+        } catch (error) {
+            console.error('에러', error);
+        }
     };
 
     return (
@@ -80,18 +101,12 @@ const LogIn: React.FC<LogInProps> = ({ style, navigation }) => {
             />
             <View style={{ marginTop: 32 }}>
                 <Input
-                    containerStyle={[style, styles.inputContainer]}
-                    disabledInputStyle={disabledInputStyle}
-                    inputContainerStyle={{}}
                     onChangeText={onChangeEmail}
                     errorMessage={emailMessage}
                     placeholder="이메일"
                     errorStyle={{ color: isEmail ? 'blue' : 'red' }}
                 />
                 <Input
-                    containerStyle={[style, styles.inputContainer]}
-                    disabledInputStyle={disabledInputStyle}
-                    inputContainerStyle={{}}
                     onChangeText={onChangePassword}
                     errorMessage={passwordMessage}
                     placeholder="비밀번호"
@@ -101,7 +116,6 @@ const LogIn: React.FC<LogInProps> = ({ style, navigation }) => {
                             <Icons name="visibility" size={20} style={{ color: '#BDBDBD' }} />
                         </TouchableOpacity>
                     }
-                    rightIconContainerStyle={{}}
                     secureTextEntry={!isshowPassword}
                 />
             </View>
@@ -115,49 +129,15 @@ const LogIn: React.FC<LogInProps> = ({ style, navigation }) => {
             </View>
             <Button
                 buttonStyle={{ width: 330, marginTop: 70, borderRadius: 100, height: 50 }}
-                containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
-                disabledStyle={{
-                    borderWidth: 2,
-                    borderColor: '#F6F6F6',
-                }}
-                disabledTitleStyle={{ color: 'white' }}
-                loadingProps={{ animating: false }}
-                loadingStyle={{}}
                 title="로그인"
-                titleProps={{}}
-                titleStyle={{ textAlign: 'center' }}
                 disabled={!isEmail || !isPassword}
+                onPress={signIn}
             />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    headerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    inputContainer: {
-        backgroundColor: '#F6F6F6',
-        color: 'ADB3BC',
-        justifyContent: 'space-around',
-        borderColor: '#E8E8E8',
-        borderWidth: 1,
-        borderRadius: 10,
-        marginTop: 16,
-    },
-    header: {
-        textAlign: 'center',
-        fontSize: 30,
-        fontWeight: 'bold',
-        color: 'black',
-        marginBottom: 50,
-        marginTop: 70,
-    },
-    closeIcon: {
-        marginLeft: 10,
-    },
     textContainer: {
         marginTop: 30,
         alignItems: 'center',
