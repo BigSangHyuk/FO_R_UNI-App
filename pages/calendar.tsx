@@ -1,5 +1,5 @@
-import React, { useState, FC, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, FlatList, Alert } from 'react-native';
+import React, { useState, FC, useEffect, useRef } from 'react';
+import { View, StyleSheet, Text, FlatList, Alert } from 'react-native';
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
@@ -43,6 +43,7 @@ const CalendarComponent: FC = () => {
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [markedDates, setMarkedDates] = useState<MarkedDates>({});
     const [posts, setPosts] = useState<Post[]>([]);
+    const flatListRef = useRef<FlatList | null>(null);
 
     useEffect(() => {
         const fetchedPosts: Post[] = [
@@ -183,6 +184,7 @@ const CalendarComponent: FC = () => {
             </View>
             <View style={styles.postsContainer}>
                 <FlatList
+                    ref={flatListRef}
                     data={selectedDatePosts}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
