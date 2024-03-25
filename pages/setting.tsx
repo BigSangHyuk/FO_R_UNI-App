@@ -3,7 +3,11 @@ import { View, Text, StyleSheet, Switch, TextInput } from 'react-native';
 import { Header, Button } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 
-const Setting: FC = () => {
+interface SettingProps {
+    handleLogOut: () => void;
+}
+
+const Setting: FC<SettingProps> = ({ handleLogOut }) => {
     const [pushEnabled, setPushEnabled] = useState<boolean>(true);
     const [darkModeEnabled, setDarkModeEnabled] = useState<boolean>(false);
     const [english, setEnglish] = useState<boolean>(false);
@@ -52,7 +56,9 @@ const Setting: FC = () => {
                 }}
                 rightComponent={
                     <View style={styles.rightContainer}>
-                        <Text style={styles.rightText}>로그아웃</Text>
+                        <Text style={styles.rightText} onPress={handleLogOut}>
+                            로그아웃
+                        </Text>
                     </View>
                 }
             />

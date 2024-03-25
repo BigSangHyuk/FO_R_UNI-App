@@ -21,6 +21,11 @@ const App = ({ navigation }: AppProps) => {
         setIsLoggedIn(true);
     };
 
+    const handleLogOut = () => {
+        setIsLoggedIn(false);
+        sessionStorage.removeItem('token');
+    };
+
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.container}>
@@ -35,11 +40,15 @@ const App = ({ navigation }: AppProps) => {
                 >
                     <Stack.Navigator>
                         {isLoggedIn ? (
-                            <Stack.Screen name="Navigation" component={Navigation} options={{ headerShown: false }} />
+                            <Stack.Screen
+                                name="Navigation"
+                                component={() => <Navigation handleLogOut={handleLogOut} />}
+                                options={{ headerShown: false }}
+                            />
                         ) : (
                             <Stack.Screen
                                 name="LogIn"
-                                component={() => <LogIn handleLogin={handleLogin} navigation={navigation} />} // navigation prop 전달
+                                component={() => <LogIn handleLogin={handleLogin} navigation={navigation} />}
                                 options={{ headerShown: false }}
                             />
                         )}

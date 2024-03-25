@@ -6,9 +6,12 @@ import CalendarComponent from '../pages/calendar';
 import Mypage from '../pages/mypage';
 import Setting from '../pages/setting';
 import UnClassify from '../pages/unclassify';
+import { FC } from 'react';
 const Tab = createBottomTabNavigator();
-
-function Navigation() {
+interface NavigationProp {
+    handleLogOut: () => void;
+}
+const Navigation: FC<NavigationProp> = ({ handleLogOut }) => {
     return (
         <Tab.Navigator initialRouteName="Setting">
             <Tab.Screen
@@ -40,7 +43,7 @@ function Navigation() {
             />
             <Tab.Screen
                 name="Setting"
-                component={Setting}
+                component={() => <Setting handleLogOut={handleLogOut} />}
                 options={{
                     title: '설정',
                     headerShown: false,
@@ -49,6 +52,6 @@ function Navigation() {
             />
         </Tab.Navigator>
     );
-}
+};
 
 export default Navigation;
