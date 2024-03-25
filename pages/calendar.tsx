@@ -1,6 +1,6 @@
 import React, { useState, FC, useEffect, useRef } from 'react';
 import { View, StyleSheet, Text, FlatList, Alert } from 'react-native';
-import { Header } from 'react-native-elements';
+import { Header, Button } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
 import moment from 'moment';
@@ -52,6 +52,66 @@ const CalendarComponent: FC = () => {
                 title: '제목입니다.',
                 contents: '내용입니다.',
                 date: '2024-03-15',
+            },
+            {
+                id: 2,
+                title: '제목입니다.',
+                contents: '내용입니다.',
+                date: '2024-03-27',
+            },
+            {
+                id: 2,
+                title: '제목입니다.',
+                contents: '내용입니다.',
+                date: '2024-03-27',
+            },
+            {
+                id: 2,
+                title: '제목입니다.',
+                contents: '내용입니다.',
+                date: '2024-03-27',
+            },
+            {
+                id: 2,
+                title: '제목입니다.',
+                contents: '내용입니다.',
+                date: '2024-03-27',
+            },
+            {
+                id: 2,
+                title: '제목입니다.',
+                contents: '내용입니다.',
+                date: '2024-03-27',
+            },
+            {
+                id: 2,
+                title: '제목입니다.',
+                contents: '내용입니다.',
+                date: '2024-03-27',
+            },
+            {
+                id: 2,
+                title: '제목입니다.',
+                contents: '내용입니다.',
+                date: '2024-03-27',
+            },
+            {
+                id: 2,
+                title: '제목입니다.',
+                contents: '내용입니다.',
+                date: '2024-03-27',
+            },
+            {
+                id: 2,
+                title: '제목입니다.',
+                contents: '내용입니다.',
+                date: '2024-03-27',
+            },
+            {
+                id: 2,
+                title: '제목입니다.',
+                contents: '내용입니다.',
+                date: '2024-03-27',
             },
             {
                 id: 2,
@@ -182,7 +242,7 @@ const CalendarComponent: FC = () => {
                     pagingEnabled={true}
                 />
             </View>
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, marginTop: 32 }}>
                 <View style={styles.postsContainer}>
                     <FlatList
                         ref={flatListRef}
@@ -191,6 +251,23 @@ const CalendarComponent: FC = () => {
                         keyExtractor={(item) => item.id.toString()}
                     />
                 </View>
+            </View>
+            <View style={{ marginBottom: 60, alignSelf: 'center' }}>
+                <Button
+                    title="스크랩한 게시물"
+                    loading={false}
+                    loadingProps={{ size: 'small', color: 'white' }}
+                    buttonStyle={{
+                        backgroundColor: 'rgba(111, 202, 186, 1)',
+                        borderRadius: 5,
+                    }}
+                    titleStyle={{ fontWeight: 'bold', fontSize: 15 }}
+                    containerStyle={{
+                        height: 50,
+                        width: 200,
+                    }}
+                    onPress={() => console.log('aye')}
+                />
             </View>
         </View>
     );
