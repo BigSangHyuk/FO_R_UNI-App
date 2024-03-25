@@ -13,7 +13,7 @@ interface NavigationProp {
 }
 const Navigation: FC<NavigationProp> = ({ handleLogOut }) => {
     return (
-        <Tab.Navigator initialRouteName="Setting">
+        <Tab.Navigator initialRouteName="Calendar">
             <Tab.Screen
                 name="Mypage"
                 component={Mypage}

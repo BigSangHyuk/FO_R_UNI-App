@@ -9,6 +9,22 @@ const UnClassify: FC = () => {
         { title: 'Item 6', duration: '60min' },
         { title: 'Item 7', duration: '30min' },
         { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
+        { title: 'Item 8', duration: '15min' },
     ];
     return (
         <View>
@@ -46,10 +62,10 @@ const UnClassify: FC = () => {
 
 const styles = StyleSheet.create({
     listContainer: {
-        width: 358,
-        height: 240,
+        width: '100%',
+        height: 354,
         backgroundColor: '#F6F6F6',
-        marginTop: 17,
+        marginTop: 32,
     },
     list: {
         width: 323,
