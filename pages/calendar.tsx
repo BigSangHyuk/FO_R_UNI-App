@@ -182,13 +182,15 @@ const CalendarComponent: FC = () => {
                     pagingEnabled={true}
                 />
             </View>
-            <View style={styles.postsContainer}>
-                <FlatList
-                    ref={flatListRef}
-                    data={selectedDatePosts}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id.toString()}
-                />
+            <View style={{ flex: 1 }}>
+                <View style={styles.postsContainer}>
+                    <FlatList
+                        ref={flatListRef}
+                        data={selectedDatePosts}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.id.toString()}
+                    />
+                </View>
             </View>
         </View>
     );
@@ -207,8 +209,7 @@ const styles = StyleSheet.create({
         marginTop: 32,
     },
     postsContainer: {
-        width: '100%',
-        height: 331,
+        maxHeight: '70%',
         backgroundColor: 'white',
         marginTop: 17,
         borderRadius: 10,
