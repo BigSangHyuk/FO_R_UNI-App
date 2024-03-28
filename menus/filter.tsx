@@ -4,15 +4,15 @@ import { CheckBox } from 'react-native-elements';
 
 const Filter: FC = () => {
     const [checkboxes, setCheckboxes] = useState([
-        { id: 1, title: '학사', checked: false },
-        { id: 2, title: '학점교류', checked: false },
-        { id: 3, title: '일반/행사/모집', checked: false },
-        { id: 4, title: '장학금', checked: false },
-        { id: 5, title: '등록금 납부', checked: false },
-        { id: 6, title: '교육시험', checked: false },
-        { id: 7, title: '봉사', checked: false },
-        { id: 8, title: '채용', checked: false },
-        { id: 9, title: '학과', checked: false },
+        { id: 1, title: '학사', checked: false, color: '#dcdcdc' },
+        { id: 2, title: '학점교류', checked: false, color: 'red' },
+        { id: 3, title: '일반/행사/모집', checked: false, color: 'orange' },
+        { id: 4, title: '장학금', checked: false, color: 'yellow' },
+        { id: 5, title: '등록금 납부', checked: false, color: 'green' },
+        { id: 6, title: '교육시험', checked: false, color: 'blue' },
+        { id: 7, title: '봉사', checked: false, color: 'indigo' },
+        { id: 8, title: '채용', checked: false, color: 'purple' },
+        { id: 9, title: '학과', checked: false, color: 'black' },
     ]);
 
     const toggleCheckbox = (id: number) => {
@@ -31,8 +31,21 @@ const Filter: FC = () => {
                 <View style={styles.checkboxContainer}>
                     {checkboxes.map((checkbox) => (
                         <View key={checkbox.id} style={styles.checkboxItem}>
-                            <CheckBox checked={checkbox.checked} onPress={() => toggleCheckbox(checkbox.id)} />
-                            <Text style={styles.checkboxLabel}>{checkbox.title}</Text>
+                            <View style={styles.checkboxLabelContainer}>
+                                <CheckBox checked={checkbox.checked} onPress={() => toggleCheckbox(checkbox.id)} />
+                                <Text style={styles.checkboxLabel}>{checkbox.title}</Text>
+                            </View>
+                            <View style={{ marginLeft: 'auto' }}>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="12"
+                                    height="12"
+                                    viewBox="0 0 12 12"
+                                    fill="none"
+                                >
+                                    <circle cx="6" cy="6" r="6" fill={checkbox.color} />
+                                </svg>
+                            </View>
                         </View>
                     ))}
                 </View>
@@ -76,9 +89,16 @@ const styles = StyleSheet.create({
     checkboxItem: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 8,
+    },
+    checkboxLabelContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     checkboxLabel: {
         fontSize: 14,
+        marginRight: 8,
     },
 });
 
