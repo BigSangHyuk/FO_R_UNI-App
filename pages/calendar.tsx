@@ -4,7 +4,7 @@ import { Header, Button } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
 import moment from 'moment';
-
+import Filter from '../menus/filter';
 LocaleConfig.locales['en'] = {
     monthNames: [
         'January',
@@ -245,6 +245,11 @@ const CalendarComponent: FC = () => {
                     pagingEnabled={true}
                 />
             </View>
+            {isFilterOpen && (
+                <View style={styles.overlay}>
+                    <Filter />
+                </View>
+            )}
             <View style={{ flex: 1, marginTop: 100 }}>
                 <View style={styles.postsContainer}>
                     <FlatList
@@ -310,6 +315,11 @@ const styles = StyleSheet.create({
     },
     itemDuration: {
         fontSize: 14,
+    },
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        zIndex: 999,
     },
 });
 
