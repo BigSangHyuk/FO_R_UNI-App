@@ -247,7 +247,7 @@ const CalendarComponent: FC = () => {
             </View>
             {isFilterOpen && (
                 <View style={styles.overlay}>
-                    <Filter />
+                    <Filter isFilterOpen={false} onCloseFilter={() => setIsFilterOpen(false)} />;
                 </View>
             )}
             <View style={{ flex: 1, marginTop: 100 }}>

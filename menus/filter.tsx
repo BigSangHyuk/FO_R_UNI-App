@@ -2,7 +2,11 @@ import React, { FC, useState } from 'react';
 import { StyleSheet, View, Text, Switch } from 'react-native';
 import { CheckBox, Button } from 'react-native-elements';
 
-const Filter: FC = () => {
+interface FilterProp {
+    isFilterOpen: boolean;
+    onCloseFilter: () => void;
+}
+const Filter: FC<FilterProp> = ({ isFilterOpen, onCloseFilter }) => {
     const [allChecked, setAllChecked] = useState(false);
     const [checkboxes, setCheckboxes] = useState([
         { id: 1, title: '학사', checked: false, color: '#dcdcdc' },
@@ -32,6 +36,10 @@ const Filter: FC = () => {
                 checked: !allChecked,
             }))
         );
+    };
+
+    const closFilter = () => {
+        onCloseFilter();
     };
 
     return (
@@ -79,7 +87,7 @@ const Filter: FC = () => {
                             height: 51,
                             width: 170,
                         }}
-                        onPress={() => console.log('aye')}
+                        onPress={() => closFilter()}
                     />
                 </View>
             </View>
@@ -101,7 +109,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 30,
-        marginTop: 72,
+        marginTop: 30,
     },
     filterContainer: {
         width: '65%',
