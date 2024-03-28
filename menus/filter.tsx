@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { CheckBox } from 'react-native-elements';
+import { StyleSheet, View, Text, Switch } from 'react-native';
+import { CheckBox, Button } from 'react-native-elements';
 
 const Filter: FC = () => {
     const [checkboxes, setCheckboxes] = useState([
@@ -49,6 +49,11 @@ const Filter: FC = () => {
                         </View>
                     ))}
                 </View>
+                <View style={styles.switch}>
+                    전체 선택
+                    <Switch />
+                    전체 해제
+                </View>
             </View>
         </View>
     );
@@ -75,6 +80,7 @@ const styles = StyleSheet.create({
         height: '100%',
         backgroundColor: '#fff',
         alignSelf: 'flex-end',
+        alignItems: 'center',
     },
     checkboxContainer: {
         alignItems: 'flex-start',
@@ -90,7 +96,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 8,
     },
     checkboxLabelContainer: {
         flexDirection: 'row',
@@ -99,6 +104,12 @@ const styles = StyleSheet.create({
     checkboxLabel: {
         fontSize: 14,
         marginRight: 8,
+    },
+    switch: {
+        fontSize: 14,
+        flexDirection: 'row',
+        gap: 17,
+        marginTop: 20,
     },
 });
 
