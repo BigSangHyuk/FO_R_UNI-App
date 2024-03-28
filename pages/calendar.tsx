@@ -1,5 +1,5 @@
 import React, { useState, FC, useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, FlatList, Alert } from 'react-native';
+import { View, StyleSheet, Text, FlatList, Alert, TouchableOpacity } from 'react-native';
 import { Header, Button } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
@@ -38,7 +38,7 @@ interface Post {
 }
 
 const CalendarComponent: FC = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+    const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
     const [selectedMonth, setSelectedMonth] = useState<string>(moment().format('M월'));
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [markedDates, setMarkedDates] = useState<MarkedDates>({});
@@ -137,11 +137,8 @@ const CalendarComponent: FC = () => {
         setSelectedMonth(moment(month.dateString).format('M월'));
     };
 
-    const handleOpenMenu = () => {
-        setIsMenuOpen((prev) => !prev);
-    };
-    const closeMenu = () => {
-        setIsMenuOpen(false);
+    const handleOpenFilter = () => {
+        setIsFilterOpen((prev) => !prev);
     };
 
     const handleDayPress = (day: DateData) => {
@@ -214,6 +211,12 @@ const CalendarComponent: FC = () => {
                     text: selectedMonth,
                     style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
                 }}
+                rightComponent={
+                    <TouchableOpacity>
+                        <Icons name="filter-list" size={25} style={{ color: '#BDBDBD' }} onPress={handleOpenFilter} />
+                    </TouchableOpacity>
+                }
+                rightContainerStyle={{ flex: 1, justifyContent: 'center' }}
             />
             <View style={styles.calendarContainer}>
                 <Calendar
@@ -242,7 +245,7 @@ const CalendarComponent: FC = () => {
                     pagingEnabled={true}
                 />
             </View>
-            <View style={{ flex: 1, marginTop: 32 }}>
+            <View style={{ flex: 1, marginTop: 100 }}>
                 <View style={styles.postsContainer}>
                     <FlatList
                         ref={flatListRef}
