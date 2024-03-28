@@ -1,5 +1,5 @@
 import React, { useState, FC, useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, FlatList, Alert, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, FlatList, Alert, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { Header, Button } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
@@ -196,88 +196,95 @@ const CalendarComponent: FC = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <Header
-                containerStyle={{
-                    borderBottomWidth: 0,
-                    backgroundColor: 'white',
-                    marginTop: 20,
-                    alignItems: 'center',
-                    paddingHorizontal: 20,
-                }}
-                backgroundColor="white"
-                barStyle="default"
-                centerComponent={{
-                    text: selectedMonth,
-                    style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
-                }}
-                rightComponent={
-                    <TouchableOpacity>
-                        <Icons name="filter-list" size={25} style={{ color: '#BDBDBD' }} onPress={handleOpenFilter} />
-                    </TouchableOpacity>
-                }
-                rightContainerStyle={{ flex: 1, justifyContent: 'center' }}
-            />
-            <View style={styles.calendarContainer}>
-                <Calendar
-                    style={styles.calendar}
-                    theme={calendarTheme}
-                    hideExtraDays={true}
-                    onMonthChange={(month: any) => {
-                        handleMonthChange(month);
+        <TouchableWithoutFeedback onPress={() => setIsFilterOpen(false)}>
+            <View style={styles.container}>
+                <Header
+                    containerStyle={{
+                        borderBottomWidth: 0,
+                        backgroundColor: 'white',
+                        marginTop: 20,
+                        alignItems: 'center',
+                        paddingHorizontal: 20,
                     }}
-                    monthFormat=""
-                    renderArrow={(direction: string) =>
-                        direction === 'left' ? (
-                            <Icons name="chevron-left" size={20} />
-                        ) : (
-                            <Icons name="chevron-right" size={20} />
-                        )
+                    backgroundColor="white"
+                    barStyle="default"
+                    centerComponent={{
+                        text: selectedMonth,
+                        style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
+                    }}
+                    rightComponent={
+                        <TouchableOpacity>
+                            <Icons
+                                name="filter-list"
+                                size={25}
+                                style={{ color: '#BDBDBD' }}
+                                onPress={handleOpenFilter}
+                            />
+                        </TouchableOpacity>
                     }
-                    markedDates={{
-                        ...markedDates,
-                        ...(selectedDate && { [selectedDate]: { selected: true, selectedColor: '#4DBFFF' } }),
-                    }}
-                    onDayPress={handleDayPress}
-                    onDayLongPress={handleLongPress}
-                    markingType={'multi-dot'}
-                    horizontal={true}
-                    pagingEnabled={true}
+                    rightContainerStyle={{ flex: 1, justifyContent: 'center' }}
                 />
-            </View>
-            {isFilterOpen && (
-                <View style={styles.overlay}>
-                    <Filter />
+                <View style={styles.calendarContainer}>
+                    <Calendar
+                        style={styles.calendar}
+                        theme={calendarTheme}
+                        hideExtraDays={true}
+                        onMonthChange={(month: any) => {
+                            handleMonthChange(month);
+                        }}
+                        monthFormat=""
+                        renderArrow={(direction: string) =>
+                            direction === 'left' ? (
+                                <Icons name="chevron-left" size={20} />
+                            ) : (
+                                <Icons name="chevron-right" size={20} />
+                            )
+                        }
+                        markedDates={{
+                            ...markedDates,
+                            ...(selectedDate && { [selectedDate]: { selected: true, selectedColor: '#4DBFFF' } }),
+                        }}
+                        onDayPress={handleDayPress}
+                        onDayLongPress={handleLongPress}
+                        markingType={'multi-dot'}
+                        horizontal={true}
+                        pagingEnabled={true}
+                    />
                 </View>
-            )}
-            <View style={{ flex: 1, marginTop: 100 }}>
-                <View style={styles.postsContainer}>
-                    <FlatList
-                        ref={flatListRef}
-                        data={selectedDatePosts}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.id.toString()}
+                {isFilterOpen && (
+                    <View style={styles.overlay}>
+                        <Filter />
+                    </View>
+                )}
+                <View style={{ flex: 1, marginTop: 100 }}>
+                    <View style={styles.postsContainer}>
+                        <FlatList
+                            ref={flatListRef}
+                            data={selectedDatePosts}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.id.toString()}
+                        />
+                    </View>
+                </View>
+                <View style={{ marginBottom: 60, alignSelf: 'center' }}>
+                    <Button
+                        title="스크랩한 게시물"
+                        loading={false}
+                        loadingProps={{ size: 'small', color: 'white' }}
+                        buttonStyle={{
+                            backgroundColor: 'rgba(111, 202, 186, 1)',
+                            borderRadius: 5,
+                        }}
+                        titleStyle={{ fontWeight: 'bold', fontSize: 15 }}
+                        containerStyle={{
+                            height: 50,
+                            width: 200,
+                        }}
+                        onPress={() => console.log('aye')}
                     />
                 </View>
             </View>
-            <View style={{ marginBottom: 60, alignSelf: 'center' }}>
-                <Button
-                    title="스크랩한 게시물"
-                    loading={false}
-                    loadingProps={{ size: 'small', color: 'white' }}
-                    buttonStyle={{
-                        backgroundColor: 'rgba(111, 202, 186, 1)',
-                        borderRadius: 5,
-                    }}
-                    titleStyle={{ fontWeight: 'bold', fontSize: 15 }}
-                    containerStyle={{
-                        height: 50,
-                        width: 200,
-                    }}
-                    onPress={() => console.log('aye')}
-                />
-            </View>
-        </View>
+        </TouchableWithoutFeedback>
     );
 };
 
