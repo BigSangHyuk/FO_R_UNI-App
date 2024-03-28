@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Switch } from 'react-native';
 import { CheckBox, Button } from 'react-native-elements';
 
 const Filter: FC = () => {
+    const [allChecked, setAllChecked] = useState(false);
     const [checkboxes, setCheckboxes] = useState([
         { id: 1, title: '학사', checked: false, color: '#dcdcdc' },
         { id: 2, title: '학점교류', checked: false, color: 'red' },
@@ -20,6 +21,16 @@ const Filter: FC = () => {
             prevCheckboxes.map((checkbox) =>
                 checkbox.id === id ? { ...checkbox, checked: !checkbox.checked } : checkbox
             )
+        );
+    };
+
+    const toggleSelect = () => {
+        setAllChecked(!allChecked);
+        setCheckboxes((prevCheckboxes) =>
+            prevCheckboxes.map((checkbox) => ({
+                ...checkbox,
+                checked: !allChecked,
+            }))
         );
     };
 
@@ -50,9 +61,26 @@ const Filter: FC = () => {
                     ))}
                 </View>
                 <View style={styles.switch}>
-                    전체 선택
-                    <Switch />
                     전체 해제
+                    <Switch value={allChecked} onValueChange={toggleSelect} />
+                    전체 선택
+                </View>
+
+                <View style={{ marginTop: 30 }}>
+                    <Button
+                        title="적용"
+                        loading={false}
+                        loadingProps={{ size: 'small', color: 'white' }}
+                        buttonStyle={{
+                            borderRadius: 100,
+                        }}
+                        titleStyle={{ fontWeight: 'bold', fontSize: 16 }}
+                        containerStyle={{
+                            height: 51,
+                            width: 170,
+                        }}
+                        onPress={() => console.log('aye')}
+                    />
                 </View>
             </View>
         </View>
