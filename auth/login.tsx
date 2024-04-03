@@ -56,6 +56,7 @@ const LogIn: React.FC<LogInProps> = ({ navigation, handleLogin }) => {
 
     const handleSignUpPress = () => {
         navigation.navigate('SignIn');
+        console.log('눌림');
     };
 
     const handleFindPassPress = () => {

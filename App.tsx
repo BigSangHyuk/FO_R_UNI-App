@@ -15,7 +15,7 @@ interface AppProps {
 }
 
 const App = ({ navigation }: AppProps) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const handleLogin = () => {
         setIsLoggedIn(true);
@@ -46,11 +46,9 @@ const App = ({ navigation }: AppProps) => {
                                 options={{ headerShown: false }}
                             />
                         ) : (
-                            <Stack.Screen
-                                name="LogIn"
-                                component={() => <LogIn handleLogin={handleLogin} navigation={navigation} />}
-                                options={{ headerShown: false }}
-                            />
+                            <Stack.Screen name="LogIn" options={{ headerShown: false }}>
+                                {(props) => <LogIn {...props} handleLogin={handleLogin} />}
+                            </Stack.Screen>
                         )}
                         <Stack.Screen name="Info" component={Info} options={{ headerShown: false }} />
                         <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
