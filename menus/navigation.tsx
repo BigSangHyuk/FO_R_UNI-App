@@ -1,12 +1,11 @@
-import React from 'react';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import React, { FC } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import CalendarComponent from '../pages/calendar';
 import Mypage from '../pages/mypage';
 import Setting from '../pages/setting';
 import UnClassify from '../pages/unclassify';
-import { FC } from 'react';
+import Scrap from './scrap';
 const Tab = createBottomTabNavigator();
 interface NavigationProp {
     handleLogOut: () => void;
@@ -39,6 +38,15 @@ const Navigation: FC<NavigationProp> = ({ handleLogOut }) => {
                     title: '달력',
                     headerShown: false,
                     tabBarIcon: ({ color, size }) => <Icons name="calendar-month" color={color} size={size} />,
+                }}
+            />
+            <Tab.Screen
+                name="Scrap"
+                component={Scrap}
+                options={{
+                    title: '스크랩한 글',
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => <Icons name="post-add" color={color} size={size} />,
                 }}
             />
             <Tab.Screen

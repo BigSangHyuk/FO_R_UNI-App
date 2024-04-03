@@ -76,6 +76,8 @@ const LogIn: React.FC<LogInProps> = ({ navigation, handleLogin }) => {
                 const data = await res.json();
                 sessionStorage.setItem('token', data.token);
                 handleLogin();
+            } else {
+                console.log('실패');
             }
         } catch (error) {
             console.error('에러', error);
