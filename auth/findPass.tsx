@@ -12,7 +12,6 @@ interface findPassProps extends InputProps {
 const FindPass: React.FC<findPassProps> = ({ style, navigation }) => {
     const disabledInputStyle: TextStyle = { backgroundColor: 'white' };
     const [email, setEmail] = useState<string>('');
-    const [nickName, setNickName] = useState<string>('');
     const [emailMessage, setEmailMessage] = useState<string>('');
     const [isEmail, setIsEmail] = useState<Boolean>(false);
 
@@ -30,10 +29,6 @@ const FindPass: React.FC<findPassProps> = ({ style, navigation }) => {
             setEmailMessage('가입 가능한 이메일입니다.');
             setIsEmail(true);
         }
-    }, []);
-
-    const onChangeNickname = useCallback((value: string) => {
-        setNickName(value);
     }, []);
 
     const handleGoBack = () => {
@@ -71,13 +66,6 @@ const FindPass: React.FC<findPassProps> = ({ style, navigation }) => {
                     errorMessage={emailMessage}
                     placeholder="이메일"
                     errorStyle={{ color: isEmail ? 'blue' : 'red' }}
-                />
-                <Input
-                    containerStyle={[style, styles.inputContainer]}
-                    disabledInputStyle={disabledInputStyle}
-                    inputContainerStyle={{}}
-                    onChangeText={onChangeNickname}
-                    placeholder="닉네임"
                 />
             </View>
 
