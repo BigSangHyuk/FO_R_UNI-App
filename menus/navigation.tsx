@@ -6,7 +6,7 @@ import Mypage from '../pages/mypage';
 import Setting from '../pages/setting';
 import UnClassify from '../pages/unclassify';
 import Scrap from './scrap';
-import { LinearGradient } from 'react-native-linear-gradient';
+import LinearGradient from 'react-native-linear-gradient';
 import { StyleSheet, View } from 'react-native';
 
 const Tab = createBottomTabNavigator();
@@ -18,7 +18,7 @@ interface NavigationProps {
 const Navigation: FC<NavigationProps> = ({ handleLogOut }) => {
     return (
         <View style={styles.container}>
-            <LinearGradient colors={['#white', '#black']} style={styles.linearGradient}>
+            <LinearGradient colors={['#ffffff', '#000000']} style={styles.linearGradient}>
                 <Tab.Navigator
                     initialRouteName="Calendar"
                     screenOptions={{

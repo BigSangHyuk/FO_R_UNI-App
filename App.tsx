@@ -3,8 +3,8 @@ import { StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-nati
 import { NavigationContainer, DefaultTheme, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LogIn from './auth/login';
+import FindPass from './auth/findPass';
 import SignIn from './auth/signin';
-import FindPass from './auth/findpass';
 import Info from './auth/info';
 import Navigation from './menus/navigation';
 

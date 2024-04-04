@@ -75,7 +75,7 @@ const LogIn: React.FC<LogInProps> = ({ navigation, handleLogin }) => {
             if (res.status === 200) {
                 console.log('로그인 시도');
                 const data = await res.json();
-                sessionStorage.setItem('token', data.token);
+                console.log(data);
                 handleLogin();
             } else {
                 console.log('실패');
