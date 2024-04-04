@@ -6,7 +6,6 @@ import Mypage from '../pages/mypage';
 import Setting from '../pages/setting';
 import UnClassify from '../pages/unclassify';
 import Scrap from './scrap';
-import LinearGradient from 'react-native-linear-gradient';
 import { StyleSheet, View } from 'react-native';
 
 const Tab = createBottomTabNavigator();
@@ -18,57 +17,55 @@ interface NavigationProps {
 const Navigation: FC<NavigationProps> = ({ handleLogOut }) => {
     return (
         <View style={styles.container}>
-            <LinearGradient colors={['#ffffff', '#000000']} style={styles.linearGradient}>
-                <Tab.Navigator
-                    initialRouteName="Calendar"
-                    screenOptions={{
-                        tabBarStyle: { backgroundColor: 'transparent' },
-                        headerShown: false,
-                        tabBarIcon: ({ color, size }) => <Icons name="calendar-today" color={color} size={size} />,
+            <Tab.Navigator
+                initialRouteName="Calendar"
+                screenOptions={{
+                    tabBarStyle: { backgroundColor: 'transparent' },
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => <Icons name="calendar-today" color={color} size={size} />,
+                }}
+            >
+                <Tab.Screen
+                    name="Mypage"
+                    component={Mypage}
+                    options={{
+                        title: '내 정보',
+                        tabBarIcon: ({ color, size }) => <Icons name="account-circle" color={color} size={size} />,
                     }}
-                >
-                    <Tab.Screen
-                        name="Mypage"
-                        component={Mypage}
-                        options={{
-                            title: '내 정보',
-                            tabBarIcon: ({ color, size }) => <Icons name="account-circle" color={color} size={size} />,
-                        }}
-                    />
-                    <Tab.Screen
-                        name="Unclassify"
-                        component={UnClassify}
-                        options={{
-                            title: '미분류글',
-                            tabBarIcon: ({ color, size }) => <Icons name="list" color={color} size={size} />,
-                        }}
-                    />
-                    <Tab.Screen
-                        name="Calendar"
-                        component={CalendarComponent}
-                        options={{
-                            title: '달력',
-                            tabBarIcon: ({ color, size }) => <Icons name="calendar-month" color={color} size={size} />,
-                        }}
-                    />
-                    <Tab.Screen
-                        name="Scrap"
-                        component={Scrap}
-                        options={{
-                            title: '스크랩한 글',
-                            tabBarIcon: ({ color, size }) => <Icons name="post-add" color={color} size={size} />,
-                        }}
-                    />
-                    <Tab.Screen
-                        name="Setting"
-                        component={() => <Setting handleLogOut={handleLogOut} />}
-                        options={{
-                            title: '설정',
-                            tabBarIcon: ({ color, size }) => <Icons name="settings" color={color} size={size} />,
-                        }}
-                    />
-                </Tab.Navigator>
-            </LinearGradient>
+                />
+                <Tab.Screen
+                    name="Unclassify"
+                    component={UnClassify}
+                    options={{
+                        title: '미분류글',
+                        tabBarIcon: ({ color, size }) => <Icons name="list" color={color} size={size} />,
+                    }}
+                />
+                <Tab.Screen
+                    name="Calendar"
+                    component={CalendarComponent}
+                    options={{
+                        title: '달력',
+                        tabBarIcon: ({ color, size }) => <Icons name="calendar-month" color={color} size={size} />,
+                    }}
+                />
+                <Tab.Screen
+                    name="Scrap"
+                    component={Scrap}
+                    options={{
+                        title: '스크랩한 글',
+                        tabBarIcon: ({ color, size }) => <Icons name="post-add" color={color} size={size} />,
+                    }}
+                />
+                <Tab.Screen
+                    name="Setting"
+                    component={() => <Setting handleLogOut={handleLogOut} />}
+                    options={{
+                        title: '설정',
+                        tabBarIcon: ({ color, size }) => <Icons name="settings" color={color} size={size} />,
+                    }}
+                />
+            </Tab.Navigator>
         </View>
     );
 };
