@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { StyleSheet, View, Text, Switch } from 'react-native';
 import { CheckBox, Button } from 'react-native-elements';
-
+import Icons from 'react-native-vector-icons/MaterialIcons';
 interface FilterProp {
     isFilterOpen: boolean;
     onCloseFilter: () => void;
@@ -55,23 +55,15 @@ const Filter: FC<FilterProp> = ({ isFilterOpen, onCloseFilter }) => {
                                 <Text style={styles.checkboxLabel}>{checkbox.title}</Text>
                             </View>
                             <View style={{ marginLeft: 'auto' }}>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="12"
-                                    height="12"
-                                    viewBox="0 0 12 12"
-                                    fill="none"
-                                >
-                                    <circle cx="6" cy="6" r="6" fill={checkbox.color} />
-                                </svg>
+                                <Icons name="circle" size={24} color={checkbox.color} />
                             </View>
                         </View>
                     ))}
                 </View>
                 <View style={styles.switch}>
-                    전체 해제
+                    <Text>전체 해제</Text>
                     <Switch value={allChecked} onValueChange={toggleSelect} />
-                    전체 선택
+                    <Text>전체 선택</Text>
                 </View>
 
                 <View style={{ marginTop: 30 }}>

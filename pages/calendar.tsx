@@ -1,5 +1,14 @@
 import React, { useState, FC, useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, FlatList, Alert, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import {
+    View,
+    StyleSheet,
+    Text,
+    FlatList,
+    Alert,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    ScrollView,
+} from 'react-native';
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
@@ -60,61 +69,7 @@ const CalendarComponent: FC = () => {
                 date: '2024-03-27',
             },
             {
-                id: 2,
-                title: '제목입니다.',
-                contents: '내용입니다.',
-                date: '2024-03-27',
-            },
-            {
-                id: 2,
-                title: '제목입니다.',
-                contents: '내용입니다.',
-                date: '2024-03-27',
-            },
-            {
-                id: 2,
-                title: '제목입니다.',
-                contents: '내용입니다.',
-                date: '2024-03-27',
-            },
-            {
-                id: 2,
-                title: '제목입니다.',
-                contents: '내용입니다.',
-                date: '2024-03-27',
-            },
-            {
-                id: 2,
-                title: '제목입니다.',
-                contents: '내용입니다.',
-                date: '2024-03-27',
-            },
-            {
-                id: 2,
-                title: '제목입니다.',
-                contents: '내용입니다.',
-                date: '2024-03-27',
-            },
-            {
-                id: 2,
-                title: '제목입니다.',
-                contents: '내용입니다.',
-                date: '2024-03-27',
-            },
-            {
-                id: 2,
-                title: '제목입니다.',
-                contents: '내용입니다.',
-                date: '2024-03-27',
-            },
-            {
-                id: 2,
-                title: '제목입니다.',
-                contents: '내용입니다.',
-                date: '2024-03-27',
-            },
-            {
-                id: 2,
+                id: 3,
                 title: '제목입니다.',
                 contents: '내용입니다.',
                 date: '2024-03-27',
@@ -143,6 +98,12 @@ const CalendarComponent: FC = () => {
 
     const handleDayPress = (day: DateData) => {
         setSelectedDate((prevSelectedDate) => (prevSelectedDate === day.dateString ? null : day.dateString));
+    };
+    const filterPostsBySelectedDate = () => {
+        if (selectedDate) {
+            return posts.filter((post) => moment(post.date).format('YYYY-MM-DD') === selectedDate);
+        }
+        return [];
     };
 
     const handleLongPress = () => {
@@ -176,7 +137,7 @@ const CalendarComponent: FC = () => {
             <Text>{moment(item.date).format('M월D일')}</Text>
         </View>
     );
-    const selectedDatePosts = posts.filter((post) => post.date === selectedDate);
+    const selectedDatePosts = filterPostsBySelectedDate();
 
     const calendarTheme: any = {
         'stylesheet.calendar.header': {
@@ -251,14 +212,13 @@ const CalendarComponent: FC = () => {
                 </View>
             )}
             <View style={{ flex: 1, marginTop: 100 }}>
-                <View style={styles.postsContainer}>
-                    <FlatList
-                        ref={flatListRef}
-                        data={selectedDatePosts}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.id.toString()}
-                    />
-                </View>
+                <FlatList
+                    style={styles.postsContainer}
+                    data={selectedDatePosts}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id.toString()}
+                    scrollEnabled={true}
+                />
             </View>
         </View>
     );
@@ -277,12 +237,13 @@ const styles = StyleSheet.create({
         marginTop: 32,
     },
     postsContainer: {
-        maxHeight: '70%',
+        flex: 1,
         backgroundColor: 'white',
         marginTop: 17,
         borderRadius: 10,
         padding: 10,
         paddingHorizontal: 20,
+        marginBottom: 10,
     },
     item: {
         flexDirection: 'row',
