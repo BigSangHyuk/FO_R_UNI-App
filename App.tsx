@@ -15,7 +15,7 @@ interface AppProps {
 }
 
 const App = ({ navigation }: AppProps) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const handleLogin = () => {
         setIsLoggedIn(true);

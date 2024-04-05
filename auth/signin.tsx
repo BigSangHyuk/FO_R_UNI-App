@@ -17,12 +17,13 @@ const SignIn: React.FC<SignInProps> = ({ style }) => {
     const [emailMessage, setEmailMessage] = useState<string>('');
     const [passwordMessage, setPasswordMessage] = useState<string>('');
     const [passwordConfirmMessage, setPasswordConfirmMessage] = useState<string>('');
-
     const [isshowPassword, setIsshowPassword] = useState<Boolean>(false);
     const [isEmail, setIsEmail] = useState<Boolean>(false);
     const [isPassword, setIsPassword] = useState<Boolean>(false);
     const [isPasswordConfirm, setIsPasswordConfirm] = useState<Boolean>(false);
-
+    const [verify, setVerify] = useState<string>('');
+    const [isVerify, setIsVerify] = useState<boolean>(false);
+    const [isbuttonclick, setIsButtonClick] = useState<boolean>(false);
     const onChangeEmail = useCallback((value: string) => {
         const EmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         setEmail(value);
@@ -62,6 +63,15 @@ const SignIn: React.FC<SignInProps> = ({ style }) => {
         setConfirm(value);
     }, []);
 
+    const onChangeVerify = useCallback((value: string) => {
+        setVerify(value);
+        if (value === '') {
+            setIsVerify(false);
+        } else {
+            setIsVerify(true);
+        }
+    }, []);
+
     useEffect(() => {
         if (isPassword) {
             if (password === confirm && password !== '' && confirm !== '') {
@@ -87,6 +97,12 @@ const SignIn: React.FC<SignInProps> = ({ style }) => {
         navigation.goBack();
     };
 
+    const handleButtonClick = () => {
+        setIsButtonClick(true);
+    };
+
+    const handleSendEmail = () => {};
+
     return (
         <View>
             <Header
@@ -110,58 +126,92 @@ const SignIn: React.FC<SignInProps> = ({ style }) => {
                 leftContainerStyle={{ flex: 1, justifyContent: 'center' }}
             />
             <View style={{ marginTop: 32 }}>
-                <Input
-                    containerStyle={[style, styles.inputContainer]}
-                    disabledInputStyle={disabledInputStyle}
-                    inputContainerStyle={{}}
-                    onChangeText={onChangeEmail}
-                    errorMessage={emailMessage}
-                    placeholder="이메일"
-                    errorStyle={{ color: isEmail ? 'blue' : 'red' }}
-                />
-                <Input
-                    containerStyle={[style, styles.inputContainer]}
-                    disabledInputStyle={disabledInputStyle}
-                    inputContainerStyle={{}}
-                    onChangeText={onChangePassword}
-                    errorMessage={passwordMessage}
-                    placeholder="비밀번호"
-                    secureTextEntry={true}
-                    errorStyle={{ color: isPassword ? 'blue' : 'red' }}
-                />
-                <Input
-                    containerStyle={[style, styles.inputContainer]}
-                    disabledInputStyle={disabledInputStyle}
-                    inputContainerStyle={{}}
-                    errorMessage={passwordConfirmMessage}
-                    onChangeText={onChangeConfirm}
-                    rightIcon={
-                        <TouchableOpacity onPress={togglePasswordVisibility} style={{ padding: 10 }}>
-                            <Icons name="visibility" size={20} style={{ color: '#BDBDBD' }} />
-                        </TouchableOpacity>
-                    }
-                    rightIconContainerStyle={{}}
-                    placeholder="비밀번호 확인"
-                    secureTextEntry={!isshowPassword}
-                    errorStyle={{ color: isPasswordConfirm ? 'blue' : 'red' }}
-                />
+                {!isbuttonclick && (
+                    <>
+                        <Input
+                            containerStyle={[style, styles.inputContainer]}
+                            disabledInputStyle={disabledInputStyle}
+                            inputContainerStyle={{}}
+                            onChangeText={onChangeEmail}
+                            errorMessage={emailMessage}
+                            placeholder="이메일"
+                            errorStyle={{ color: isEmail ? 'blue' : 'red' }}
+                        />
+                        <Input
+                            containerStyle={[style, styles.inputContainer]}
+                            disabledInputStyle={disabledInputStyle}
+                            inputContainerStyle={{}}
+                            onChangeText={onChangePassword}
+                            errorMessage={passwordMessage}
+                            placeholder="비밀번호"
+                            secureTextEntry={true}
+                            errorStyle={{ color: isPassword ? 'blue' : 'red' }}
+                        />
+                        <Input
+                            containerStyle={[style, styles.inputContainer]}
+                            disabledInputStyle={disabledInputStyle}
+                            inputContainerStyle={{}}
+                            errorMessage={passwordConfirmMessage}
+                            onChangeText={onChangeConfirm}
+                            rightIcon={
+                                <TouchableOpacity onPress={togglePasswordVisibility} style={{ padding: 10 }}>
+                                    <Icons name="visibility" size={20} style={{ color: '#BDBDBD' }} />
+                                </TouchableOpacity>
+                            }
+                            rightIconContainerStyle={{}}
+                            placeholder="비밀번호 확인"
+                            secureTextEntry={!isshowPassword}
+                            errorStyle={{ color: isPasswordConfirm ? 'blue' : 'red' }}
+                        />
+                    </>
+                )}
+                {isbuttonclick && (
+                    <Input
+                        containerStyle={[style, styles.inputContainer]}
+                        disabledInputStyle={disabledInputStyle}
+                        inputContainerStyle={{}}
+                        onChangeText={onChangeVerify}
+                        rightIconContainerStyle={{}}
+                        placeholder="인증코드"
+                        secureTextEntry={!isshowPassword}
+                    />
+                )}
             </View>
-
-            <Button
-                buttonStyle={{ width: 330, marginTop: 70, borderRadius: 100, height: 50 }}
-                containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
-                disabledStyle={{
-                    borderWidth: 2,
-                    borderColor: '#F6F6F6',
-                }}
-                disabledTitleStyle={{ color: 'white' }}
-                loadingProps={{ animating: false }}
-                loadingStyle={{}}
-                title="회원가입"
-                titleProps={{}}
-                titleStyle={{ textAlign: 'center' }}
-                disabled={!isEmail || !isPassword || !isPasswordConfirm}
-            />
+            {!isbuttonclick ? (
+                <Button
+                    onPress={handleButtonClick}
+                    buttonStyle={{ width: 330, marginTop: 70, borderRadius: 100, height: 50 }}
+                    containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
+                    disabledStyle={{
+                        borderWidth: 2,
+                        borderColor: '#F6F6F6',
+                    }}
+                    disabledTitleStyle={{ color: 'white' }}
+                    loadingProps={{ animating: false }}
+                    loadingStyle={{}}
+                    title="인증 메일 보내기"
+                    titleProps={{}}
+                    titleStyle={{ textAlign: 'center' }}
+                    disabled={!isEmail || !isPassword || !isPasswordConfirm}
+                />
+            ) : (
+                <Button
+                    onPress={handleSendEmail}
+                    buttonStyle={{ width: 330, marginTop: 70, borderRadius: 100, height: 50 }}
+                    containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
+                    disabledStyle={{
+                        borderWidth: 2,
+                        borderColor: '#F6F6F6',
+                    }}
+                    disabledTitleStyle={{ color: 'white' }}
+                    loadingProps={{ animating: false }}
+                    loadingStyle={{}}
+                    title="정보 입력"
+                    titleProps={{}}
+                    titleStyle={{ textAlign: 'center' }}
+                    disabled={!isVerify}
+                />
+            )}
         </View>
     );
 };
