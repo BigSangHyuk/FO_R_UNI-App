@@ -95,12 +95,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     inputContainer: {
-        backgroundColor: '#F6F6F6',
+        backgroundColor: '#FFF',
         color: 'ADB3BC',
         justifyContent: 'space-around',
-        borderColor: '#E8E8E8',
-        borderWidth: 1,
-        borderRadius: 10,
         marginTop: 16,
     },
     header: {
