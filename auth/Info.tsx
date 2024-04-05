@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Input, Button, Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, RouteProp } from '@react-navigation/native';
 import {
     UNI,
     Humanity,
@@ -19,12 +19,18 @@ import {
     NortheastAsia,
     Law,
 } from '../data/department';
+import Http from '../address/backend_url';
+
+type RootStackParamList = {
+    Info: { email: string; password: string };
+};
 
 interface InfoProps {
     navigation: NavigationProp<any>;
+    route: RouteProp<RootStackParamList, 'Info'>;
 }
 
-const Info: React.FC<InfoProps> = ({ navigation }) => {
+const Info: React.FC<InfoProps> = ({ route, navigation }) => {
     const [nickName, setNickName] = useState<string>('');
     const [uni, setUni] = useState<string | null>(null);
     const [depart, setDepart] = useState<string | null>(null);
@@ -32,6 +38,8 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
     const [selectDepart, setSelectDepart] = useState<boolean>(false);
     const [isUniOpen, setIsUniOpen] = useState<boolean>(false);
     const [isDepartOpen, setIsDepartOpen] = useState<boolean>(false);
+
+    const { email, password } = route.params;
 
     const onChangeNickname = useCallback((value: string) => {
         setNickName(value);
@@ -99,6 +107,23 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
             case '법학부':
                 return Law;
         }
+    };
+
+    const SignIn = async () => {
+        const res = await fetch(Http + `/sign-up`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+                name: '고재현',
+                departmentType: 'IT',
+                nickName: nickName,
+                image: 'image',
+            }),
+        });
     };
 
     return (
@@ -204,16 +229,13 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     inputContainer: {
-        backgroundColor: '#F6F6F6',
+        backgroundColor: '#FFF',
         color: 'ADB3BC',
         justifyContent: 'space-around',
-        borderColor: '#E8E8E8',
-        borderWidth: 1,
-        borderRadius: 10,
         marginTop: 16,
     },
     dropdownToggle: {
-        backgroundColor: '#F6F6F6',
+        backgroundColor: '#FFF',
         color: 'ADB3BC',
         height: 50,
         borderRadius: 8,

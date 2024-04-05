@@ -129,7 +129,7 @@ const SignIn: React.FC<SignInProps> = ({ style, navigation }) => {
             }
             const data = await response.json();
             console.log(data);
-            navigation.navigate('Info');
+            navigation.navigate('Info', { email: email, password: password });
         } catch (error) {
             console.log('에러인디용');
         }
