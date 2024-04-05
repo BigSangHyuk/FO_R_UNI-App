@@ -2,14 +2,16 @@ import React, { ChangeEvent, useState, useEffect, useCallback } from 'react';
 import { Input, InputProps, Button, Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { TextStyle, ViewStyle, StyleSheet, View, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import Http from '../address/backend_url';
+import Info from './info';
 
 interface SignInProps extends InputProps {
     style?: ViewStyle;
+    navigation: NavigationProp<any>;
 }
 
-const SignIn: React.FC<SignInProps> = ({ style }) => {
-    const navigation = useNavigation();
+const SignIn: React.FC<SignInProps> = ({ style, navigation }) => {
     const disabledInputStyle: TextStyle = { backgroundColor: 'white' };
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -97,11 +99,41 @@ const SignIn: React.FC<SignInProps> = ({ style }) => {
         navigation.goBack();
     };
 
-    const handleButtonClick = () => {
-        setIsButtonClick(true);
+    const handleSendEmail = async () => {
+        const res = await fetch(Http + `/auth/send`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email }),
+        });
+        if (res.status == 200) {
+            setIsButtonClick(true);
+            console.log(res);
+        }
     };
 
-    const handleSendEmail = () => {};
+    const handleConfirmEmail = async () => {
+        const emailValue = email.toString();
+        const codeValue = verify.toString();
+
+        try {
+            const response = await fetch(`${Http}/auth/certificate?email=${emailValue}&code=${codeValue}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+            const data = await response.json();
+            console.log(data);
+            navigation.navigate('Info');
+        } catch (error) {
+            console.log('에러인디용');
+        }
+    };
 
     return (
         <View>
@@ -179,7 +211,7 @@ const SignIn: React.FC<SignInProps> = ({ style }) => {
             </View>
             {!isbuttonclick ? (
                 <Button
-                    onPress={handleButtonClick}
+                    onPress={handleSendEmail}
                     buttonStyle={{ width: 330, marginTop: 70, borderRadius: 100, height: 50 }}
                     containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
                     disabledStyle={{
@@ -196,7 +228,7 @@ const SignIn: React.FC<SignInProps> = ({ style }) => {
                 />
             ) : (
                 <Button
-                    onPress={handleSendEmail}
+                    onPress={handleConfirmEmail}
                     buttonStyle={{ width: 330, marginTop: 70, borderRadius: 100, height: 50 }}
                     containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
                     disabledStyle={{

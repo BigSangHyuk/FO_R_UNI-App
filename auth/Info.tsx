@@ -204,16 +204,13 @@ const Info: React.FC<InfoProps> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     inputContainer: {
-        backgroundColor: '#F6F6F6',
+        backgroundColor: '#FFF',
         color: 'ADB3BC',
         justifyContent: 'space-around',
-        borderColor: '#E8E8E8',
-        borderWidth: 1,
-        borderRadius: 10,
         marginTop: 16,
     },
     dropdownToggle: {
-        backgroundColor: '#F6F6F6',
+        backgroundColor: '#FFF',
         color: 'ADB3BC',
         height: 50,
         borderRadius: 8,
