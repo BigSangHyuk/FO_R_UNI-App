@@ -5,9 +5,13 @@ import { TextStyle, ViewStyle, StyleSheet, View, TouchableOpacity } from 'react-
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Http from '../address/backend_url';
 import Info from './info';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import Http from '../address/backend_url';
+import Info from './info';
 
 interface SignInProps extends InputProps {
     style?: ViewStyle;
+    navigation: NavigationProp<any>;
     navigation: NavigationProp<any>;
 }
 
