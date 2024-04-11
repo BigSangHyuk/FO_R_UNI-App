@@ -3,6 +3,7 @@ import { Input, InputProps, Button, Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { TextStyle, ViewStyle, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import Http from '../address/backend_url';
 
 interface findPassProps extends InputProps {
     style?: ViewStyle;
@@ -26,7 +27,7 @@ const FindPass: React.FC<findPassProps> = ({ style, navigation }) => {
             setEmailMessage('이메일 형식이 아닙니다.');
             setIsEmail(false);
         } else {
-            setEmailMessage('가입 가능한 이메일입니다.');
+            setEmailMessage('');
             setIsEmail(true);
         }
     }, []);
@@ -35,6 +36,21 @@ const FindPass: React.FC<findPassProps> = ({ style, navigation }) => {
         navigation.goBack();
     };
 
+    const rePW = async () => {
+        const res = await fetch(Http + `/auth/temp-pw`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email }),
+        });
+        if (res.status === 200) {
+            console.log(res);
+            navigation.navigate('LogIn');
+        } else {
+            console.error(Error);
+        }
+    };
     return (
         <View>
             <Header
@@ -70,6 +86,7 @@ const FindPass: React.FC<findPassProps> = ({ style, navigation }) => {
             </View>
 
             <Button
+                onPress={rePW}
                 buttonStyle={{ width: 330, marginTop: 70, borderRadius: 100, height: 50 }}
                 containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
                 disabledStyle={{

@@ -53,7 +53,6 @@ const App = ({ navigation }: AppProps) => {
                         <Stack.Screen name="Info" component={Info} options={{ headerShown: false }} />
                         <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
                         <Stack.Screen name="FindPass" component={FindPass} options={{ headerShown: false }} />
-                        <Stack.Screen name="Main" component={Navigation} options={{ headerShown: false }} />
                     </Stack.Navigator>
                 </NavigationContainer>
             </View>
