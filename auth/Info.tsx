@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Input, Button, Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import { NavigationProp, RouteProp } from '@react-navigation/native';
+import { NavigationProp, RouteProp, useNavigation } from '@react-navigation/native';
 import {
     UNI,
     Humanity,
@@ -28,12 +28,14 @@ type RootStackParamList = {
 interface InfoProps {
     navigation: NavigationProp<any>;
     route: RouteProp<RootStackParamList, 'Info'>;
+    handleLogin();
 }
 
 const Info: React.FC<InfoProps> = ({ route, navigation }) => {
     const [nickName, setNickName] = useState<string>('');
     const [uni, setUni] = useState<string | null>(null);
     const [depart, setDepart] = useState<string | null>(null);
+    const [departCode, setDepartCode] = useState<string | null>(null);
     const [selectUni, setSelectUni] = useState<boolean>(false);
     const [selectDepart, setSelectDepart] = useState<boolean>(false);
     const [isUniOpen, setIsUniOpen] = useState<boolean>(false);
@@ -67,7 +69,9 @@ const Info: React.FC<InfoProps> = ({ route, navigation }) => {
     };
 
     const handleDepartSelect = (value: string) => {
+        const selectedDepartmentCode = getDepartmentsByUni(uni)?.find((department) => department.value === value)?.code;
         setDepart(value);
+        setDepartCode(selectedDepartmentCode);
         setIsDepartOpen(false);
         setSelectDepart(true);
     };
@@ -118,12 +122,17 @@ const Info: React.FC<InfoProps> = ({ route, navigation }) => {
             body: JSON.stringify({
                 email: email,
                 password: password,
-                name: '고재현',
-                departmentType: 'IT',
+                departmentType: departCode,
                 nickName: nickName,
-                image: 'image',
             }),
         });
+        if (res.status === 200) {
+            const data = await res.json();
+            console.log(data);
+            navigation.navigate('mypage');
+        } else {
+            console.log('이상함');
+        }
     };
 
     return (
@@ -206,6 +215,7 @@ const Info: React.FC<InfoProps> = ({ route, navigation }) => {
                 <View style={{ zIndex: -1, marginTop: 100 }}>
                     {selectUni && selectDepart && nickName && (
                         <Button
+                            onPress={() => SignIn()}
                             buttonStyle={{ width: 330, borderRadius: 120, height: 50 }}
                             containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
                             disabledStyle={{
