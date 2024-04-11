@@ -128,9 +128,7 @@ const Info: React.FC<InfoProps> = ({ route, navigation }) => {
         if (res.status === 200) {
             const data = await res.json();
             console.log(data);
-            navigation.navigate('Navigation', {
-                screen: 'Mypage',
-            });
+            navigation.navigate('LogIn');
         } else {
             console.log('이상함');
         }
