@@ -28,7 +28,6 @@ type RootStackParamList = {
 interface InfoProps {
     navigation: NavigationProp<any>;
     route: RouteProp<RootStackParamList, 'Info'>;
-    handleLogin();
 }
 
 const Info: React.FC<InfoProps> = ({ route, navigation }) => {
@@ -129,7 +128,9 @@ const Info: React.FC<InfoProps> = ({ route, navigation }) => {
         if (res.status === 200) {
             const data = await res.json();
             console.log(data);
-            navigation.navigate('mypage');
+            navigation.navigate('Main', {
+                screen: 'Mypage',
+            });
         } else {
             console.log('이상함');
         }
