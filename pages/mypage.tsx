@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Animated, FlatList, Image } from 'react-native';
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -91,7 +91,11 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                 }}
             />
             <View style={{ alignItems: 'center' }}>
-                <View style={styles.profileContainer}></View>
+                <View style={styles.profileContainer}>
+                    {userInfo && userInfo.image && (
+                        <Image source={{ uri: userInfo.image }} style={styles.profileImage} />
+                    )}
+                </View>
                 <View style={styles.infoContainer}>
                     <Text style={{ fontSize: 30, textAlign: 'center', fontWeight: '600' }}>{userInfo?.nickName}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
@@ -165,6 +169,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    profileImage: {
+        width: 158,
+        height: 158,
+        borderRadius: 158,
     },
     infoContainer: {
         width: 133,
