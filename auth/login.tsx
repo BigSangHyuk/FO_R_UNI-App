@@ -153,7 +153,7 @@ const LogIn: React.FC<LogInProps> = ({ navigation, handleLogin }) => {
                     title="자동로그인"
                     checkedIcon="check-circle"
                     uncheckedIcon="circle-o"
-                    checkedColor="blue"
+                    checkedColor="#4EA2EF"
                     uncheckedColor="grey"
                     checked={autoLogin}
                     onPress={() => setAutoLogin(!autoLogin)}
@@ -185,6 +185,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         backgroundColor: 'transparent',
         borderWidth: 0,
+        marginLeft: 30,
     },
 });
 
