@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { NavigationContainer, DefaultTheme, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -8,6 +8,7 @@ import SignIn from './auth/signin';
 import Info from './auth/info';
 import Navigation from './menus/navigation';
 import Http from './address/backend_url';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,16 +17,30 @@ interface AppProps {
 }
 
 const App = ({ navigation }: AppProps) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
     const handleLogin = () => {
         setIsLoggedIn(true);
     };
 
-    const handleLogOut = () => {
+    const handleLogOut = async () => {
         setIsLoggedIn(false);
-        sessionStorage.removeItem('accessToken');
+        await AsyncStorage.removeItem('accessToken');
+        await AsyncStorage.removeItem('autoLogin');
     };
+
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+            const autoLogin = await AsyncStorage.getItem('autoLogin');
+            const accessToken = await AsyncStorage.getItem('accessToken');
+
+            if (autoLogin === 'true' && accessToken) {
+                setIsLoggedIn(true);
+            }
+        };
+
+        checkLoginStatus();
+    }, []);
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
