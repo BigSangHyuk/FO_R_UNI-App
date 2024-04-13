@@ -6,7 +6,7 @@ import { NavigationProp } from '@react-navigation/native';
 import Http from '../address/backend_url';
 import { CheckBox } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { setStorage } from './asyncsotrage';
+import { setStorage } from './asyncstorage';
 
 interface LogInProps {
     navigation: NavigationProp<any>;
@@ -82,6 +82,7 @@ const LogIn: React.FC<LogInProps> = ({ navigation, handleLogin }) => {
                 console.log(data);
                 setStorage('accessToken', data.token.accessToken);
                 setStorage('refreshToken', data.token.refreshToken);
+                setStorage('userId', data.token.userId);
                 handleLogin();
                 if (autoLogin) {
                     await AsyncStorage.setItem('autoLogin', 'true');

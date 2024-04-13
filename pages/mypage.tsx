@@ -4,33 +4,54 @@ import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Http from '../address/backend_url';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 interface MypageProps {
     navigation: NavigationProp<any>;
+}
+interface UserInfo {
+    id: number;
+    email: string;
+    password: string;
+    departmentType: string;
+    nickName: string;
+    image: string;
+    roles: { name: string }[];
 }
 
 const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     const [isToggled, setIsToggled] = useState<boolean>(false);
-    const [userInfo, setUserInfo] = useState([]);
+    const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const slideAnimation = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         GetInfo();
-    });
+    }, []);
 
     const GetInfo = async () => {
-        const res = await fetch(Http + `/users/info`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
-                accept: '*/*',
-            },
-        });
-        if (res.status === 200) {
-            const data = await res.json();
-            setUserInfo(data);
-        } else {
-            console.error(Error, '떄문이레요');
+        try {
+            const accessToken = await AsyncStorage.getItem('accessToken');
+            if (!accessToken) throw new Error('Access token not found');
+
+            const res = await fetch(Http + `/users/info`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                    accept: '*/*',
+                },
+            });
+            console.log('accesstoken', accessToken);
+
+            if (res.status === 200) {
+                const data = await res.json();
+                setUserInfo(data);
+            } else {
+                const errorText = await res.text();
+                console.error('Error response body:', errorText);
+                throw new Error('Failed to fetch user info.');
+            }
+        } catch (error) {
+            console.error('An error occurred while fetching user info:', error);
         }
     };
 
@@ -62,22 +83,9 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
             <View style={{ alignItems: 'center' }}>
                 <View style={styles.profileContainer} />
                 <View style={styles.infoContainer}>
-                    {userInfo.map((user, index) => (
-                        <View
-                            key={index}
-                            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}
-                        >
-                            <Text style={{ fontSize: 30, textAlign: 'center', fontWeight: '600' }}>
-                                {user.nickName}
-                            </Text>
-                            <View
-                                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}
-                            >
-                                <Text style={styles.depart}>{user.departmentType}</Text>
-                                <Icons name="edit" size={15}></Icons>
-                            </View>
-                        </View>
-                    ))}
+                    <Text style={{ fontSize: 30, textAlign: 'center', fontWeight: '600' }}></Text>
+                    <Text style={styles.depart}></Text>
+                    <Icons name="edit" size={15}></Icons>
                 </View>
                 <TouchableOpacity style={styles.toggleContainer} onPress={handleToggle}>
                     <Animated.View
