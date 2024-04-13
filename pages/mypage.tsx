@@ -4,7 +4,6 @@ import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Http from '../address/backend_url';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getStorage, refreshAccessToken } from '../auth/asyncstorage';
 interface MypageProps {
     navigation: NavigationProp<any>;
@@ -18,14 +17,32 @@ interface UserInfo {
     image: string;
     roles: { name: string }[];
 }
+interface UserComment {
+    postId: number;
+    deadline: string;
+    title: string;
+    category: string;
+    count: number;
+}
+interface UserLike {
+    content: string;
+    postId: number;
+    commentId: number;
+    userId: number;
+    commentLike: number;
+    count: number;
+}
 
 const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     const [isToggled, setIsToggled] = useState<boolean>(false);
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+    const [userComment, setUserComment] = useState<UserComment[]>(null);
+    const [userLike, setUserLike] = useState<UserLike[]>(null);
     const slideAnimation = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         GetInfo();
+        GetComment();
     }, []);
 
     const GetInfo = async () => {
@@ -45,12 +62,83 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
             if (res.status === 200) {
                 const data = await res.json();
                 setUserInfo(data);
-                console.log(data);
             } else if (res.status === 400) {
                 try {
                     const newAccessToken = await refreshAccessToken();
                     if (newAccessToken) {
                         GetInfo();
+                    } else {
+                        console.log('Failed to refresh token, redirecting to login');
+                    }
+                } catch (error) {
+                    console.error('Refresh token process failed:', error);
+                }
+            } else {
+                console.error('Error fetching user info:', res.status);
+            }
+        } catch (error) {
+            console.error('An error occurred while fetching user info:', error);
+        }
+    };
+
+    const GetComment = async () => {
+        try {
+            const accessToken = await getStorage('accessToken');
+
+            const res = await fetch(Http + `/posts/commented`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                    accept: '*/*',
+                },
+            });
+
+            if (res.status === 200) {
+                const data = await res.json();
+                setUserComment(data.data);
+                console.log(data);
+            } else if (res.status === 400) {
+                try {
+                    const newAccessToken = await refreshAccessToken();
+                    if (newAccessToken) {
+                        GetComment();
+                    } else {
+                        console.log('Failed to refresh token, redirecting to login');
+                    }
+                } catch (error) {
+                    console.error('Refresh token process failed:', error);
+                }
+            } else {
+                console.error('Error fetching user info:', res.status);
+            }
+        } catch (error) {
+            console.error('An error occurred while fetching user info:', error);
+        }
+    };
+
+    const GetLike = async () => {
+        try {
+            const accessToken = await getStorage('accessToken');
+
+            const res = await fetch(Http + `/comments/liked`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                    accept: '*/*',
+                },
+            });
+
+            if (res.status === 200) {
+                const data = await res.json();
+                setUserLike(data.data);
+                console.log(data);
+            } else if (res.status === 400) {
+                try {
+                    const newAccessToken = await refreshAccessToken();
+                    if (newAccessToken) {
+                        GetLike();
                     } else {
                         console.log('Failed to refresh token, redirecting to login');
                     }
@@ -131,25 +219,27 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                 <View style={styles.listContainer}>
                     {isToggled ? (
                         <FlatList
-                            data={null}
+                            data={userComment}
+                            extraData={userComment}
                             renderItem={({ item }) => (
                                 <View style={styles.item}>
-                                    <Text style={styles.itemTitle}>○ {item.title}</Text>
-                                    <Text style={styles.itemDuration}>{item.duration}</Text>
+                                    <Text style={styles.itemTitle} numberOfLines={1} ellipsizeMode="tail">
+                                        ○ {item.title}
+                                    </Text>
+                                    <Text style={styles.itemDuration}>{item.deadline}</Text>
                                 </View>
                             )}
-                            keyExtractor={(item) => item.title}
+                            keyExtractor={(item) => item.postId.toString()}
                         />
                     ) : (
                         <FlatList
-                            data={null}
+                            data={userLike}
                             renderItem={({ item }) => (
                                 <View style={styles.item}>
-                                    <Text style={styles.itemTitle}>○ {item.title}</Text>
-                                    <Text style={styles.itemDuration}>{item.duration}</Text>
+                                    <Text style={styles.itemTitle}>○ {item.content}</Text>
                                 </View>
                             )}
-                            keyExtractor={(item) => item.title}
+                            keyExtractor={(item) => item.postId.toString()}
                         />
                     )}
                 </View>
@@ -228,6 +318,9 @@ const styles = StyleSheet.create({
     itemTitle: {
         fontSize: 16,
         fontWeight: 'bold',
+        flex: 1,
+        flexShrink: 1,
+        maxWidth: '70%',
     },
     itemDuration: {
         fontSize: 14,
