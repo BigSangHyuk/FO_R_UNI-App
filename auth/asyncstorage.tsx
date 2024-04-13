@@ -22,7 +22,7 @@ export const refreshAccessToken = async () => {
         if (!userId || !refreshToken) throw new Error('No refresh token available');
 
         const res = await fetch(Http + '/refresh', {
-            method: 'POST',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -31,10 +31,10 @@ export const refreshAccessToken = async () => {
                 refreshToken: refreshToken,
             }),
         });
-
         const data = await res.json();
         if (res.status === 200) {
-            await AsyncStorage.setItem('accessToken', data.accessToken);
+            setStorage('accessToken', data.accessToken);
+            console.log(data.accessToken);
             return data.accessToken;
         } else {
             throw new Error('Unable to refresh access token');

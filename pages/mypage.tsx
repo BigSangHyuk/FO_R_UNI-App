@@ -5,6 +5,7 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Http from '../address/backend_url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getStorage, refreshAccessToken } from '../auth/asyncstorage';
 interface MypageProps {
     navigation: NavigationProp<any>;
 }
@@ -29,8 +30,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
 
     const GetInfo = async () => {
         try {
-            const accessToken = await AsyncStorage.getItem('accessToken');
-            if (!accessToken) throw new Error('Access token not found');
+            const accessToken = await getStorage('accessToken');
 
             const res = await fetch(Http + `/users/info`, {
                 method: 'GET',
@@ -45,10 +45,20 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
             if (res.status === 200) {
                 const data = await res.json();
                 setUserInfo(data);
+                console.log(data);
+            } else if (res.status === 400) {
+                try {
+                    const newAccessToken = await refreshAccessToken();
+                    if (newAccessToken) {
+                        GetInfo();
+                    } else {
+                        console.log('Failed to refresh token, redirecting to login');
+                    }
+                } catch (error) {
+                    console.error('Refresh token process failed:', error);
+                }
             } else {
-                const errorText = await res.text();
-                console.error('Error response body:', errorText);
-                throw new Error('Failed to fetch user info.');
+                console.error('Error fetching user info:', res.status);
             }
         } catch (error) {
             console.error('An error occurred while fetching user info:', error);
@@ -81,11 +91,15 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                 }}
             />
             <View style={{ alignItems: 'center' }}>
-                <View style={styles.profileContainer} />
+                <View style={styles.profileContainer}></View>
                 <View style={styles.infoContainer}>
-                    <Text style={{ fontSize: 30, textAlign: 'center', fontWeight: '600' }}></Text>
-                    <Text style={styles.depart}></Text>
-                    <Icons name="edit" size={15}></Icons>
+                    <Text style={{ fontSize: 30, textAlign: 'center', fontWeight: '600' }}>{userInfo?.nickName}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                        <Text style={styles.depart}>{userInfo?.departmentType}</Text>
+                        <TouchableOpacity onPress={() => {}}>
+                            <Icons name="edit" size={15} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 <TouchableOpacity style={styles.toggleContainer} onPress={handleToggle}>
                     <Animated.View
@@ -146,9 +160,9 @@ const styles = StyleSheet.create({
         height: 158,
         borderRadius: 158,
         borderWidth: 4,
-        borderColor: 'white',
+        borderColor: 'black',
         marginTop: 32,
-        backgroundColor: 'black',
+        backgroundColor: 'transparent',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -163,7 +177,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         textAlign: 'center',
-        marginLeft: 15,
     },
     toggleContainer: {
         flexDirection: 'row',
