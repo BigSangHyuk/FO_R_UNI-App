@@ -7,6 +7,7 @@ import FindPass from './auth/findPass';
 import SignIn from './auth/signin';
 import Info from './auth/info';
 import Navigation from './menus/navigation';
+import Http from './address/backend_url';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,7 +24,7 @@ const App = ({ navigation }: AppProps) => {
 
     const handleLogOut = () => {
         setIsLoggedIn(false);
-        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('accessToken');
     };
 
     return (

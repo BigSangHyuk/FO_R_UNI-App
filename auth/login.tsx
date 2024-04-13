@@ -4,6 +4,8 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import { View, TouchableOpacity, Text, StyleSheet, TextStyle } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
 import Http from '../address/backend_url';
+import { CheckBox } from 'react-native-elements';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface LogInProps {
     navigation: NavigationProp<any>;
@@ -18,6 +20,7 @@ const LogIn: React.FC<LogInProps> = ({ navigation, handleLogin }) => {
     const [isshowPassword, setIsshowPassword] = useState<boolean>(false);
     const [isEmail, setIsEmail] = useState<boolean>(false);
     const [isPassword, setIsPassword] = useState<boolean>(false);
+    const [autoLogin, setAutoLogin] = useState<boolean>(false);
 
     const onChangeEmail = useCallback((value: string) => {
         const EmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -76,7 +79,14 @@ const LogIn: React.FC<LogInProps> = ({ navigation, handleLogin }) => {
                 console.log('로그인 시도');
                 const data = await res.json();
                 console.log(data);
+                sessionStorage.setItem('accessToken', data.token.accessToken);
+                sessionStorage.setItem('refreshToken', data.token.refreshToken);
+
+                console.log(data.token.accessToken, data.token.refreshToken);
                 handleLogin();
+                if (autoLogin) {
+                    await AsyncStorage.setItem('autoLogin', 'true');
+                }
             } else {
                 console.log('실패');
             }
@@ -130,13 +140,26 @@ const LogIn: React.FC<LogInProps> = ({ navigation, handleLogin }) => {
                     <Text style={[styles.text, { marginLeft: 60 }]}>비밀번호 찾기</Text>
                 </TouchableOpacity>
             </View>
-            <Button
-                buttonStyle={{ width: 330, marginTop: 70, borderRadius: 100, height: 50 }}
-                title="로그인"
-                disabled={!isEmail || !isPassword}
-                onPress={signIn}
-                style={styles.button}
-            />
+            <View>
+                <Button
+                    buttonStyle={{ width: 330, marginTop: 70, borderRadius: 100, height: 50 }}
+                    title="로그인"
+                    disabled={!isEmail || !isPassword}
+                    onPress={signIn}
+                    style={styles.button}
+                />
+                <CheckBox
+                    center
+                    title="자동로그인"
+                    checkedIcon="check-circle"
+                    uncheckedIcon="circle-o"
+                    checkedColor="blue"
+                    uncheckedColor="grey"
+                    checked={autoLogin}
+                    onPress={() => setAutoLogin(!autoLogin)}
+                    containerStyle={styles.checkBox}
+                />
+            </View>
         </View>
     );
 };
@@ -157,6 +180,11 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    checkBox: {
+        alignSelf: 'flex-start',
+        backgroundColor: 'transparent',
+        borderWidth: 0,
     },
 });
 

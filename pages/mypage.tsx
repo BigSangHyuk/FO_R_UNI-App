@@ -1,15 +1,38 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated, FlatList } from 'react-native';
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import Http from '../address/backend_url';
 interface MypageProps {
     navigation: NavigationProp<any>;
 }
 
 const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     const [isToggled, setIsToggled] = useState<boolean>(false);
+    const [userInfo, setUserInfo] = useState([]);
     const slideAnimation = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        GetInfo();
+    });
+
+    const GetInfo = async () => {
+        const res = await fetch(Http + `/users/info`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                accept: '*/*',
+            },
+        });
+        if (res.status === 200) {
+            const data = await res.json();
+            setUserInfo(data);
+        } else {
+            console.error(Error, '떄문이레요');
+        }
+    };
 
     const handleToggle = () => {
         setIsToggled((previousState) => !previousState);
@@ -19,19 +42,6 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
             useNativeDriver: false,
         }).start();
     };
-
-    const like = [
-        { title: 'Item 1', duration: '9월 13일' },
-        { title: 'Item 2', duration: '60min' },
-        { title: 'Item 3', duration: '30min' },
-        { title: 'Item 4', duration: '15min' },
-    ];
-    const comment = [
-        { title: 'Item 5', duration: '3월 11일' },
-        { title: 'Item 6', duration: '60min' },
-        { title: 'Item 7', duration: '30min' },
-        { title: 'Item 8', duration: '15min' },
-    ];
 
     return (
         <View>
@@ -52,11 +62,22 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
             <View style={{ alignItems: 'center' }}>
                 <View style={styles.profileContainer} />
                 <View style={styles.infoContainer}>
-                    <Text style={{ fontSize: 30, textAlign: 'center', fontWeight: '600' }}>장려상혁</Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                        <Text style={styles.depart}>컴퓨터공학부</Text>
-                        <Icons name="edit" size={15}></Icons>
-                    </View>
+                    {userInfo.map((user, index) => (
+                        <View
+                            key={index}
+                            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}
+                        >
+                            <Text style={{ fontSize: 30, textAlign: 'center', fontWeight: '600' }}>
+                                {user.nickName}
+                            </Text>
+                            <View
+                                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}
+                            >
+                                <Text style={styles.depart}>{user.departmentType}</Text>
+                                <Icons name="edit" size={15}></Icons>
+                            </View>
+                        </View>
+                    ))}
                 </View>
                 <TouchableOpacity style={styles.toggleContainer} onPress={handleToggle}>
                     <Animated.View
@@ -84,7 +105,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                 <View style={styles.listContainer}>
                     {isToggled ? (
                         <FlatList
-                            data={comment}
+                            data={null}
                             renderItem={({ item }) => (
                                 <View style={styles.item}>
                                     <Text style={styles.itemTitle}>○ {item.title}</Text>
@@ -95,7 +116,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                         />
                     ) : (
                         <FlatList
-                            data={like}
+                            data={null}
                             renderItem={({ item }) => (
                                 <View style={styles.item}>
                                     <Text style={styles.itemTitle}>○ {item.title}</Text>
