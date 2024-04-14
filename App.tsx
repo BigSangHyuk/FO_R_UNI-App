@@ -9,6 +9,7 @@ import Info from './auth/info';
 import Navigation from './menus/navigation';
 import Http from './address/backend_url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getStorage } from './auth/asyncstorage';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,9 +25,26 @@ const App = ({ navigation }: AppProps) => {
     };
 
     const handleLogOut = async () => {
-        setIsLoggedIn(false);
-        await AsyncStorage.removeItem('accessToken');
-        await AsyncStorage.removeItem('autoLogin');
+        const accessToken = await getStorage('accessToken');
+        console.log('로그아웃시도');
+        const res = await fetch(Http + `/log-out`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+                accept: '*/*',
+            },
+            body: JSON.stringify({
+                accessToken: await getStorage('accessToken'),
+                refreshToken: await getStorage('refreshToken'),
+            }),
+        });
+        if (res.ok) {
+            setIsLoggedIn(false);
+            console.log('로그아웃');
+        } else {
+            console.error(Error);
+        }
     };
 
     useEffect(() => {
