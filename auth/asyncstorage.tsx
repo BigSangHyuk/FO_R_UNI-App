@@ -16,8 +16,8 @@ export const removeStorage = async (key: string) => {
 
 export const refreshAccessToken = async () => {
     try {
-        const userId = await AsyncStorage.getItem('userId');
-        const refreshToken = await AsyncStorage.getItem('refreshToken');
+        const userId = await getStorage('userId');
+        const refreshToken = await getStorage('refreshToken');
 
         if (!userId || !refreshToken) throw new Error('No refresh token available');
 
@@ -28,7 +28,7 @@ export const refreshAccessToken = async () => {
             },
             body: JSON.stringify({
                 userId: Number(userId),
-                refreshToken: refreshToken,
+                refreshToken: await refreshToken,
             }),
         });
         const data = await res.json();
