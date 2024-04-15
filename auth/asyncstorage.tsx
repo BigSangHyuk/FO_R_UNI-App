@@ -28,13 +28,15 @@ export const refreshAccessToken = async () => {
             },
             body: JSON.stringify({
                 userId: Number(userId),
-                refreshToken: await refreshToken,
+                refreshToken: refreshToken,
             }),
         });
+        console.log('adasdsadad', res);
         const data = await res.json();
         if (res.status === 200) {
-            setStorage('accessToken', data.accessToken);
             console.log(data.accessToken);
+            setStorage('accessToken', data.accessToken);
+
             return data.accessToken;
         } else {
             throw new Error('Unable to refresh access token');

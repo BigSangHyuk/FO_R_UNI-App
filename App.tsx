@@ -27,6 +27,7 @@ const App = ({ navigation }: AppProps) => {
     const handleLogOut = async () => {
         const accessToken = await getStorage('accessToken');
         console.log('로그아웃시도');
+        setIsLoggedIn(false);
         const res = await fetch(Http + `/log-out`, {
             method: 'POST',
             headers: {

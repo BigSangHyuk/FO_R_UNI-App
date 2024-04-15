@@ -46,6 +46,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     }, []);
 
     const GetInfo = async () => {
+        console.log('GETINFO');
         try {
             const accessToken = await getStorage('accessToken');
 
