@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, FlatList, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Animated, FlatList, Image, TextInput } from 'react-native';
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -184,25 +184,24 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
             });
 
             if (res.status === 200) {
-                const data = await res.json();
-                setUserLike(data.data);
-                console.log(data);
+                const updatedUserInfo = await res.json();
+                setUserInfo((currentUserInfo) => ({
+                    ...currentUserInfo,
+                    ...updatedUserInfo
+                }));
+                console.log('User info updated:', updatedUserInfo);
             } else if (res.status === 400) {
-                try {
-                    const newAccessToken = await refreshAccessToken();
-                    if (newAccessToken) {
-                        GetLike();
-                    } else {
-                        console.log('Failed to refresh token, redirecting to login');
-                    }
-                } catch (error) {
-                    console.error('Refresh token process failed:', error);
+                const newAccessToken = await refreshAccessToken();
+                if (newAccessToken) {
+                    UserEdit(); 
+                } else {
+                    console.log('Failed to refresh token, redirecting to login');
                 }
             } else {
-                console.error('Error fetching user info:', res.status);
+                console.error('Error updating user info:', res.status);
             }
         } catch (error) {
-            console.error('An error occurred while fetching user info:', error);
+            console.error('An error occurred while updating user info:', error);
         }
     };
 
@@ -214,6 +213,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
             useNativeDriver: false,
         }).start();
     };
+
 
     return (
         <View>
