@@ -33,16 +33,27 @@ interface UserLike {
     count: number;
 }
 
+interface UserEdit {
+    departmentType: string;
+    nickName: string;
+    image: string;
+}
+
 const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     const [isToggled, setIsToggled] = useState<boolean>(false);
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [userComment, setUserComment] = useState<UserComment[]>(null);
     const [userLike, setUserLike] = useState<UserLike[]>(null);
+    const [nickName, setNickName] = useState<UserEdit | string>('');
+    const [image, setImage] = useState<UserEdit | string>('');
+    const [departmentType, setDepartmentType] = useState<UserEdit | string>('');
+
     const slideAnimation = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         GetInfo();
         GetComment();
+        GetLike();
     }, []);
 
     const GetInfo = async () => {
@@ -154,6 +165,47 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
         }
     };
 
+    const UserEdit = async () => {
+        try {
+            const accessToken = await getStorage('accessToken');
+
+            const res = await fetch(Http + `/users/edit`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                    accept: '*/*',
+                },
+                body: JSON.stringify({
+                    departmentType: departmentType,
+                    nickName: nickName,
+                    image: image,
+                }),
+            });
+
+            if (res.status === 200) {
+                const data = await res.json();
+                setUserLike(data.data);
+                console.log(data);
+            } else if (res.status === 400) {
+                try {
+                    const newAccessToken = await refreshAccessToken();
+                    if (newAccessToken) {
+                        GetLike();
+                    } else {
+                        console.log('Failed to refresh token, redirecting to login');
+                    }
+                } catch (error) {
+                    console.error('Refresh token process failed:', error);
+                }
+            } else {
+                console.error('Error fetching user info:', res.status);
+            }
+        } catch (error) {
+            console.error('An error occurred while fetching user info:', error);
+        }
+    };
+
     const handleToggle = () => {
         setIsToggled((previousState) => !previousState);
         Animated.timing(slideAnimation, {
@@ -190,7 +242,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
                         <Text style={styles.depart}>{userInfo?.departmentType}</Text>
                         <TouchableOpacity onPress={() => {}}>
-                            <Icons name="edit" size={15} />
+                            <Icons name="edit" onPress={UserEdit} size={15} />
                         </TouchableOpacity>
                     </View>
                 </View>
