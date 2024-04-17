@@ -30,7 +30,7 @@ import {
     Law,
 } from '../../data/department';
 import Http from '../../address/backend_url';
-import { getStorage } from '../../auth/asyncstorage';
+import { getStorage, refreshAccessToken } from '../../auth/asyncstorage';
 
 interface EditInfoProps {
     isVisible: boolean;
@@ -39,7 +39,8 @@ interface EditInfoProps {
 }
 
 const EditInfo: React.FC<EditInfoProps> = ({ isVisible, onClose, userInfo }) => {
-    const [nickName, setNickName] = useState<string>('');
+    const [inituserInfo, setUserInfo] = useState<UserInfo>(userInfo);
+    const [nickName, setNickName] = useState<string>(userInfo?.nickName);
     const [uni, setUni] = useState<string | null>(null);
     const [depart, setDepart] = useState<string | null>(null);
     const [departCode, setDepartCode] = useState<string | null>(null);
@@ -121,6 +122,28 @@ const EditInfo: React.FC<EditInfoProps> = ({ isVisible, onClose, userInfo }) => 
                 nickName: nickName,
             }),
         });
+        if (res.status === 200) {
+            setUserInfo({
+                ...inituserInfo,
+                nickName: nickName,
+                departmentType: departCode,
+            });
+            console.log(inituserInfo);
+            onClose();
+        } else if (res.status === 400) {
+            try {
+                const newAccessToken = await refreshAccessToken();
+                if (newAccessToken) {
+                    userEdit();
+                } else {
+                    console.log('토큰 재발급 실패');
+                }
+            } catch (error) {
+                console.error('Refresh token process failed:', error);
+            }
+        } else {
+            console.error('Error fetching user info:', res.status);
+        }
     };
 
     return (
