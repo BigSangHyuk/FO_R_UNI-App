@@ -1,42 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated, FlatList, Image, TextInput } from 'react-native';
 import { Header } from 'react-native-elements';
+import EditInfo from './modals/editinfo';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Http from '../address/backend_url';
 import { getStorage, refreshAccessToken } from '../auth/asyncstorage';
+import { UserEdit, UserComment, UserInfo, UserLike } from '../data/types';
+
 interface MypageProps {
     navigation: NavigationProp<any>;
-}
-interface UserInfo {
-    id: number;
-    email: string;
-    password: string;
-    department: string;
-    nickName: string;
-    image: string;
-    roles: { name: string }[];
-}
-interface UserComment {
-    postId: number;
-    deadline: string;
-    title: string;
-    category: string;
-    count: number;
-}
-interface UserLike {
-    content: string;
-    postId: number;
-    commentId: number;
-    userId: number;
-    commentLike: number;
-    count: number;
-}
-
-interface UserEdit {
-    departmentType: string;
-    nickName: string;
-    image: string;
 }
 
 const Mypage: React.FC<MypageProps> = ({ navigation }) => {
@@ -44,9 +17,8 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [userComment, setUserComment] = useState<UserComment[]>(null);
     const [userLike, setUserLike] = useState<UserLike[]>(null);
-    const [nickName, setNickName] = useState<UserEdit | string>('');
     const [image, setImage] = useState<UserEdit | string>('');
-    const [departmentType, setDepartmentType] = useState<UserEdit | string>('');
+    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
     const slideAnimation = useRef(new Animated.Value(0)).current;
 
@@ -165,46 +137,6 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
         }
     };
 
-    const UserEdit = async () => {
-        try {
-            const accessToken = await getStorage('accessToken');
-
-            const res = await fetch(Http + `/users/edit`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${accessToken}`,
-                    accept: '*/*',
-                },
-                body: JSON.stringify({
-                    departmentType: departmentType,
-                    nickName: nickName,
-                    image: image,
-                }),
-            });
-
-            if (res.status === 200) {
-                const updatedUserInfo = await res.json();
-                setUserInfo((currentUserInfo) => ({
-                    ...currentUserInfo,
-                    ...updatedUserInfo,
-                }));
-                console.log('User info updated:', updatedUserInfo);
-            } else if (res.status === 400) {
-                const newAccessToken = await refreshAccessToken();
-                if (newAccessToken) {
-                    UserEdit();
-                } else {
-                    console.log('Failed to refresh token, redirecting to login');
-                }
-            } else {
-                console.error('Error updating user info:', res.status);
-            }
-        } catch (error) {
-            console.error('An error occurred while updating user info:', error);
-        }
-    };
-
     const handleToggle = () => {
         setIsToggled((previousState) => !previousState);
         Animated.timing(slideAnimation, {
@@ -222,6 +154,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                     backgroundColor: 'white',
                     marginTop: 20,
                     alignItems: 'center',
+                    paddingHorizontal: 20,
                 }}
                 backgroundColor="white"
                 barStyle="default"
@@ -229,7 +162,19 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                     text: '내 정보',
                     style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
                 }}
+                rightComponent={
+                    <TouchableOpacity onPress={() => {}}>
+                        <Icons
+                            name="edit"
+                            size={25}
+                            style={{ color: '#BDBDBD' }}
+                            onPress={() => setIsEditModalVisible(true)}
+                        />
+                    </TouchableOpacity>
+                }
+                rightContainerStyle={{ flex: 1, justifyContent: 'center' }}
             />
+            <EditInfo isVisible={isEditModalVisible} onClose={() => setIsEditModalVisible(false)} userInfo={userInfo} />
             <View style={{ alignItems: 'center' }}>
                 <View style={styles.profileContainer}>
                     {userInfo && userInfo.image && (
@@ -239,10 +184,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                 <View style={styles.infoContainer}>
                     <Text style={{ fontSize: 30, textAlign: 'center', fontWeight: '600' }}>{userInfo?.nickName}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                        <Text style={styles.depart}>{userInfo?.department}</Text>
-                        <TouchableOpacity onPress={() => {}}>
-                            <Icons name="edit" onPress={UserEdit} size={15} />
-                        </TouchableOpacity>
+                        <Text style={styles.depart}>{userInfo?.departmentType}</Text>
                     </View>
                 </View>
                 <TouchableOpacity style={styles.toggleContainer} onPress={handleToggle}>

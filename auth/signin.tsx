@@ -4,7 +4,6 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import { TextStyle, ViewStyle, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Http from '../address/backend_url';
-import Info from './info';
 
 interface SignInProps extends InputProps {
     style?: ViewStyle;
