@@ -12,7 +12,7 @@ interface UserInfo {
     id: number;
     email: string;
     password: string;
-    departmentType: string;
+    department: string;
     nickName: string;
     image: string;
     roles: { name: string }[];
@@ -187,13 +187,13 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                 const updatedUserInfo = await res.json();
                 setUserInfo((currentUserInfo) => ({
                     ...currentUserInfo,
-                    ...updatedUserInfo
+                    ...updatedUserInfo,
                 }));
                 console.log('User info updated:', updatedUserInfo);
             } else if (res.status === 400) {
                 const newAccessToken = await refreshAccessToken();
                 if (newAccessToken) {
-                    UserEdit(); 
+                    UserEdit();
                 } else {
                     console.log('Failed to refresh token, redirecting to login');
                 }
@@ -213,7 +213,6 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
             useNativeDriver: false,
         }).start();
     };
-
 
     return (
         <View>
@@ -240,7 +239,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                 <View style={styles.infoContainer}>
                     <Text style={{ fontSize: 30, textAlign: 'center', fontWeight: '600' }}>{userInfo?.nickName}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                        <Text style={styles.depart}>{userInfo?.departmentType}</Text>
+                        <Text style={styles.depart}>{userInfo?.department}</Text>
                         <TouchableOpacity onPress={() => {}}>
                             <Icons name="edit" onPress={UserEdit} size={15} />
                         </TouchableOpacity>
