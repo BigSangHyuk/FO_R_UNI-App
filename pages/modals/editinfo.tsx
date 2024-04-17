@@ -29,6 +29,8 @@ import {
     NortheastAsia,
     Law,
 } from '../../data/department';
+import Http from '../../address/backend_url';
+import { getStorage } from '../../auth/asyncstorage';
 
 interface EditInfoProps {
     isVisible: boolean;
@@ -105,6 +107,22 @@ const EditInfo: React.FC<EditInfoProps> = ({ isVisible, onClose, userInfo }) => 
         }
     };
 
+    const userEdit = async () => {
+        const accessToken = await getStorage('accessToken');
+        const res = await fetch(Http + `/users/edit`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+                accept: '*/*',
+            },
+            body: JSON.stringify({
+                departmentType: departCode,
+                nickName: nickName,
+            }),
+        });
+    };
+
     return (
         <Modal visible={isVisible} animationType="slide" transparent={true}>
             <View style={styles.centeredView}>
@@ -165,6 +183,7 @@ const EditInfo: React.FC<EditInfoProps> = ({ isVisible, onClose, userInfo }) => 
                     )}
                     <View style={{ marginTop: 150, flexDirection: 'row' }}>
                         <Button
+                            onPress={userEdit}
                             buttonStyle={{ width: 50, borderRadius: 120, height: 50 }}
                             containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
                             disabledTitleStyle={{ color: 'white' }}
