@@ -155,23 +155,62 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
             useNativeDriver: false,
         }).start();
     };
+    const uploadImage = async (imageUri) => {
+        const accessToken = await getStorage('accessToken');
+        const uriParts = imageUri.split('.');
+        const fileType = uriParts[uriParts.length - 1];
 
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
+        const formData = new FormData();
+        formData.append('images', {
+            uri: imageUri,
+            name: `photo.${fileType}`,
+            type: `image/${fileType}`,
+        } as any);
 
-        if (!result.canceled) {
-            // userInfo 상태에 새 이미지를 설정하는 로직을 추가하세요.
-            //   setUserInfo({ ...userInfo, image: result.uri });
-            setEditImageOverlayVisible(false); // 이미지 피커가 닫힌 후 오버레이 숨기기
+        try {
+            const response = await fetch(Http + '/users/image', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${accessToken}`,
+                    accept: 'application/json',
+                },
+                body: formData,
+            });
+
+            const result = await response.json();
+            if (response.status === 200) {
+                console.log('Image uploaded successfully:', result);
+                setUserInfo((prevUserInfo) => ({
+                    ...prevUserInfo,
+                    image: result.image,
+                }));
+            } else {
+                console.error('Failed to upload image:', result);
+            }
+        } catch (error) {
+            console.error('An error occurred during the image upload:', error);
         }
     };
 
-    // 이미지 오버레이 상태를 토글하는 함수
+    const pickImage = async () => {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+            alert("You've refused to allow this app to access your photos!");
+            return;
+        }
+
+        const pickerResult = await ImagePicker.launchImageLibraryAsync();
+        if (pickerResult.canceled === true) {
+            return;
+        }
+
+        const pickedUri = pickerResult.assets?.[0].uri;
+        if (pickedUri) {
+            await uploadImage(pickedUri);
+        }
+    };
+
     const toggleEditImageOverlay = () => {
         setEditImageOverlayVisible(!editImageOverlayVisible);
     };
@@ -220,9 +259,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                             onPress={editImageOverlayVisible ? pickImage : toggleEditImageOverlay}
                             style={styles.imageTouchable}
                         >
-                            {userInfo && userInfo.image && (
-                                <Image source={{ uri: userInfo.image }} style={styles.profileImage} />
-                            )}
+                            {userInfo?.image && <Image source={{ uri: userInfo.image }} style={styles.profileImage} />}
                             {editImageOverlayVisible && (
                                 <TouchableOpacity style={styles.overlay} onPress={pickImage}>
                                     <Text style={styles.overlayText}>이미지 변경</Text>
