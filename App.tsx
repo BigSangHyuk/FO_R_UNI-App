@@ -1,71 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { NavigationContainer, DefaultTheme, NavigationProp } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LogIn from './auth/login';
 import FindPass from './auth/findPass';
 import SignIn from './auth/signin';
-import Info from './auth/info';
+import Info from './auth/Info';
 import Navigation from './menus/navigation';
-import Http from './address/backend_url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getStorage } from './auth/asyncstorage';
 
 const Stack = createNativeStackNavigator();
 
-interface AppProps {
-    navigation: NavigationProp<any>;
-}
-
-const App = ({ navigation }: AppProps) => {
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+const App = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const handleLogin = () => {
         setIsLoggedIn(true);
     };
-    const checkAutoLogin = async () => {
-        const autoLoginValue = await AsyncStorage.getItem('autoLogin');
-        if (autoLoginValue === 'true') {
-            handleLogin();
-        }
-    };
 
     const handleLogOut = async () => {
-        const accessToken = await getStorage('accessToken');
         console.log('로그아웃시도');
         setIsLoggedIn(false);
         await AsyncStorage.removeItem('autoLogin');
-        const res = await fetch(Http + `/log-out`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`,
-                accept: '*/*',
-            },
-            body: JSON.stringify({
-                accessToken: await getStorage('accessToken'),
-                refreshToken: await getStorage('refreshToken'),
-            }),
-        });
-        if (res.ok) {
-            setIsLoggedIn(false);
-            console.log('로그아웃');
-        } else {
-            console.error(Error);
-        }
+        console.log('로그아웃');
     };
 
     useEffect(() => {
-        const checkLoginStatus = async () => {
+        const checkAutoLogin = async () => {
             const autoLogin = await AsyncStorage.getItem('autoLogin');
             const accessToken = await AsyncStorage.getItem('accessToken');
 
             if (autoLogin === 'true' && accessToken) {
-                setIsLoggedIn(true);
+                handleLogin();
             }
         };
-
-        checkLoginStatus();
+        checkAutoLogin();
     }, []);
 
     return (
