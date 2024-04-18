@@ -126,7 +126,7 @@ const EditInfo: React.FC<EditInfoProps> = ({ isVisible, onClose, userInfo }) => 
             setUserInfo({
                 ...inituserInfo,
                 nickName: nickName,
-                departmentType: departCode,
+                department: departCode,
             });
             console.log(inituserInfo);
             onClose();

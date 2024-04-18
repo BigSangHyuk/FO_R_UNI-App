@@ -184,7 +184,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                 <View style={styles.infoContainer}>
                     <Text style={{ fontSize: 30, textAlign: 'center', fontWeight: '600' }}>{userInfo?.nickName}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                        <Text style={styles.depart}>{userInfo?.departmentType}</Text>
+                        <Text style={styles.depart}>{userInfo?.department}</Text>
                     </View>
                 </View>
                 <TouchableOpacity style={styles.toggleContainer} onPress={handleToggle}>

@@ -2,7 +2,7 @@ export interface UserInfo {
     id: number;
     email: string;
     password: string;
-    departmentType: string;
+    department: string;
     nickName: string;
     image: string;
     roles: { name: string }[];
