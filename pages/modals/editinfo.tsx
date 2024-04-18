@@ -36,9 +36,10 @@ interface EditInfoProps {
     isVisible: boolean;
     onClose: () => void;
     userInfo: UserInfo;
+    onEditSuccess: () => void;
 }
 
-const EditInfo: React.FC<EditInfoProps> = ({ isVisible, onClose, userInfo }) => {
+const EditInfo: React.FC<EditInfoProps> = ({ isVisible, onClose, userInfo, onEditSuccess }) => {
     const [inituserInfo, setUserInfo] = useState<UserInfo>(userInfo);
     const [nickName, setNickName] = useState<string>(userInfo?.nickName);
     const [uni, setUni] = useState<string | null>(null);
@@ -130,6 +131,7 @@ const EditInfo: React.FC<EditInfoProps> = ({ isVisible, onClose, userInfo }) => 
             });
             console.log(inituserInfo);
             onClose();
+            onEditSuccess();
         } else if (res.status === 400) {
             try {
                 const newAccessToken = await refreshAccessToken();

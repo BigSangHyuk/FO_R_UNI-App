@@ -174,7 +174,12 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                 }
                 rightContainerStyle={{ flex: 1, justifyContent: 'center' }}
             />
-            <EditInfo isVisible={isEditModalVisible} onClose={() => setIsEditModalVisible(false)} userInfo={userInfo} />
+            <EditInfo
+                isVisible={isEditModalVisible}
+                onClose={() => setIsEditModalVisible(false)}
+                userInfo={userInfo}
+                onEditSuccess={() => GetInfo()}
+            />
             <View style={{ alignItems: 'center' }}>
                 <View style={styles.profileContainer}>
                     {userInfo && userInfo.image && (
