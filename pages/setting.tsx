@@ -1,7 +1,10 @@
 import React, { FC, useState } from 'react';
-import { View, Text, StyleSheet, Switch, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Switch, TextInput, Alert } from 'react-native';
 import { Header, Button } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Http from '../address/backend_url';
+import { getStorage } from '../auth/asyncstorage';
 
 interface SettingProps {
     handleLogOut: () => void;
@@ -37,6 +40,44 @@ const Setting: FC<SettingProps> = ({ handleLogOut }) => {
 
     const handleSendFeedback = () => {
         console.log('Feedback submitted:', feedback);
+    };
+
+    const withdraw = async () => {
+        try {
+            const accessToken = await getStorage('accessToken');
+            const res = await fetch(Http + '/leave', {
+                method: 'DELETE',
+                headers: {
+                    accept: '*/*',
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            if (res.ok) {
+                console.log('회원탈퇴 성공');
+                handleLogOut();
+            } else {
+                console.error('회원탈퇴 실패', res.status);
+            }
+        } catch (error) {
+            console.error('회원탈퇴 중 에러 발생', error);
+        }
+    };
+
+    const goAlert = () => {
+        Alert.alert(
+            '회원 탈퇴',
+            '회원 탈퇴시 모든 정보가 삭제됩니다. 탈퇴하시겠습니까?',
+            [
+                { text: '아니오', onPress: () => console.log('No'), style: 'cancel' },
+                {
+                    text: '네',
+                    onPress: () => withdraw(),
+                },
+            ],
+            { cancelable: false }
+        );
     };
 
     return (
@@ -126,6 +167,11 @@ const Setting: FC<SettingProps> = ({ handleLogOut }) => {
                 )}
                 <View style={styles.separator} />
                 <View style={styles.itemContainer}>
+                    <Text style={styles.item}>탈퇴하기</Text>
+                    <Icon name="account-cancel" size={25} onPress={goAlert} />
+                </View>
+                <View style={styles.separator} />
+                <View style={styles.itemContainer}>
                     <Text style={styles.item}>About us</Text>
                     <Icons name="keyboard-arrow-down" size={25} onPress={toggleAbout} />
                 </View>
@@ -208,3 +254,6 @@ const styles = StyleSheet.create({
 });
 
 export default Setting;
+function asnyc() {
+    throw new Error('Function not implemented.');
+}
