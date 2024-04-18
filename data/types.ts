@@ -24,7 +24,7 @@ export interface UserLike {
 }
 
 export interface UserEdit {
-    departmentType: string;
+    department: string;
     nickName: string;
     image: string;
 }
