@@ -23,11 +23,18 @@ const App = ({ navigation }: AppProps) => {
     const handleLogin = () => {
         setIsLoggedIn(true);
     };
+    const checkAutoLogin = async () => {
+        const autoLoginValue = await AsyncStorage.getItem('autoLogin');
+        if (autoLoginValue === 'true') {
+            handleLogin();
+        }
+    };
 
     const handleLogOut = async () => {
         const accessToken = await getStorage('accessToken');
         console.log('로그아웃시도');
         setIsLoggedIn(false);
+        await AsyncStorage.removeItem('autoLogin');
         const res = await fetch(Http + `/log-out`, {
             method: 'POST',
             headers: {

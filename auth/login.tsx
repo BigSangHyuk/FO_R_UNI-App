@@ -86,6 +86,8 @@ const LogIn: React.FC<LogInProps> = ({ navigation, handleLogin }) => {
                 handleLogin();
                 if (autoLogin) {
                     await AsyncStorage.setItem('autoLogin', 'true');
+                } else {
+                    await AsyncStorage.removeItem('autoLogin'); 
                 }
             } else {
                 console.log('실패');
