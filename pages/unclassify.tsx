@@ -1,16 +1,22 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Switch, TextInput, FlatList } from 'react-native';
 import { Header, Button } from 'react-native-elements';
 import Http from '../address/backend_url';
 import { getStorage } from '../auth/asyncstorage';
+import { UnClassified } from '../data/types';
 
 const UnClassify: FC = () => {
+    const [unclass, setUnclass] = useState<UnClassified | null>(null);
     const comment = [
         { title: 'Item 5', duration: '3월 11일' },
         { title: 'Item 6', duration: '60min' },
         { title: 'Item 7', duration: '30min' },
         { title: 'Item 7', duration: '30min' },
     ];
+
+    useEffect(() => {
+        unclassified();
+    }, []);
 
     const unclassified = async () => {
         const accessToken = await getStorage('accessToken');
@@ -22,6 +28,12 @@ const UnClassify: FC = () => {
                 accept: 'application/json',
             },
         });
+        if (res.status === 200) {
+            const result = await res.json();
+            console.log(result);
+        } else {
+            console.log('실패');
+        }
     };
     return (
         <View style={styles.container}>
