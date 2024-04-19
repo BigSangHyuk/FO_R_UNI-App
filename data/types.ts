@@ -28,3 +28,10 @@ export interface UserEdit {
     nickName: string;
     image: string;
 }
+
+export interface UnClassified {
+    postId: number;
+    deadline: null;
+    title: string;
+    category: string;
+}

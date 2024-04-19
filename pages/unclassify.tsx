@@ -1,6 +1,8 @@
 import React, { FC, useState } from 'react';
 import { View, Text, StyleSheet, Switch, TextInput, FlatList } from 'react-native';
 import { Header, Button } from 'react-native-elements';
+import Http from '../address/backend_url';
+import { getStorage } from '../auth/asyncstorage';
 
 const UnClassify: FC = () => {
     const comment = [
@@ -9,6 +11,18 @@ const UnClassify: FC = () => {
         { title: 'Item 7', duration: '30min' },
         { title: 'Item 7', duration: '30min' },
     ];
+
+    const unclassified = async () => {
+        const accessToken = await getStorage('accessToken');
+        const res = await fetch(Http + '/posts/unclassified', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+                accept: 'application/json',
+            },
+        });
+    };
     return (
         <View style={styles.container}>
             <Header
