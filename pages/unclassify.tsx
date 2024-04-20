@@ -3,16 +3,10 @@ import { View, Text, StyleSheet, FlatList, TouchableWithoutFeedback } from 'reac
 import { Header } from 'react-native-elements';
 import Http from '../address/backend_url';
 import { getStorage } from '../auth/asyncstorage';
-
-interface UnClassifiedItem {
-    postId: number;
-    category: string;
-    title: string;
-    deadline: string;
-}
+import { UnClassified } from '../data/types';
 
 const UnClassify: FC = () => {
-    const [unclass, setUnclass] = useState<UnClassifiedItem[] | null>(null);
+    const [unclass, setUnclass] = useState<UnClassified[] | null>(null);
 
     useEffect(() => {
         const unclassified = async () => {
