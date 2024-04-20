@@ -55,6 +55,11 @@ const Scrap: FC = () => {
                     </View>
                 )}
                 keyExtractor={(item) => item.postId.toString()}
+                ListEmptyComponent={() => (
+                    <View style={styles.emptyContainer}>
+                        <Text style={styles.emptyText}>아무것도 스크랩하지 않았습니다.</Text>
+                    </View>
+                )}
                 contentContainerStyle={styles.listContainer}
             />
         </View>
