@@ -1,40 +1,41 @@
 import React, { FC, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Switch, TextInput, FlatList } from 'react-native';
-import { Header, Button } from 'react-native-elements';
+import { View, Text, StyleSheet, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { Header } from 'react-native-elements';
 import Http from '../address/backend_url';
 import { getStorage } from '../auth/asyncstorage';
-import { UnClassified } from '../data/types';
+
+interface UnClassifiedItem {
+    postId: number;
+    category: string;
+    title: string;
+    deadline: string;
+}
 
 const UnClassify: FC = () => {
-    const [unclass, setUnclass] = useState<UnClassified | null>(null);
-    const comment = [
-        { title: 'Item 5', duration: '3월 11일' },
-        { title: 'Item 6', duration: '60min' },
-        { title: 'Item 7', duration: '30min' },
-        { title: 'Item 7', duration: '30min' },
-    ];
+    const [unclass, setUnclass] = useState<UnClassifiedItem[] | null>(null);
 
     useEffect(() => {
+        const unclassified = async () => {
+            const accessToken = await getStorage('accessToken');
+            const res = await fetch(Http + '/posts/unclassified', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                    accept: 'application/json',
+                },
+            });
+            if (res.status === 200) {
+                const result = await res.json();
+                setUnclass(result.data);
+            } else {
+                console.log('Request failed');
+            }
+        };
+
         unclassified();
     }, []);
 
-    const unclassified = async () => {
-        const accessToken = await getStorage('accessToken');
-        const res = await fetch(Http + '/posts/unclassified', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`,
-                accept: 'application/json',
-            },
-        });
-        if (res.status === 200) {
-            const result = await res.json();
-            console.log(result);
-        } else {
-            console.log('실패');
-        }
-    };
     return (
         <View style={styles.container}>
             <Header
@@ -51,31 +52,28 @@ const UnClassify: FC = () => {
                     style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
                 }}
             />
-            <View style={styles.listContainer}>
-                <FlatList
-                    data={comment}
-                    renderItem={({ item }) => (
-                        <View style={styles.item}>
-                            <Text style={styles.itemTitle}>○ {item.title}</Text>
-                            <Text style={styles.itemDuration}>{item.duration}</Text>
-                        </View>
-                    )}
-                    keyExtractor={(item) => item.title}
-                />
-            </View>
+            <FlatList
+                data={unclass}
+                renderItem={({ item }) => (
+                    <View style={styles.item}>
+                        <Text style={styles.itemTitle} numberOfLines={1} ellipsizeMode="tail">
+                            {item.title}
+                        </Text>
+                    </View>
+                )}
+                keyExtractor={(item) => item.postId.toString()}
+                contentContainerStyle={styles.listContainer}
+            />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
+    container: {},
     listContainer: {
-        flex: 1,
-        maxHeight: '70%',
+        flexGrow: 1,
         backgroundColor: '#F6F6F6',
-        marginTop: 32,
+        marginTop: 52,
     },
     item: {
         flexDirection: 'row',
@@ -86,11 +84,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     itemTitle: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: 'bold',
-    },
-    itemDuration: {
-        fontSize: 14,
+        flex: 1,
+        marginRight: 10,
     },
 });
 export default UnClassify;

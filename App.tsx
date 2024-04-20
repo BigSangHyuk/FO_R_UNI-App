@@ -38,36 +38,34 @@ const App = () => {
     }, []);
 
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <View style={styles.container}>
-                <NavigationContainer
-                    theme={{
-                        ...DefaultTheme,
-                        colors: {
-                            ...DefaultTheme.colors,
-                            background: 'white',
-                        },
-                    }}
-                >
-                    <Stack.Navigator>
-                        {isLoggedIn ? (
-                            <Stack.Screen
-                                name="Navigation"
-                                component={() => <Navigation handleLogOut={handleLogOut} />}
-                                options={{ headerShown: false }}
-                            />
-                        ) : (
-                            <Stack.Screen name="LogIn" options={{ headerShown: false }}>
-                                {(props) => <LogIn {...props} handleLogin={handleLogin} />}
-                            </Stack.Screen>
-                        )}
-                        <Stack.Screen name="Info" component={Info} options={{ headerShown: false }} />
-                        <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
-                        <Stack.Screen name="FindPass" component={FindPass} options={{ headerShown: false }} />
-                    </Stack.Navigator>
-                </NavigationContainer>
-            </View>
-        </TouchableWithoutFeedback>
+        <View style={styles.container}>
+            <NavigationContainer
+                theme={{
+                    ...DefaultTheme,
+                    colors: {
+                        ...DefaultTheme.colors,
+                        background: 'white',
+                    },
+                }}
+            >
+                <Stack.Navigator>
+                    {isLoggedIn ? (
+                        <Stack.Screen
+                            name="Navigation"
+                            component={() => <Navigation handleLogOut={handleLogOut} />}
+                            options={{ headerShown: false }}
+                        />
+                    ) : (
+                        <Stack.Screen name="LogIn" options={{ headerShown: false }}>
+                            {(props) => <LogIn {...props} handleLogin={handleLogin} />}
+                        </Stack.Screen>
+                    )}
+                    <Stack.Screen name="Info" component={Info} options={{ headerShown: false }} />
+                    <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
+                    <Stack.Screen name="FindPass" component={FindPass} options={{ headerShown: false }} />
+                </Stack.Navigator>
+            </NavigationContainer>
+        </View>
     );
 };
 
