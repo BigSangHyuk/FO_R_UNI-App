@@ -35,3 +35,10 @@ export interface UnClassified {
     title: string;
     category: string;
 }
+
+export interface Scrapped {
+    postId: number;
+    deadline: null;
+    title: string;
+    category: string;
+}
