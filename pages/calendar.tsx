@@ -9,6 +9,7 @@ import {
     TouchableWithoutFeedback,
     ScrollView,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
@@ -119,9 +120,6 @@ const CalendarComponent: FC = () => {
                     {
                         text: '확인',
                         onPress: () => {
-                            // 여기에 일정 등록 로직을 추가하세요.
-                            // 사용자로부터 일정 정보를 입력 받아 처리할 수 있습니다.
-                            // 예: 일정 모달을 열거나, 다른 화면으로 이동하여 일정을 입력 받습니다.
                             console.log('일정이 등록되었습니다:', selectedDate);
                         },
                     },
@@ -158,27 +156,33 @@ const CalendarComponent: FC = () => {
 
     return (
         <View style={styles.container}>
-            <Header
-                containerStyle={{
-                    borderBottomWidth: 0,
-                    backgroundColor: 'white',
-                    marginTop: 20,
-                    alignItems: 'center',
-                    paddingHorizontal: 20,
-                }}
-                backgroundColor="white"
-                barStyle="default"
-                centerComponent={{
-                    text: selectedMonth,
-                    style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
-                }}
-                rightComponent={
-                    <TouchableOpacity>
-                        <Icons name="filter-list" size={25} style={{ color: '#BDBDBD' }} onPress={handleOpenFilter} />
-                    </TouchableOpacity>
-                }
-                rightContainerStyle={{ flex: 1, justifyContent: 'center' }}
-            />
+            <LinearGradient style={styles.linear} colors={['skyblue', 'white']}>
+                <Header
+                    containerStyle={{
+                        borderBottomWidth: 0,
+                        backgroundColor: 'transparent',
+                        marginTop: 20,
+                        alignItems: 'center',
+                        paddingHorizontal: 20,
+                    }}
+                    barStyle="default"
+                    centerComponent={{
+                        text: selectedMonth,
+                        style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
+                    }}
+                    rightComponent={
+                        <TouchableOpacity>
+                            <Icons
+                                name="filter-list"
+                                size={25}
+                                style={{ color: '#BDBDBD' }}
+                                onPress={handleOpenFilter}
+                            />
+                        </TouchableOpacity>
+                    }
+                    rightContainerStyle={{ flex: 1, justifyContent: 'center' }}
+                />
+            </LinearGradient>
             <View style={styles.calendarContainer}>
                 <Calendar
                     style={styles.calendar}
@@ -225,6 +229,11 @@ const CalendarComponent: FC = () => {
 };
 
 const styles = StyleSheet.create({
+    linear: {
+        backgroundColor: '#15106b',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     container: {
         flex: 1,
     },
@@ -238,7 +247,7 @@ const styles = StyleSheet.create({
     },
     postsContainer: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: 'transparent',
         marginTop: 17,
         borderRadius: 10,
         padding: 10,
