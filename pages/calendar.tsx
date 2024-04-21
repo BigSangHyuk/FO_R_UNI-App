@@ -48,10 +48,23 @@ interface Post {
 }
 
 const CalendarComponent: FC = () => {
+    const getGradientColorsByMonth = (month: number) => {
+        if (month >= 12 || month <= 2) {
+            return ['#0064CD', '#5ABEF5', 'white'];
+        } else if (month >= 3 && month <= 5) {
+            return ['#FFDC3C', '#FFFF96', 'white'];
+        } else if (month >= 6 && month <= 8) {
+            return ['#3CB371', '#82F9B7', 'white'];
+        } else if (month >= 9 && month <= 11) {
+            return ['#FFA500', '#FFEB46', 'white'];
+        }
+    };
+
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
     const [selectedMonth, setSelectedMonth] = useState<string>(moment().format('M월'));
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [markedDates, setMarkedDates] = useState<MarkedDates>({});
+    const [gradientColors, setGradientColors] = useState<string[]>(getGradientColorsByMonth(moment().month() + 1));
     const [posts, setPosts] = useState<Post[]>([]);
     const flatListRef = useRef<FlatList | null>(null);
 
@@ -90,7 +103,9 @@ const CalendarComponent: FC = () => {
     }, []);
 
     const handleMonthChange = (month: DateData) => {
+        const monthNumber = moment(month.dateString).month() + 1;
         setSelectedMonth(moment(month.dateString).format('M월'));
+        setGradientColors(getGradientColorsByMonth(monthNumber));
     };
 
     const handleOpenFilter = () => {
@@ -156,7 +171,7 @@ const CalendarComponent: FC = () => {
 
     return (
         <View style={styles.container}>
-            <LinearGradient style={styles.linear} colors={['skyblue', 'white']}>
+            <LinearGradient style={styles.linear} colors={gradientColors}>
                 <Header
                     containerStyle={{
                         borderBottomWidth: 0,
