@@ -9,6 +9,7 @@ import {
     Image,
     TouchableWithoutFeedback,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Header } from 'react-native-elements';
 import EditInfo from './editProfile/editinfo';
 import Icons from 'react-native-vector-icons/MaterialIcons';
@@ -26,7 +27,6 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [userComment, setUserComment] = useState<UserComment[]>(null);
     const [userLike, setUserLike] = useState<UserLike[]>(null);
-    const [image, setImage] = useState<UserEdit | string>('');
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [editImageOverlayVisible, setEditImageOverlayVisible] = useState<boolean>(false);
 
@@ -221,32 +221,34 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     return (
         <TouchableWithoutFeedback onPress={hideImageEditOverlay}>
             <View>
-                <Header
-                    containerStyle={{
-                        borderBottomWidth: 0,
-                        backgroundColor: 'white',
-                        marginTop: 20,
-                        alignItems: 'center',
-                        paddingHorizontal: 20,
-                    }}
-                    backgroundColor="white"
-                    barStyle="default"
-                    centerComponent={{
-                        text: '내 정보',
-                        style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
-                    }}
-                    rightComponent={
-                        <TouchableOpacity onPress={() => {}}>
-                            <Icons
-                                name="edit"
-                                size={25}
-                                style={{ color: '#BDBDBD' }}
-                                onPress={() => setIsEditModalVisible(true)}
-                            />
-                        </TouchableOpacity>
-                    }
-                    rightContainerStyle={{ flex: 1, justifyContent: 'center' }}
-                />
+                <LinearGradient style={styles.linear} colors={['#FF7A85', '#FFC0CB', 'white']}>
+                    <Header
+                        containerStyle={{
+                            borderBottomWidth: 0,
+                            backgroundColor: 'transparent',
+                            marginTop: 20,
+                            alignItems: 'center',
+                            paddingHorizontal: 20,
+                        }}
+                        backgroundColor="white"
+                        barStyle="default"
+                        centerComponent={{
+                            text: '내 정보',
+                            style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
+                        }}
+                        rightComponent={
+                            <TouchableOpacity onPress={() => {}}>
+                                <Icons
+                                    name="edit"
+                                    size={25}
+                                    style={{ color: '#BDBDBD' }}
+                                    onPress={() => setIsEditModalVisible(true)}
+                                />
+                            </TouchableOpacity>
+                        }
+                        rightContainerStyle={{ flex: 1, justifyContent: 'center' }}
+                    />
+                </LinearGradient>
                 <EditInfo
                     isVisible={isEditModalVisible}
                     onClose={() => setIsEditModalVisible(false)}
@@ -292,7 +294,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                             ]}
                         >
                             <Text style={{ fontSize: 16, fontWeight: '600' }}>
-                                {isToggled ? '내가 댓글 남긴 글' : '좋아요 한 댓글'}
+                                {isToggled ? '내가 댓글 남긴 글' : '좋아요한 댓글'}
                             </Text>
                         </Animated.View>
                     </TouchableOpacity>
@@ -312,6 +314,11 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                                     </View>
                                 )}
                                 keyExtractor={(item) => item.postId.toString()}
+                                ListEmptyComponent={() => (
+                                    <View style={styles.emptyContainer}>
+                                        <Text style={styles.emptyText}>남긴 댓글이 없습니다.</Text>
+                                    </View>
+                                )}
                             />
                         ) : (
                             <FlatList
@@ -322,6 +329,11 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                                     </View>
                                 )}
                                 keyExtractor={(item) => item.postId.toString()}
+                                ListEmptyComponent={() => (
+                                    <View style={styles.emptyContainer}>
+                                        <Text style={styles.emptyText}>좋아요한 댓글이 없습니다.</Text>
+                                    </View>
+                                )}
                             />
                         )}
                     </View>
@@ -332,6 +344,11 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+    linear: {
+        backgroundColor: '#15106b',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     profileContainer: {
         width: 158,
         height: 158,
@@ -352,6 +369,7 @@ const styles = StyleSheet.create({
         width: 133,
         height: 72,
         marginTop: 15,
+        backgroundColor: 'transparent',
     },
     depart: {
         marginBottom: 9,
@@ -412,14 +430,7 @@ const styles = StyleSheet.create({
         width: 158,
         height: 158,
         borderRadius: 158 / 2,
-        // 다른 스타일을 필요에 따라 추가하세요.
     },
-    // profileImage: {
-    //     width: 158,
-    //     height: 158,
-    //     borderRadius: 79,
-    // },
-    addImageText: {},
     overlay: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: 'rgba(0,0,0,0.5)',
@@ -429,6 +440,16 @@ const styles = StyleSheet.create({
     },
     overlayText: {
         color: 'white',
+    },
+    emptyContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: 20,
+    },
+    emptyText: {
+        fontSize: 20,
+        color: 'gray',
     },
 });
 
