@@ -6,8 +6,9 @@ import {
     FlatList,
     Alert,
     TouchableOpacity,
-    TouchableWithoutFeedback,
-    ScrollView,
+    PanResponder,
+    Dimensions,
+    Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Header } from 'react-native-elements';
@@ -66,7 +67,7 @@ const CalendarComponent: FC = () => {
     const [markedDates, setMarkedDates] = useState<MarkedDates>({});
     const [gradientColors, setGradientColors] = useState<string[]>(getGradientColorsByMonth(moment().month() + 1));
     const [posts, setPosts] = useState<Post[]>([]);
-    const flatListRef = useRef<FlatList | null>(null);
+    const filterTranslateX = useRef(new Animated.Value(Dimensions.get('window').width)).current;
 
     useEffect(() => {
         const fetchedPosts: Post[] = [
@@ -100,16 +101,42 @@ const CalendarComponent: FC = () => {
             };
         });
         setMarkedDates(markedDatesObj);
-    }, []);
 
+        if (!isFilterOpen) {
+            filterTranslateX.setValue(Dimensions.get('window').width);
+        }
+    }, [isFilterOpen]);
+    const panResponder = useRef(
+        PanResponder.create({
+            onMoveShouldSetPanResponder: () => true,
+            onPanResponderMove: Animated.event([null, { dx: filterTranslateX }], { useNativeDriver: false }),
+            onPanResponderRelease: (evt, gestureState) => {
+                if (gestureState.dx > 50) {
+                    Animated.spring(filterTranslateX, {
+                        toValue: Dimensions.get('window').width,
+                        useNativeDriver: true,
+                    }).start(() => setIsFilterOpen(false));
+                } else {
+                    Animated.spring(filterTranslateX, {
+                        toValue: 0,
+                        useNativeDriver: true,
+                    }).start();
+                }
+            },
+        })
+    ).current;
+
+    const handleOpenFilter = () => {
+        setIsFilterOpen(true);
+        Animated.spring(filterTranslateX, {
+            toValue: 0,
+            useNativeDriver: true,
+        }).start();
+    };
     const handleMonthChange = (month: DateData) => {
         const monthNumber = moment(month.dateString).month() + 1;
         setSelectedMonth(moment(month.dateString).format('M월'));
         setGradientColors(getGradientColorsByMonth(monthNumber));
-    };
-
-    const handleOpenFilter = () => {
-        setIsFilterOpen((prev) => !prev);
     };
 
     const handleDayPress = (day: DateData) => {
@@ -226,9 +253,12 @@ const CalendarComponent: FC = () => {
                 />
             </View>
             {isFilterOpen && (
-                <View style={styles.overlay}>
-                    <Filter isFilterOpen={false} onCloseFilter={() => setIsFilterOpen(false)} />;
-                </View>
+                <Animated.View
+                    style={[styles.overlay, { transform: [{ translateX: filterTranslateX }] }]}
+                    {...panResponder.panHandlers}
+                >
+                    <Filter isFilterOpen={true} onCloseFilter={() => setIsFilterOpen(false)} />
+                </Animated.View>
             )}
             <View style={{ flex: 1, marginTop: 100 }}>
                 <FlatList

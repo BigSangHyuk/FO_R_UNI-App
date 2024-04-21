@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 30,
-        marginTop: 30,
+        marginTop: 70,
     },
     filterContainer: {
         width: '65%',
