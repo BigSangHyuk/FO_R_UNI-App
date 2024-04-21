@@ -57,7 +57,7 @@ const CalendarComponent: FC = () => {
         } else if (month >= 6 && month <= 8) {
             return ['#3CB371', '#82F9B7', 'white'];
         } else if (month >= 9 && month <= 11) {
-            return ['#FFA500', '#FFEB46', 'white'];
+            return ['#DB631F', '#F4A460', 'white'];
         }
     };
 
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     },
     overlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'transparent',
         zIndex: 999,
     },
 });
