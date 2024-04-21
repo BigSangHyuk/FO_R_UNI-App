@@ -149,28 +149,6 @@ const CalendarComponent: FC = () => {
         return [];
     };
 
-    const handleLongPress = () => {
-        if (selectedDate) {
-            Alert.alert(
-                '일정 등록',
-                `일정을 등록하시겠습니까? (${moment(selectedDate).format('YYYY-MM-DD')})`,
-                [
-                    {
-                        text: '취소',
-                        style: 'cancel',
-                    },
-                    {
-                        text: '확인',
-                        onPress: () => {
-                            console.log('일정이 등록되었습니다:', selectedDate);
-                        },
-                    },
-                ],
-                { cancelable: false }
-            );
-        }
-    };
-
     const renderItem = ({ item }: { item: Post }) => (
         <View style={styles.item}>
             <Text>{item.title}</Text>
@@ -246,7 +224,6 @@ const CalendarComponent: FC = () => {
                         ...(selectedDate && { [selectedDate]: { selected: true, selectedColor: '#4DBFFF' } }),
                     }}
                     onDayPress={handleDayPress}
-                    onDayLongPress={handleLongPress}
                     markingType={'multi-dot'}
                     horizontal={true}
                     pagingEnabled={true}
