@@ -42,3 +42,18 @@ export interface Scrapped {
     title: string;
     category: string;
 }
+
+export interface Posts {
+    id: number;
+    category: string;
+    title: string;
+    content: string;
+    imageUrl: string[];
+    views: number;
+    postedAt: string;
+    deadline: string;
+    noticeUrl: string;
+    reported: boolean;
+    postReportCount: number;
+    classified: boolean;
+}
