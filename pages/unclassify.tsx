@@ -4,9 +4,12 @@ import { Header } from 'react-native-elements';
 import Http from '../address/backend_url';
 import { getStorage } from '../auth/asyncstorage';
 import { UnClassified } from '../data/types';
+import { Posts } from '../data/types';
 
 const UnClassify: FC = () => {
     const [unclass, setUnclass] = useState<UnClassified[] | null>(null);
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [selectedPost, setSelectedPost] = useState<Posts[] | null>(null);
 
     useEffect(() => {
         const unclassified = async () => {
@@ -30,8 +33,26 @@ const UnClassify: FC = () => {
         unclassified();
     }, []);
 
+    const fetchPostDetails = async (postId) => {
+        const accessToken = await getStorage('accessToken');
+        const res = await fetch(Http + `/posts/${postId}`, {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        if (res.status === 200) {
+            const result = await res.json();
+            setSelectedPost(result.detail);
+            setModalVisible(true);
+        } else {
+            console.log('Request failed');
+        }
+    };
+
     return (
-        <View style={styles.container}>
+        <View>
             <Header
                 containerStyle={{
                     borderBottomWidth: 0,
@@ -63,7 +84,6 @@ const UnClassify: FC = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {},
     listContainer: {
         flexGrow: 1,
         backgroundColor: '#F6F6F6',
