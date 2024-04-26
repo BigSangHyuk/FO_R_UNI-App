@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Header } from 'react-native-elements';
-import EditInfo from './editProfile/editinfo';
+import EditInfo from './modals/editinfo';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Http from '../address/backend_url';

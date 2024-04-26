@@ -1,10 +1,11 @@
-import React, { FC, useState } from 'react';
-import { View, Text, StyleSheet, Switch, TextInput, Alert } from 'react-native';
+import React, { FC, useRef, useState } from 'react';
+import { View, Text, StyleSheet, Switch, TextInput, Alert, Animated } from 'react-native';
 import { Header, Button } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Http from '../address/backend_url';
 import { getStorage } from '../auth/asyncstorage';
+import EditPass from './modals/editpass';
 
 interface SettingProps {
     handleLogOut: () => void;
@@ -17,6 +18,18 @@ const Setting: FC<SettingProps> = ({ handleLogOut }) => {
     const [about, setAbout] = useState<boolean>(false);
     const [contact, setContact] = useState<boolean>(false);
     const [feedback, setFeedback] = useState<string>('');
+    const [isToggled, setIsToggled] = useState<boolean>(false);
+    const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
+    const slideAnimation = useRef(new Animated.Value(0)).current;
+
+    const handleToggle = () => {
+        setIsToggled((previousState) => !previousState);
+        Animated.timing(slideAnimation, {
+            toValue: isToggled ? 0 : 1,
+            duration: 400,
+            useNativeDriver: false,
+        }).start();
+    };
 
     const togglePushSwitch = () => {
         setPushEnabled((prevState) => !prevState);
@@ -95,6 +108,13 @@ const Setting: FC<SettingProps> = ({ handleLogOut }) => {
                     text: '설정',
                     style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
                 }}
+                leftComponent={
+                    <View style={styles.rightContainer}>
+                        <Text style={styles.leftText} numberOfLines={1} onPress={() => setIsEditModalVisible(true)}>
+                            비밀번호 변경
+                        </Text>
+                    </View>
+                }
                 rightComponent={
                     <View style={styles.rightContainer}>
                         <Text style={styles.rightText} onPress={handleLogOut}>
@@ -102,6 +122,11 @@ const Setting: FC<SettingProps> = ({ handleLogOut }) => {
                         </Text>
                     </View>
                 }
+            />
+            <EditPass
+                isVisible={isEditModalVisible}
+                onClose={() => setIsEditModalVisible(false)}
+                onEditSuccess={() => close()}
             />
             <View style={[styles.separator, { marginTop: 18 }]} />
             <View style={[styles.settingContainer, { alignSelf: 'center' }]}>
@@ -202,6 +227,11 @@ const styles = StyleSheet.create({
         marginRight: 10,
         marginTop: 19,
     },
+    leftText: {
+        fontSize: 12,
+        marginRight: 10,
+        marginTop: 19,
+    },
     separator: {
         height: 1,
         backgroundColor: '#000',
@@ -254,6 +284,3 @@ const styles = StyleSheet.create({
 });
 
 export default Setting;
-function asnyc() {
-    throw new Error('Function not implemented.');
-}

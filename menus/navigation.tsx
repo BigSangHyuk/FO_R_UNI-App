@@ -5,7 +5,7 @@ import CalendarComponent from '../pages/calendar';
 import Mypage from '../pages/mypage';
 import Setting from '../pages/setting';
 import UnClassify from '../pages/unclassify';
-import Scrap from '../pages/editProfile/scrap';
+import Scrap from '../pages/scrap';
 import { StyleSheet, View } from 'react-native';
 
 const Tab = createBottomTabNavigator();

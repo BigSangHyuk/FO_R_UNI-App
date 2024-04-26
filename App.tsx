@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LogIn from './auth/login';
 import FindPass from './auth/findPass';
 import SignIn from './auth/signin';
-import Info from './auth/Info';
+import Info from './auth/info';
 import Navigation from './menus/navigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

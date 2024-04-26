@@ -1,9 +1,9 @@
 import React, { FC, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Switch, TextInput, FlatList } from 'react-native';
 import { Header, Button } from 'react-native-elements';
-import Http from '../../address/backend_url';
-import { Scrapped } from '../../data/types';
-import { getStorage } from '../../auth/asyncstorage';
+import Http from '../address/backend_url';
+import { Scrapped } from '../data/types';
+import { getStorage } from '../auth/asyncstorage';
 const Scrap: FC = () => {
     const [isscrapped, setIsScrapped] = useState<Scrapped[] | null>(null);
 
