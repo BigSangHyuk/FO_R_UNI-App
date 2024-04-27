@@ -68,7 +68,7 @@ const CalendarComponent: FC = () => {
     const [gradientColors, setGradientColors] = useState<string[]>(getGradientColorsByMonth(moment().month() + 1));
     const [posts, setPosts] = useState<Post[]>([]);
     const filterTranslateX = useRef(new Animated.Value(Dimensions.get('window').width)).current;
-
+    const [currentDate, setCurrentDate] = useState(moment().format('YYYY-MM-DD'));
     useEffect(() => {
         const fetchedPosts: Post[] = [
             {
@@ -125,6 +125,11 @@ const CalendarComponent: FC = () => {
             },
         })
     ).current;
+
+    const handleTodayPress = () => {
+        setSelectedMonth(moment().format('M월'));
+        setGradientColors(getGradientColorsByMonth(moment().month() + 1));
+    };
 
     const handleOpenFilter = () => {
         setIsFilterOpen(true);
@@ -190,17 +195,23 @@ const CalendarComponent: FC = () => {
                         text: selectedMonth,
                         style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
                     }}
+                    leftComponent={
+                        <TouchableOpacity>
+                            <Icons name="today" size={30} style={{ color: '#BDBDBD' }} onPress={handleTodayPress} />
+                        </TouchableOpacity>
+                    }
+                    leftContainerStyle={{ justifyContent: 'center' }}
                     rightComponent={
                         <TouchableOpacity>
                             <Icons
                                 name="filter-list"
-                                size={25}
+                                size={30}
                                 style={{ color: '#BDBDBD' }}
                                 onPress={handleOpenFilter}
                             />
                         </TouchableOpacity>
                     }
-                    rightContainerStyle={{ flex: 1, justifyContent: 'center' }}
+                    rightContainerStyle={{ justifyContent: 'center' }}
                 />
             </LinearGradient>
             <View style={styles.calendarContainer}>
