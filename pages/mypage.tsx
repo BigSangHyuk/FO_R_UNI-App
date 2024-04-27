@@ -240,7 +240,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                             <TouchableOpacity onPress={() => {}}>
                                 <Icons
                                     name="edit"
-                                    size={25}
+                                    size={30}
                                     style={{ color: '#BDBDBD' }}
                                     onPress={() => setIsEditModalVisible(true)}
                                 />
