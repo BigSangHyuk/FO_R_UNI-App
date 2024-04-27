@@ -9,10 +9,10 @@ import {
     Dimensions,
     ScrollView,
     Keyboard,
+    Alert,
 } from 'react-native';
-import { UserInfo } from '../../data/types';
+import { useNavigation } from '@react-navigation/native';
 import { Input, Button } from 'react-native-elements';
-import Icons from 'react-native-vector-icons/MaterialIcons';
 import Http from '../../address/backend_url';
 import { getStorage, refreshAccessToken } from '../../auth/asyncstorage';
 
@@ -20,9 +20,10 @@ interface EditPassProps {
     isVisible: boolean;
     onClose: () => void;
     onEditSuccess: () => void;
+    handleLogOut: () => void;
 }
 
-const EditPass: React.FC<EditPassProps> = ({ isVisible, onClose, onEditSuccess }) => {
+const EditPass: React.FC<EditPassProps> = ({ isVisible, onClose, handleLogOut, onEditSuccess }) => {
     const [oldpass, setOldPass] = useState<string>('');
     const [newpass, setNewPass] = useState<string>('');
     const [newpassconfirm, setNewPassConfirm] = useState<string>('');
@@ -30,7 +31,7 @@ const EditPass: React.FC<EditPassProps> = ({ isVisible, onClose, onEditSuccess }
     const [passwordMessage, setPasswordMessage] = useState<string>('');
     const [isPassword, setIsPassword] = useState<boolean>(false);
     const [passwordConfirmMessage, setPasswordConfirmMessage] = useState<string>('');
-
+    const navigate = useNavigation();
     const passEdit = async () => {
         const accessToken = await getStorage('accessToken');
         const res = await fetch(Http + `/users/password`, {
@@ -42,14 +43,27 @@ const EditPass: React.FC<EditPassProps> = ({ isVisible, onClose, onEditSuccess }
             },
             body: JSON.stringify({
                 oldPassword: oldpass,
-                newpassword: newpass,
+                newPassword: newpass,
             }),
         });
+        console.log('Status Code:', res.status);
         if (res.status === 200) {
-            console.log(oldpass, newpass);
-            onClose();
-            onEditSuccess();
-        } else if (res.status === 400) {
+            console.log('Password change successful');
+            Alert.alert(
+                '비밀번호 변경',
+                '비밀번호가 변경되었습니다. 다시 로그인해주세요.',
+                [
+                    {
+                        text: '확인',
+                        onPress: () => {
+                            console.log('Alert confirmed');
+                            na;
+                        },
+                    },
+                ],
+                { cancelable: false }
+            );
+        } else if (res.status === 401) {
             try {
                 const newAccessToken = await refreshAccessToken();
                 if (newAccessToken) {
@@ -61,7 +75,7 @@ const EditPass: React.FC<EditPassProps> = ({ isVisible, onClose, onEditSuccess }
                 console.error('Refresh token process failed:', error);
             }
         } else {
-            console.error('Error fetching user info:', res.status);
+            console.error('bbb오류: ', res.status);
         }
     };
 

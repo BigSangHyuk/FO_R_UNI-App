@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { StyleSheet, View } from 'react-native';
+import { NavigationContainer, DefaultTheme, NavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LogIn from './auth/login';
 import FindPass from './auth/findPass';
@@ -19,10 +19,20 @@ const App = () => {
     };
 
     const handleLogOut = async () => {
-        console.log('로그아웃시도');
-        setIsLoggedIn(false);
-        await AsyncStorage.removeItem('autoLogin');
-        console.log('로그아웃');
+        console.log('로그아웃 시도');
+        try {
+            await AsyncStorage.removeItem('autoLogin');
+            await AsyncStorage.removeItem('accessToken'); // If you store accessToken, remove it as well.
+            setIsLoggedIn(false);
+            // Use reset to clear the navigation stack and bring the user back to the login screen
+            navigationRef.current?.reset({
+                index: 0,
+                routes: [{ name: 'LogIn' }],
+            });
+            console.log('로그아웃 완료');
+        } catch (error) {
+            console.error('로그아웃 에러:', error);
+        }
     };
 
     useEffect(() => {
@@ -74,5 +84,5 @@ const styles = StyleSheet.create({
         flex: 1,
     },
 });
-
+export const navigationRef = React.createRef();
 export default App;

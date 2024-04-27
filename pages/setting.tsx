@@ -127,6 +127,7 @@ const Setting: FC<SettingProps> = ({ handleLogOut }) => {
                 isVisible={isEditModalVisible}
                 onClose={() => setIsEditModalVisible(false)}
                 onEditSuccess={() => close()}
+                handleLogOut={handleLogOut}
             />
             <View style={[styles.separator, { marginTop: 18 }]} />
             <View style={[styles.settingContainer, { alignSelf: 'center' }]}>
