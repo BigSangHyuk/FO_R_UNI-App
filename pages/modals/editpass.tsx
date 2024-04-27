@@ -31,7 +31,6 @@ const EditPass: React.FC<EditPassProps> = ({ isVisible, onClose, handleLogOut, o
     const [passwordMessage, setPasswordMessage] = useState<string>('');
     const [isPassword, setIsPassword] = useState<boolean>(false);
     const [passwordConfirmMessage, setPasswordConfirmMessage] = useState<string>('');
-    const navigate = useNavigation();
     const passEdit = async () => {
         const accessToken = await getStorage('accessToken');
         const res = await fetch(Http + `/users/password`, {
@@ -51,13 +50,12 @@ const EditPass: React.FC<EditPassProps> = ({ isVisible, onClose, handleLogOut, o
             console.log('Password change successful');
             Alert.alert(
                 '비밀번호 변경',
-                '비밀번호가 변경되었습니다. 다시 로그인해주세요.',
+                '비밀번호가 변경되었습니다.',
                 [
                     {
                         text: '확인',
                         onPress: () => {
-                            console.log('Alert confirmed');
-                            na;
+                            onClose();
                         },
                     },
                 ],
