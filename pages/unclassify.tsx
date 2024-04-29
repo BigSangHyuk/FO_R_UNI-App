@@ -113,42 +113,44 @@ const UnClassify: FC = () => {
                     style: { color: 'black', fontSize: 34, fontWeight: 'bold' },
                 }}
             />
-            <View style={styles.searchContainer}>
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="검색할 제목을 입력하세요"
-                    value={searchKeyword}
-                    onChangeText={(text) => setSearchKeyword(text)}
+            <View style={{ marginTop: 30 }}>
+                <View style={styles.searchContainer}>
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="검색할 제목을 입력하세요"
+                        value={searchKeyword}
+                        onChangeText={(text) => setSearchKeyword(text)}
+                    />
+                    <TouchableOpacity onPress={fetchPostsBySearch}>
+                        <Icons name="search" size={25} color="#000" />
+                    </TouchableOpacity>
+                </View>
+                <FlatList
+                    data={filteredData}
+                    ListEmptyComponent={renderEmptyComponent}
+                    renderItem={({ item }) => (
+                        <TouchableWithoutFeedback
+                            onPress={() => {
+                                setSelectedPost(item);
+                                setModalVisible(true);
+                            }}
+                        >
+                            <View style={styles.item}>
+                                <Text style={styles.itemTitle}>{item.title}</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
+                    )}
+                    keyExtractor={(item) => item.postId.toString()}
+                    contentContainerStyle={styles.listContainer}
                 />
-                <TouchableOpacity onPress={fetchPostsBySearch}>
-                    <Icons name="search" size={25} color="#000" />
-                </TouchableOpacity>
-            </View>
-            <FlatList
-                data={filteredData}
-                ListEmptyComponent={renderEmptyComponent}
-                renderItem={({ item }) => (
-                    <TouchableWithoutFeedback
-                        onPress={() => {
-                            setSelectedPost(item);
-                            setModalVisible(true);
-                        }}
-                    >
-                        <View style={styles.item}>
-                            <Text style={styles.itemTitle}>{item.title}</Text>
-                        </View>
-                    </TouchableWithoutFeedback>
+                {selectedPost && (
+                    <UnclassifyDetail
+                        modalVisible={modalVisible}
+                        selectedPost={selectedPost}
+                        setModalVisible={setModalVisible}
+                    />
                 )}
-                keyExtractor={(item) => item.postId.toString()}
-                contentContainerStyle={styles.listContainer}
-            />
-            {selectedPost && (
-                <UnclassifyDetail
-                    modalVisible={modalVisible}
-                    selectedPost={selectedPost}
-                    setModalVisible={setModalVisible}
-                />
-            )}
+            </View>
         </View>
     );
 };
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
     listContainer: {
         flexGrow: 1,
         backgroundColor: '#F6F6F6',
-        marginTop: 52,
+        marginTop: 15,
     },
     item: {
         flexDirection: 'row',
