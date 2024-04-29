@@ -1,14 +1,32 @@
 import React, { FC, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Switch, TextInput, FlatList } from 'react-native';
-import { Header, Button } from 'react-native-elements';
+import {
+    View,
+    Text,
+    StyleSheet,
+    FlatList,
+    TouchableWithoutFeedback,
+    Modal,
+    TouchableOpacity,
+    TextInput,
+} from 'react-native';
+import { Header } from 'react-native-elements';
 import Http from '../address/backend_url';
-import { Scrapped } from '../data/types';
 import { getStorage } from '../auth/asyncstorage';
+import { Scrapped } from '../data/types';
+import Icons from 'react-native-vector-icons/MaterialIcons';
+
 const Scrap: FC = () => {
-    const [isscrapped, setIsScrapped] = useState<Scrapped[] | null>(null);
+    const [scrapped, setScrapped] = useState<Scrapped[] | null>(null);
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [selectedPost, setSelectedPost] = useState<Scrapped | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [searchKeyword, setSearchKeyword] = useState<string>('');
+    const [filteredData, setFilteredData] = useState<Scrapped[] | null>(null);
+    const [searchInitiated, setSearchInitiated] = useState<boolean>(false);
 
     useEffect(() => {
-        const scrapped = async () => {
+        const fetchScrapped = async () => {
+            setIsLoading(true);
             const accessToken = await getStorage('accessToken');
             const res = await fetch(Http + '/posts/scrapped', {
                 method: 'GET',
@@ -20,48 +38,107 @@ const Scrap: FC = () => {
             });
             if (res.status === 200) {
                 const result = await res.json();
-                setIsScrapped(result.data);
+                setScrapped(result.data);
+                setFilteredData(result.data);
             } else {
                 console.log('Request failed');
             }
+            setIsLoading(false);
         };
 
-        scrapped();
+        fetchScrapped();
     }, []);
+
+    const fetchPostsBySearch = async () => {
+        setSearchInitiated(true);
+        setIsLoading(true);
+        const accessToken = await getStorage('accessToken');
+        try {
+            const res = await fetch(`${Http}/posts/search?keyword=${encodeURIComponent(searchKeyword)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            if (res.status === 200) {
+                const result = await res.json();
+                const filteredPosts = result.data.filter((post) =>
+                    post.title.toLowerCase().includes(searchKeyword.toLowerCase())
+                );
+                setFilteredData(filteredPosts);
+            } else {
+                console.log('Search request failed');
+                setFilteredData([]);
+            }
+        } catch (error) {
+            console.error('Search failed', error);
+            setFilteredData([]);
+        }
+        setIsLoading(false);
+    };
+
+    const renderEmptyComponent = () => {
+        if (searchInitiated) {
+            return (
+                <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>아무것도 스크랩하지 않았습니다.</Text>
+                </View>
+            );
+        }
+        return null;
+    };
+
+    if (isLoading) {
+        return (
+            <View style={styles.centeredView}>
+                <Text>불러오는중...</Text>
+            </View>
+        );
+    }
 
     return (
         <View style={styles.container}>
             <Header
-                containerStyle={{
-                    borderBottomWidth: 0,
-                    backgroundColor: 'white',
-                    marginTop: 20,
-                    alignItems: 'center',
-                }}
-                backgroundColor="white"
-                barStyle="default"
+                containerStyle={styles.headerContainer}
                 centerComponent={{
                     text: '스크랩한 게시물',
-                    style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
+                    style: styles.headerText,
                 }}
             />
-            <FlatList
-                data={isscrapped}
-                renderItem={({ item }) => (
-                    <View style={styles.item}>
-                        <Text style={styles.itemTitle} numberOfLines={1} ellipsizeMode="tail">
-                            {item.title}
-                        </Text>
-                    </View>
-                )}
-                keyExtractor={(item) => item.postId.toString()}
-                ListEmptyComponent={() => (
-                    <View style={styles.emptyContainer}>
-                        <Text style={styles.emptyText}>아무것도 스크랩하지 않았습니다.</Text>
-                    </View>
-                )}
-                contentContainerStyle={styles.listContainer}
-            />
+            <View style={styles.contentContainer}>
+                <View style={styles.searchContainer}>
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="검색할 제목을 입력하세요"
+                        value={searchKeyword}
+                        onChangeText={(text) => setSearchKeyword(text)}
+                    />
+                    <TouchableOpacity onPress={fetchPostsBySearch}>
+                        <Icons name="search" size={25} color="#000" />
+                    </TouchableOpacity>
+                </View>
+                <FlatList
+                    data={filteredData}
+                    ListEmptyComponent={renderEmptyComponent}
+                    renderItem={({ item }) => (
+                        <TouchableWithoutFeedback
+                            onPress={() => {
+                                setSelectedPost(item);
+                                setModalVisible(true);
+                            }}
+                        >
+                            <View style={styles.item}>
+                                <Text style={styles.itemTitle}>{item.title}</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
+                    )}
+                    keyExtractor={(item) => item.postId.toString()}
+                    contentContainerStyle={styles.listContainer}
+                />
+                {/* Add Modal detail view if needed */}
+            </View>
         </View>
     );
 };
@@ -70,11 +147,24 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    headerContainer: {
+        borderBottomWidth: 0,
+        backgroundColor: 'white',
+        justifyContent: 'space-around',
+    },
+    headerText: {
+        color: 'black',
+        fontSize: 34,
+        fontWeight: 'bold',
+    },
+    contentContainer: {
+        flex: 1,
+        marginTop: 30,
+    },
     listContainer: {
         flexGrow: 1,
         backgroundColor: '#F6F6F6',
-        marginTop: 52,
-        justifyContent: 'center',
+        marginTop: 15,
     },
     item: {
         flexDirection: 'row',
@@ -90,13 +180,34 @@ const styles = StyleSheet.create({
         flex: 1,
         marginRight: 10,
     },
-    emptyContainer: {
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
-        margin: 20,
+        marginTop: 22,
+    },
+    emptyContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     emptyText: {
         fontSize: 20,
         color: 'gray',
     },
+    searchContainer: {
+        flexDirection: 'row',
+        backgroundColor: '#fff',
+        width: '50%',
+        marginLeft: 'auto',
+    },
+    searchInput: {
+        flex: 1,
+        borderColor: '#ddd',
+        borderWidth: 1,
+        borderRadius: 5,
+        margin: 'auto',
+    },
 });
+
 export default Scrap;
