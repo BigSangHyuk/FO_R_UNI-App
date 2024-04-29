@@ -62,7 +62,7 @@ const CalendarComponent: FC = () => {
     };
 
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
-    const [selectedMonth, setSelectedMonth] = useState<string>(moment().format('M월'));
+    const [selectedMonth, setSelectedMonth] = useState<string>(moment().format('YYYY년 M월'));
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [markedDates, setMarkedDates] = useState<MarkedDates>({});
     const [gradientColors, setGradientColors] = useState<string[]>(getGradientColorsByMonth(moment().month() + 1));
@@ -126,11 +126,6 @@ const CalendarComponent: FC = () => {
         })
     ).current;
 
-    const handleTodayPress = () => {
-        setSelectedMonth(moment().format('M월'));
-        setGradientColors(getGradientColorsByMonth(moment().month() + 1));
-    };
-
     const handleOpenFilter = () => {
         setIsFilterOpen(true);
         Animated.spring(filterTranslateX, {
@@ -140,7 +135,7 @@ const CalendarComponent: FC = () => {
     };
     const handleMonthChange = (month: DateData) => {
         const monthNumber = moment(month.dateString).month() + 1;
-        setSelectedMonth(moment(month.dateString).format('M월'));
+        setSelectedMonth(moment(month.dateString).format('YYYY년 M월'));
         setGradientColors(getGradientColorsByMonth(monthNumber));
     };
 
@@ -195,12 +190,6 @@ const CalendarComponent: FC = () => {
                         text: selectedMonth,
                         style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
                     }}
-                    leftComponent={
-                        <TouchableOpacity>
-                            <Icons name="today" size={30} style={{ color: '#BDBDBD' }} onPress={handleTodayPress} />
-                        </TouchableOpacity>
-                    }
-                    leftContainerStyle={{ justifyContent: 'center' }}
                     rightComponent={
                         <TouchableOpacity>
                             <Icons
@@ -218,6 +207,7 @@ const CalendarComponent: FC = () => {
                 <Calendar
                     style={styles.calendar}
                     theme={calendarTheme}
+                    initialDate={currentDate}
                     hideExtraDays={true}
                     onMonthChange={(month: any) => {
                         handleMonthChange(month);
