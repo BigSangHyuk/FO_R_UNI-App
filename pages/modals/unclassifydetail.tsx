@@ -23,6 +23,7 @@ const UnclassifyDetail = ({ modalVisible, selectedPost, setModalVisible }) => {
                         {selectedPost ? (
                             <View>
                                 <Text style={styles.modalTitle}>{selectedPost.title}</Text>
+                                <Text style={styles.modalCategory}>{selectedPost.category}</Text>
                                 <Text style={styles.modalText}>{selectedPost.content}</Text>
 
                                 <TouchableOpacity style={styles.linkStyle} onPress={openURL}>
@@ -75,14 +76,21 @@ const styles = StyleSheet.create({
     modalTitle: {
         textAlign: 'center',
         color: '#1B1B1B',
-        fontSize: 16,
+        fontSize: 20,
         fontWeight: 'bold',
     },
     modalText: {
         marginBottom: 15,
         textAlign: 'center',
         color: '#1B1B1B',
-        fontSize: 13,
+        fontSize: 15,
+    },
+    modalCategory: {
+        marginLeft: 'auto',
+        marginTop: 5,
+        textAlign: 'center',
+        color: '#1B1B1B',
+        fontSize: 16,
     },
     linkStyle: {
         marginTop: 10,
