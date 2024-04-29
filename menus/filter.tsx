@@ -7,17 +7,16 @@ interface FilterProp {
     onCloseFilter: () => void;
 }
 const Filter: FC<FilterProp> = ({ isFilterOpen, onCloseFilter }) => {
-    const [allChecked, setAllChecked] = useState(false);
+    const [allChecked, setAllChecked] = useState(true);
     const [checkboxes, setCheckboxes] = useState([
-        { id: 1, title: '학사', checked: false, color: '#dcdcdc' },
-        { id: 2, title: '학점교류', checked: false, color: 'red' },
-        { id: 3, title: '일반/행사/모집', checked: false, color: 'orange' },
-        { id: 4, title: '장학금', checked: false, color: 'yellow' },
-        { id: 5, title: '등록금 납부', checked: false, color: 'green' },
-        { id: 6, title: '교육시험', checked: false, color: 'blue' },
-        { id: 7, title: '봉사', checked: false, color: 'indigo' },
-        { id: 8, title: '채용', checked: false, color: 'purple' },
-        { id: 9, title: '학과', checked: false, color: 'black' },
+        { id: 1, title: '학사', checked: true, color: '#dcdcdc' },
+        { id: 2, title: '학점교류', checked: true, color: 'red' },
+        { id: 3, title: '일반/행사/모집', checked: true, color: 'orange' },
+        { id: 4, title: '장학금', checked: true, color: 'yellow' },
+        { id: 5, title: '등록금 납부', checked: true, color: 'green' },
+        { id: 6, title: '교육시험', checked: true, color: 'blue' },
+        { id: 7, title: '봉사', checked: true, color: 'purple' },
+        { id: 8, title: '학과', checked: true, color: 'black' },
     ]);
 
     const toggleCheckbox = (id: number) => {
@@ -29,13 +28,9 @@ const Filter: FC<FilterProp> = ({ isFilterOpen, onCloseFilter }) => {
     };
 
     const toggleSelect = () => {
-        setAllChecked(!allChecked);
-        setCheckboxes((prevCheckboxes) =>
-            prevCheckboxes.map((checkbox) => ({
-                ...checkbox,
-                checked: !allChecked,
-            }))
-        );
+        const newAllChecked = !allChecked;
+        setAllChecked(newAllChecked);
+        setCheckboxes(checkboxes.map((checkbox) => ({ ...checkbox, checked: newAllChecked })));
     };
 
     const closFilter = () => {
