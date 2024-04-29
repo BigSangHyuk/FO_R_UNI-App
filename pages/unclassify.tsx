@@ -11,9 +11,11 @@ const UnClassify: FC = () => {
     const [unclass, setUnclass] = useState<UnClassified[] | null>(null);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [selectedPost, setSelectedPost] = useState<Posts[] | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    useEffect(() => {
+   useEffect(() => {
         const unclassified = async () => {
+            setIsLoading(true);
             const accessToken = await getStorage('accessToken');
             const res = await fetch(Http + '/posts/unclassified', {
                 method: 'GET',
@@ -29,12 +31,14 @@ const UnClassify: FC = () => {
             } else {
                 console.log('Request failed');
             }
+            setIsLoading(false);
         };
 
         unclassified();
     }, []);
 
     const fetchPostDetails = async (postId: number) => {
+        setIsLoading(true);
         const accessToken = await getStorage('accessToken');
         const res = await fetch(Http + `/posts/${postId}`, {
             method: 'GET',
@@ -50,7 +54,16 @@ const UnClassify: FC = () => {
         } else {
             console.log('Request failed');
         }
+        setIsLoading(false);
     };
+
+    if (isLoading) {
+        return (
+            <View style={styles.centeredView}>
+                <Text>불러오는중...</Text>
+            </View>
+        );
+    }
 
     return (
         <View>
