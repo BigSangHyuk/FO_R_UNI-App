@@ -1,5 +1,7 @@
 import React from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView, Dimensions } from 'react-native';
+
+const { height } = Dimensions.get('window');
 
 const UnclassifyDetail = ({ modalVisible, selectedPost, setModalVisible }) => {
     const openURL = () => {
@@ -17,18 +19,20 @@ const UnclassifyDetail = ({ modalVisible, selectedPost, setModalVisible }) => {
         >
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                    {selectedPost ? (
-                        <View>
-                            <Text style={styles.modalTitle}>{selectedPost.title}</Text>
-                            <Text style={styles.modalText}>{selectedPost.content}</Text>
+                    <ScrollView contentContainerStyle={styles.scrollView}>
+                        {selectedPost ? (
+                            <View>
+                                <Text style={styles.modalTitle}>{selectedPost.title}</Text>
+                                <Text style={styles.modalText}>{selectedPost.content}</Text>
 
-                            <TouchableOpacity style={styles.linkStyle} onPress={openURL}>
-                                <Text style={styles.linkText}>원문 보기</Text>
-                            </TouchableOpacity>
-                        </View>
-                    ) : (
-                        <Text>불러오는 중...</Text>
-                    )}
+                                <TouchableOpacity style={styles.linkStyle} onPress={openURL}>
+                                    <Text style={styles.linkText}>원문 보기</Text>
+                                </TouchableOpacity>
+                            </View>
+                        ) : (
+                            <Text>불러오는 중...</Text>
+                        )}
+                    </ScrollView>
                     <TouchableOpacity
                         style={[styles.button, styles.buttonClose]}
                         onPress={() => setModalVisible(!modalVisible)}
@@ -63,6 +67,10 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
         width: '90%',
+        maxHeight: height * 0.7,
+    },
+    scrollView: {
+        flexGrow: 1,
     },
     modalTitle: {
         textAlign: 'center',
