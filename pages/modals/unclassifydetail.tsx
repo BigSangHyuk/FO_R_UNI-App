@@ -1,6 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView, Dimensions } from 'react-native';
-
 const { height } = Dimensions.get('window');
 
 const UnclassifyDetail = ({ modalVisible, selectedPost, setModalVisible }) => {
@@ -12,7 +11,7 @@ const UnclassifyDetail = ({ modalVisible, selectedPost, setModalVisible }) => {
         <Modal
             animationType="slide"
             transparent={true}
-            visible={modalVisible}
+            visible={modalVisible && selectedPost != null}
             onRequestClose={() => {
                 setModalVisible(!modalVisible);
             }}
