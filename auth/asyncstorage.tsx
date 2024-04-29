@@ -25,6 +25,8 @@ export const refreshAccessToken = async () => {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
+                accept: '*/*',
+                credential: 'include',
             },
             body: JSON.stringify({
                 userId: Number(userId),
