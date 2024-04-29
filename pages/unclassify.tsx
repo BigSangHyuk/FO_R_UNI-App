@@ -5,6 +5,7 @@ import Http from '../address/backend_url';
 import { getStorage } from '../auth/asyncstorage';
 import { UnClassified } from '../data/types';
 import { Posts } from '../data/types';
+import UnclassifyDetail from './modals/unclassifydetail';
 
 const UnClassify: FC = () => {
     const [unclass, setUnclass] = useState<UnClassified[] | null>(null);
@@ -33,7 +34,7 @@ const UnClassify: FC = () => {
         unclassified();
     }, []);
 
-    const fecthPostDetails = async (postId: number) => {
+    const fetchPostDetails = async (postId: number) => {
         const accessToken = await getStorage('accessToken');
         const res = await fetch(Http + `/posts/${postId}`, {
             method: 'GET',
@@ -70,41 +71,39 @@ const UnClassify: FC = () => {
             <FlatList
                 data={unclass}
                 renderItem={({ item }) => (
-                    <View style={styles.item}>
-                        <Text style={styles.itemTitle} numberOfLines={1} ellipsizeMode="tail">
-                            {item.title}
-                        </Text>
-                    </View>
+                    <TouchableWithoutFeedback onPress={() => fetchPostDetails(item.postId)}>
+                        <View style={styles.item}>
+                            <Text style={styles.itemTitle} numberOfLines={1} ellipsizeMode="tail">
+                                {item.title}
+                            </Text>
+                        </View>
+                    </TouchableWithoutFeedback>
                 )}
                 keyExtractor={(item) => item.postId.toString()}
                 contentContainerStyle={styles.listContainer}
             />
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    setModalVisible(!modalVisible);
-                }}
-            >
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        {selectedPost ? (
-                            <>
-                                <Text style={styles.modalText}></Text>
-                            </>
-                        ) : (
-                            <Text>불러오는중...</Text>
-                        )}
-                        <TouchableOpacity
-                            style={[styles.button, styles.buttonClose]}
-                            onPress={() => setModalVisible(!modalVisible)}
-                        >
-                            <Text style={styles.textStyle}>닫기</Text>
-                        </TouchableOpacity>
-                    </View>
+            <UnclassifyDetail
+                modalVisible={modalVisible}
+                selectedPost={selectedPost}
+                setModalVisible={setModalVisible}
+            />
+            <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                    {selectedPost ? (
+                        <>
+                            <Text style={styles.modalText}></Text>
+                        </>
+                    ) : (
+                        <Text>불러오는중...</Text>
+                    )}
+                    <TouchableOpacity
+                        style={[styles.button, styles.buttonClose]}
+                        onPress={() => setModalVisible(!modalVisible)}
+                    >
+                        <Text style={styles.textStyle}>닫기</Text>
+                    </TouchableOpacity>
                 </View>
-            </Modal>
+            </View>
         </View>
     );
 };
