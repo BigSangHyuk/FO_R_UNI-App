@@ -83,8 +83,8 @@ const UnClassify: FC = () => {
     const renderEmptyComponent = () => {
         if (searchInitiated) {
             return (
-                <View style={styles.centeredView}>
-                    <Text>해당 게시글이 없습니다.</Text>
+                <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>해당 게시글이 없습니다.</Text>
                 </View>
             );
         }
@@ -100,20 +100,15 @@ const UnClassify: FC = () => {
     }
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={styles.container}>
             <Header
-                containerStyle={{
-                    borderBottomWidth: 0,
-                    backgroundColor: 'white',
-                    justifyContent: 'space-around',
-                }}
-                backgroundColor="white"
+                containerStyle={styles.headerContainer}
                 centerComponent={{
                     text: '미분류 게시글',
-                    style: { color: 'black', fontSize: 34, fontWeight: 'bold' },
+                    style: styles.headerText,
                 }}
             />
-            <View style={{ marginTop: 30 }}>
+            <View style={styles.contentContainer}>
                 <View style={styles.searchContainer}>
                     <TextInput
                         style={styles.searchInput}
@@ -156,6 +151,23 @@ const UnClassify: FC = () => {
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    headerContainer: {
+        borderBottomWidth: 0,
+        backgroundColor: 'white',
+        justifyContent: 'space-around',
+    },
+    headerText: {
+        color: 'black',
+        fontSize: 34,
+        fontWeight: 'bold',
+    },
+    contentContainer: {
+        flex: 1,
+        marginTop: 30,
+    },
     listContainer: {
         flexGrow: 1,
         backgroundColor: '#F6F6F6',
@@ -181,40 +193,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 22,
     },
-    modalView: {
+    emptyContainer: {
         margin: 20,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 35,
+        flex: 1,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
+        justifyContent: 'center',
     },
-    button: {
-        borderRadius: 20,
-        padding: 10,
-        elevation: 2,
-    },
-    buttonOpen: {
-        backgroundColor: '#F194FF',
-    },
-    buttonClose: {
-        backgroundColor: '#2196F3',
-    },
-    textStyle: {
-        color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    modalText: {
-        marginBottom: 15,
-        textAlign: 'center',
+    emptyText: {
+        fontSize: 20,
+        color: 'gray',
     },
     searchContainer: {
         flexDirection: 'row',
