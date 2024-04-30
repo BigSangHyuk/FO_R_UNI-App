@@ -1,25 +1,16 @@
 import React, { FC, useState, useEffect } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    FlatList,
-    TouchableWithoutFeedback,
-    Modal,
-    TouchableOpacity,
-    TextInput,
-} from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableWithoutFeedback, TouchableOpacity, TextInput } from 'react-native';
 import { Header } from 'react-native-elements';
 import Http from '../address/backend_url';
 import { getStorage } from '../auth/asyncstorage';
-import { UnClassified } from '../data/types';
+import { UnClassified, Posts } from '../data/types';
 import UnclassifyDetail from './modals/unclassifydetail';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 
 const UnClassify: FC = () => {
     const [unclass, setUnclass] = useState<UnClassified[] | null>(null);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
-    const [selectedPost, setSelectedPost] = useState<UnClassified | null>(null);
+    const [selectedPost, setSelectedPost] = useState<Posts | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const [filteredData, setFilteredData] = useState<UnClassified[] | null>(null);
@@ -49,6 +40,26 @@ const UnClassify: FC = () => {
 
         unclassified();
     }, []);
+
+    const fetchPostDetails = async (postId: number) => {
+        setIsLoading(true);
+        const accessToken = await getStorage('accessToken');
+        const res = await fetch(Http + `/posts/${postId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        if (res.status === 200) {
+            const result = await res.json();
+            setSelectedPost(result.detail);
+            setModalVisible(true);
+        } else {
+            console.log('Request failed');
+        }
+        setIsLoading(false);
+    };
 
     const fetchPostsBySearch = async () => {
         setSearchInitiated(true);
@@ -124,12 +135,7 @@ const UnClassify: FC = () => {
                     data={filteredData}
                     ListEmptyComponent={renderEmptyComponent}
                     renderItem={({ item }) => (
-                        <TouchableWithoutFeedback
-                            onPress={() => {
-                                setSelectedPost(item);
-                                setModalVisible(true);
-                            }}
-                        >
+                        <TouchableWithoutFeedback onPress={() => fetchPostDetails(item.postId)}>
                             <View style={styles.item}>
                                 <Text style={styles.itemTitle}>{item.title}</Text>
                             </View>
@@ -217,4 +223,5 @@ const styles = StyleSheet.create({
         margin: 'auto',
     },
 });
+
 export default UnClassify;
