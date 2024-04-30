@@ -92,7 +92,7 @@ const UnClassify: FC = () => {
     };
 
     const renderEmptyComponent = () => {
-        if (searchInitiated) {
+        if (!filteredData || filteredData.length === 0) {
             return (
                 <View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>해당 게시글이 없습니다.</Text>
