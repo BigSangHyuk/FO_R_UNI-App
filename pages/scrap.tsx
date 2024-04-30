@@ -1,11 +1,22 @@
-import React, { FC, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableWithoutFeedback, TouchableOpacity, TextInput } from 'react-native';
+import React, { FC, useState, useEffect, useRef } from 'react';
+import {
+    View,
+    Text,
+    StyleSheet,
+    FlatList,
+    TouchableWithoutFeedback,
+    TouchableOpacity,
+    TextInput,
+    Alert,
+} from 'react-native';
 import { Header } from 'react-native-elements';
 import Http from '../address/backend_url';
 import { getStorage } from '../auth/asyncstorage';
+import { Swipeable } from 'react-native-gesture-handler';
 import { Scrapped } from '../data/types';
 import { Posts } from '../data/types';
-import Icons from 'react-native-vector-icons/MaterialIcons';
+import Icons from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import ScrapDetail from './modals/scrapdetail';
 
 const Scrap: FC = () => {
@@ -16,6 +27,8 @@ const Scrap: FC = () => {
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const [filteredData, setFilteredData] = useState<Scrapped[] | null>(null);
     const [searchInitiated, setSearchInitiated] = useState<boolean>(false);
+    const [refreshData, setRefreshData] = useState<boolean>(false);
+    const swipeableRef = useRef(null);
 
     useEffect(() => {
         const fetchScrapped = async () => {
@@ -40,7 +53,7 @@ const Scrap: FC = () => {
         };
 
         fetchScrapped();
-    }, []);
+    }, [refreshData]);
 
     const fetchPostDetails = async (postId: number) => {
         setIsLoading(true);
@@ -92,8 +105,31 @@ const Scrap: FC = () => {
         setIsLoading(false);
     };
 
+    const unscrapPost = async (postId: number) => {
+        const accessToken = await getStorage('accessToken');
+        try {
+            const res = await fetch(`${Http}/posts/unscrap/${postId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            if (res.status === 200) {
+                setFilteredData((currentData) => currentData.filter((item) => item.postId !== postId));
+                setRefreshData((old) => !old);
+            } else {
+                console.log('삭제 실패');
+            }
+        } catch (error) {
+            console.error('Deletion failed', error);
+        }
+        setIsLoading(false);
+    };
+
     const renderEmptyComponent = () => {
-        if (searchInitiated) {
+        if (!filteredData || filteredData.length === 0) {
             return (
                 <View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>아무것도 스크랩하지 않았습니다.</Text>
@@ -110,6 +146,33 @@ const Scrap: FC = () => {
             </View>
         );
     }
+
+    const handleDelete = (postId: number) => {
+        if (swipeableRef.current) {
+            swipeableRef.current.close();
+        }
+        Alert.alert('스크랩 삭제하기', '스크랩한 게시물을 삭제하시겠습니까?', [
+            {
+                text: '예',
+                onPress: () => unscrapPost(postId),
+            },
+            {
+                text: '아니오',
+            },
+        ]);
+    };
+    const renderRightActions = (progress, dragX, postId) => {
+        return (
+            <TouchableOpacity
+                onPress={() => {
+                    return handleDelete(postId);
+                }}
+                style={styles.deleteButton}
+            >
+                <Icons name="delete" size={25} />
+            </TouchableOpacity>
+        );
+    };
 
     return (
         <View style={styles.container}>
@@ -129,18 +192,23 @@ const Scrap: FC = () => {
                         onChangeText={(text) => setSearchKeyword(text)}
                     />
                     <TouchableOpacity onPress={fetchPostsBySearch}>
-                        <Icons name="search" size={25} color="#000" />
+                        <Icon name="search" size={25} color="#000" />
                     </TouchableOpacity>
                 </View>
                 <FlatList
                     data={filteredData}
                     ListEmptyComponent={renderEmptyComponent}
                     renderItem={({ item }) => (
-                        <TouchableWithoutFeedback onPress={() => fetchPostDetails(item.postId)}>
-                            <View style={styles.item}>
-                                <Text style={styles.itemTitle}>{item.title}</Text>
-                            </View>
-                        </TouchableWithoutFeedback>
+                        <Swipeable
+                            ref={swipeableRef}
+                            renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item.postId)}
+                        >
+                            <TouchableWithoutFeedback onPress={() => fetchPostDetails(item.postId)}>
+                                <View style={styles.item}>
+                                    <Text style={styles.itemTitle}>{item.title}</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </Swipeable>
                     )}
                     keyExtractor={(item) => item.postId.toString()}
                     contentContainerStyle={styles.listContainer}
@@ -221,6 +289,18 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         margin: 'auto',
+    },
+    deleteButton: {
+        backgroundColor: 'red',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 50,
+        height: '100%',
+    },
+    deleteButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
     },
 });
 
