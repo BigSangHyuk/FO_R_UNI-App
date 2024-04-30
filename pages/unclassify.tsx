@@ -1,11 +1,22 @@
-import React, { FC, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableWithoutFeedback, TouchableOpacity, TextInput } from 'react-native';
+import React, { FC, useState, useEffect, useRef } from 'react';
+import {
+    View,
+    Text,
+    StyleSheet,
+    FlatList,
+    TouchableWithoutFeedback,
+    TouchableOpacity,
+    TextInput,
+    Alert,
+} from 'react-native';
 import { Header } from 'react-native-elements';
 import Http from '../address/backend_url';
 import { getStorage } from '../auth/asyncstorage';
 import { UnClassified, Posts } from '../data/types';
 import UnclassifyDetail from './modals/unclassifydetail';
 import Icons from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { Swipeable } from 'react-native-gesture-handler';
 
 const UnClassify: FC = () => {
     const [unclass, setUnclass] = useState<UnClassified[] | null>(null);
@@ -15,6 +26,7 @@ const UnClassify: FC = () => {
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const [filteredData, setFilteredData] = useState<UnClassified[] | null>(null);
     const [searchInitiated, setSearchInitiated] = useState<boolean>(false);
+    const swipeableRef = useRef(null);
 
     useEffect(() => {
         const unclassified = async () => {
@@ -91,6 +103,28 @@ const UnClassify: FC = () => {
         setIsLoading(false);
     };
 
+    const scrapPost = async (postId: number) => {
+        const accessToken = await getStorage('accessToken');
+        try {
+            const res = await fetch(`${Http}/posts/scrap/${postId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            if (res.status === 200) {
+                console.log('성공');
+            } else {
+                console.log('스크랩 실패');
+            }
+        } catch (error) {
+            console.error('Add failed', error);
+        }
+        setIsLoading(false);
+    };
+
     const renderEmptyComponent = () => {
         if (!filteredData || filteredData.length === 0) {
             return (
@@ -109,6 +143,34 @@ const UnClassify: FC = () => {
             </View>
         );
     }
+
+    const handleAdd = (postId: number) => {
+        if (swipeableRef.current) {
+            swipeableRef.current.close();
+        }
+        Alert.alert('스크랩 하기', '해당 게시물을 스크랩하시겠습니까?', [
+            {
+                text: '예',
+                onPress: () => scrapPost(postId),
+            },
+            {
+                text: '아니오',
+            },
+        ]);
+    };
+
+    const renderRightActions = (progress, dragX, postId) => {
+        return (
+            <TouchableOpacity
+                onPress={() => {
+                    return handleAdd(postId);
+                }}
+                style={styles.addButton}
+            >
+                <Icons name="add-circle-outline" size={25} />
+            </TouchableOpacity>
+        );
+    };
 
     return (
         <View style={styles.container}>
@@ -135,11 +197,16 @@ const UnClassify: FC = () => {
                     data={filteredData}
                     ListEmptyComponent={renderEmptyComponent}
                     renderItem={({ item }) => (
-                        <TouchableWithoutFeedback onPress={() => fetchPostDetails(item.postId)}>
-                            <View style={styles.item}>
-                                <Text style={styles.itemTitle}>{item.title}</Text>
-                            </View>
-                        </TouchableWithoutFeedback>
+                        <Swipeable
+                            ref={swipeableRef}
+                            renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item.postId)}
+                        >
+                            <TouchableWithoutFeedback onPress={() => fetchPostDetails(item.postId)}>
+                                <View style={styles.item}>
+                                    <Text style={styles.itemTitle}>{item.title}</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </Swipeable>
                     )}
                     keyExtractor={(item) => item.postId.toString()}
                     contentContainerStyle={styles.listContainer}
@@ -221,6 +288,13 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         margin: 'auto',
+    },
+    addButton: {
+        backgroundColor: '#BEEFFF',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 50,
+        height: '100%',
     },
 });
 
