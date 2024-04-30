@@ -1,24 +1,17 @@
 import React, { FC, useState, useEffect } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    FlatList,
-    TouchableWithoutFeedback,
-    Modal,
-    TouchableOpacity,
-    TextInput,
-} from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableWithoutFeedback, TouchableOpacity, TextInput } from 'react-native';
 import { Header } from 'react-native-elements';
 import Http from '../address/backend_url';
 import { getStorage } from '../auth/asyncstorage';
 import { Scrapped } from '../data/types';
+import { Posts } from '../data/types';
 import Icons from 'react-native-vector-icons/MaterialIcons';
+import UnclassifyDetail from './modals/unclassifydetail';
 
 const Scrap: FC = () => {
     const [scrapped, setScrapped] = useState<Scrapped[] | null>(null);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
-    const [selectedPost, setSelectedPost] = useState<Scrapped | null>(null);
+    const [selectedPost, setSelectedPost] = useState<Posts[] | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const [filteredData, setFilteredData] = useState<Scrapped[] | null>(null);
@@ -48,6 +41,26 @@ const Scrap: FC = () => {
 
         fetchScrapped();
     }, []);
+
+    const fetchPostDetails = async (postId: number) => {
+        setIsLoading(true);
+        const accessToken = await getStorage('accessToken');
+        const res = await fetch(Http + `/posts/${postId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        if (res.status === 200) {
+            const result = await res.json();
+            setSelectedPost(result.detail);
+            setModalVisible(true);
+        } else {
+            console.log('Request failed');
+        }
+        setIsLoading(false);
+    };
 
     const fetchPostsBySearch = async () => {
         setSearchInitiated(true);
@@ -123,12 +136,7 @@ const Scrap: FC = () => {
                     data={filteredData}
                     ListEmptyComponent={renderEmptyComponent}
                     renderItem={({ item }) => (
-                        <TouchableWithoutFeedback
-                            onPress={() => {
-                                setSelectedPost(item);
-                                setModalVisible(true);
-                            }}
-                        >
+                        <TouchableWithoutFeedback onPress={() => fetchPostDetails(item.postId)}>
                             <View style={styles.item}>
                                 <Text style={styles.itemTitle}>{item.title}</Text>
                             </View>
@@ -137,7 +145,13 @@ const Scrap: FC = () => {
                     keyExtractor={(item) => item.postId.toString()}
                     contentContainerStyle={styles.listContainer}
                 />
-                {/* Add Modal detail view if needed */}
+                {selectedPost && (
+                    <UnclassifyDetail
+                        modalVisible={modalVisible}
+                        selectedPost={selectedPost}
+                        setModalVisible={setModalVisible}
+                    />
+                )}
             </View>
         </View>
     );
