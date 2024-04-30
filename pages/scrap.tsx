@@ -112,7 +112,7 @@ const Scrap: FC = () => {
     const unscrapPost = async (postId: number) => {
         const accessToken = await getStorage('accessToken');
         try {
-            const res = await fetch(`${Http}/posts/unscrap/${postId}`, {
+            const res = await fetch(`${Http}/unscrap/${postId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
