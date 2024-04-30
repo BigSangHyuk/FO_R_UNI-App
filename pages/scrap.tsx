@@ -6,7 +6,7 @@ import { getStorage } from '../auth/asyncstorage';
 import { Scrapped } from '../data/types';
 import { Posts } from '../data/types';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import UnclassifyDetail from './modals/unclassifydetail';
+import ScrapDetail from './modals/scrapdetail';
 
 const Scrap: FC = () => {
     const [scrapped, setScrapped] = useState<Scrapped[] | null>(null);
@@ -146,7 +146,7 @@ const Scrap: FC = () => {
                     contentContainerStyle={styles.listContainer}
                 />
                 {selectedPost && (
-                    <UnclassifyDetail
+                    <ScrapDetail
                         modalVisible={modalVisible}
                         selectedPost={selectedPost}
                         setModalVisible={setModalVisible}
