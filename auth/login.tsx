@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Input, Button, Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import { View, TouchableOpacity, Text, StyleSheet, TextStyle } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, TextStyle, Alert } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
 import Http from '../address/backend_url';
 import { CheckBox } from 'react-native-elements';
@@ -87,10 +87,21 @@ const LogIn: React.FC<LogInProps> = ({ navigation, handleLogin }) => {
                 if (autoLogin) {
                     await AsyncStorage.setItem('autoLogin', 'true');
                 } else {
-                    await AsyncStorage.removeItem('autoLogin'); 
+                    await AsyncStorage.removeItem('autoLogin');
                 }
             } else {
                 console.log('실패');
+                Alert.alert(
+                    '로그인 실패',
+                    '아이디 혹은 비밀번호를 확인해주세요',
+                    [
+                        {
+                            text: '확인',
+                            onPress: () => {},
+                        },
+                    ],
+                    { cancelable: false }
+                );
             }
         } catch (error) {
             console.error('에러', error);
