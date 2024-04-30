@@ -15,7 +15,6 @@ import { getStorage } from '../auth/asyncstorage';
 import { UnClassified, Posts } from '../data/types';
 import UnclassifyDetail from './modals/unclassifydetail';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import Icon from 'react-native-vector-icons/Ionicons';
 import { Swipeable } from 'react-native-gesture-handler';
 
 const UnClassify: FC = () => {

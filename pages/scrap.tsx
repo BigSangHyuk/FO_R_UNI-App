@@ -28,33 +28,33 @@ const Scrap: FC = () => {
     const [filteredData, setFilteredData] = useState<Scrapped[] | null>(null);
     const [searchInitiated, setSearchInitiated] = useState<boolean>(false);
     const [refreshData, setRefreshData] = useState<boolean>(false);
+    const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
     const swipeableRef = useRef(null);
 
     useEffect(() => {
-        const fetchScrapped = async () => {
-            setIsLoading(true);
-            const accessToken = await getStorage('accessToken');
-            const res = await fetch(Http + '/posts/scrapped', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${accessToken}`,
-                    accept: 'application/json',
-                },
-            });
-            if (res.status === 200) {
-                const result = await res.json();
-                setScrapped(result.data);
-                setFilteredData(result.data);
-            } else {
-                console.log('Request failed');
-            }
-            setIsLoading(false);
-        };
-
         fetchScrapped();
     }, [refreshData]);
 
+    const fetchScrapped = async () => {
+        setIsLoading(true);
+        const accessToken = await getStorage('accessToken');
+        const res = await fetch(Http + '/posts/scrapped', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+                accept: 'application/json',
+            },
+        });
+        if (res.status === 200) {
+            const result = await res.json();
+            setScrapped(result.data);
+            setFilteredData(result.data);
+        } else {
+            console.log('Request failed');
+        }
+        setIsLoading(false);
+    };
     const fetchPostDetails = async (postId: number) => {
         setIsLoading(true);
         const accessToken = await getStorage('accessToken');
@@ -74,7 +74,11 @@ const Scrap: FC = () => {
         }
         setIsLoading(false);
     };
-
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        await fetchScrapped();
+        setIsRefreshing(false);
+    };
     const fetchPostsBySearch = async () => {
         setSearchInitiated(true);
         setIsLoading(true);
@@ -108,7 +112,7 @@ const Scrap: FC = () => {
     const unscrapPost = async (postId: number) => {
         const accessToken = await getStorage('accessToken');
         try {
-            const res = await fetch(`${Http}/unscrap/${postId}`, {
+            const res = await fetch(`${Http}/posts/unscrap/${postId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -212,6 +216,8 @@ const Scrap: FC = () => {
                     )}
                     keyExtractor={(item) => item.postId.toString()}
                     contentContainerStyle={styles.listContainer}
+                    onRefresh={handleRefresh}
+                    refreshing={isRefreshing}
                 />
                 {selectedPost && (
                     <ScrapDetail
