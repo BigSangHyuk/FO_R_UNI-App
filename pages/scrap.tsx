@@ -108,7 +108,7 @@ const Scrap: FC = () => {
     const unscrapPost = async (postId: number) => {
         const accessToken = await getStorage('accessToken');
         try {
-            const res = await fetch(`${Http}/posts/unscrap/${postId}`, {
+            const res = await fetch(`${Http}/unscrap/${postId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -129,7 +129,7 @@ const Scrap: FC = () => {
     };
 
     const renderEmptyComponent = () => {
-        if (!filteredData || filteredData.length === 0) {
+        if (searchInitiated) {
             return (
                 <View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>아무것도 스크랩하지 않았습니다.</Text>
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
         margin: 'auto',
     },
     deleteButton: {
-        backgroundColor: 'red',
+        backgroundColor: '#FA8282',
         justifyContent: 'center',
         alignItems: 'center',
         width: 50,
