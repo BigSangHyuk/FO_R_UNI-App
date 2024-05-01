@@ -16,6 +16,9 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
 import moment from 'moment';
 import Filter from '../menus/filter';
+import { CalendarPosts } from '../data/types';
+import { getStorage } from '../auth/asyncstorage';
+import Http from '../address/backend_url';
 LocaleConfig.locales['en'] = {
     monthNames: [
         'January',
@@ -41,13 +44,6 @@ interface MarkedDates {
     [key: string]: { marked?: boolean; dots?: { color: string; selectedDotColor: string }[] };
 }
 
-interface Post {
-    id: number;
-    title: string;
-    contents: string;
-    date: string;
-}
-
 const CalendarComponent: FC = () => {
     const getGradientColorsByMonth = (month: number) => {
         if (month >= 12 || month <= 2) {
@@ -66,46 +62,49 @@ const CalendarComponent: FC = () => {
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [markedDates, setMarkedDates] = useState<MarkedDates>({});
     const [gradientColors, setGradientColors] = useState<string[]>(getGradientColorsByMonth(moment().month() + 1));
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [posts, setPosts] = useState<CalendarPosts[]>([]);
     const filterTranslateX = useRef(new Animated.Value(Dimensions.get('window').width)).current;
     const [currentDate, setCurrentDate] = useState(moment().format('YYYY-MM-DD'));
+    const [filter, setFilter] = useState('246-247-248-249-250-252-253');
+    const [currentMonth, setCurrentMonth] = useState(moment().format('YYYY-MM'));
+
     useEffect(() => {
-        const fetchedPosts: Post[] = [
-            {
-                id: 1,
-                title: '제목입니다.',
-                contents: '내용입니다.',
-                date: '2024-03-15',
-            },
-            {
-                id: 2,
-                title: '제목입니다.',
-                contents: '내용입니다.',
-                date: '2024-03-27',
-            },
-            {
-                id: 3,
-                title: '제목입니다.',
-                contents: '내용입니다.',
-                date: '2024-03-27',
-            },
-        ];
-        setPosts(fetchedPosts);
+        const fetchPosts = async () => {
+            const accessToken = await getStorage('accessToken');
+            try {
+                const res = await fetch(`${Http}/posts/filter?date=${currentMonth}&id=${filter}&dept=true`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
 
-        const markedDatesObj: MarkedDates = {};
-        fetchedPosts.forEach((post) => {
-            const formattedDate = moment(post.date).format('YYYY-MM-DD');
-            markedDatesObj[formattedDate] = {
-                marked: true,
-                dots: [{ color: '#4DBFFF', selectedDotColor: '#4DBFFF' }],
-            };
-        });
-        setMarkedDates(markedDatesObj);
+                if (res.status === 200) {
+                    const result = await res.json();
+                    setPosts(result.data);
 
-        if (!isFilterOpen) {
-            filterTranslateX.setValue(Dimensions.get('window').width);
-        }
-    }, [isFilterOpen]);
+                    const newMarkedDates = {};
+                    result.data.forEach((post) => {
+                        const formattedDate = moment(post.deadline).format('YYYY-MM-DD');
+                        newMarkedDates[formattedDate] = {
+                            marked: true,
+                            dots: [{ color: '#4DBFFF', selectedDotColor: '#4DBFFF' }],
+                        };
+                    });
+
+                    setMarkedDates(newMarkedDates);
+                } else {
+                    console.log('Fetch failed:', res.statusText);
+                }
+            } catch (error) {
+                console.error('Fetch API failed', error);
+            }
+        };
+
+        fetchPosts();
+    }, [currentMonth, filter]);
+
     const panResponder = useRef(
         PanResponder.create({
             onMoveShouldSetPanResponder: () => true,
@@ -133,9 +132,11 @@ const CalendarComponent: FC = () => {
             useNativeDriver: true,
         }).start();
     };
-    const handleMonthChange = (month: DateData) => {
+
+    const handleMonthChange = (month) => {
         const monthNumber = moment(month.dateString).month() + 1;
         setSelectedMonth(moment(month.dateString).format('YYYY년 M월'));
+        setCurrentMonth(moment(month.dateString).format('YYYY-MM'));
         setGradientColors(getGradientColorsByMonth(monthNumber));
     };
 
@@ -144,15 +145,15 @@ const CalendarComponent: FC = () => {
     };
     const filterPostsBySelectedDate = () => {
         if (selectedDate) {
-            return posts.filter((post) => moment(post.date).format('YYYY-MM-DD') === selectedDate);
+            return posts.filter((post) => moment(post.deadline).format('YYYY-MM-DD') === selectedDate);
         }
         return [];
     };
 
-    const renderItem = ({ item }: { item: Post }) => (
+    const renderItem = ({ item }: { item: CalendarPosts }) => (
         <View style={styles.item}>
             <Text>{item.title}</Text>
-            <Text>{moment(item.date).format('M월D일')}</Text>
+            <Text>{moment(item.deadline).format('M월D일')}</Text>
         </View>
     );
     const selectedDatePosts = filterPostsBySelectedDate();
@@ -243,7 +244,7 @@ const CalendarComponent: FC = () => {
                     style={styles.postsContainer}
                     data={selectedDatePosts}
                     renderItem={renderItem}
-                    keyExtractor={(item) => item.id.toString()}
+                    keyExtractor={(item) => item.postId.toString()}
                     scrollEnabled={true}
                 />
             </View>

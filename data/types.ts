@@ -57,3 +57,10 @@ export interface Posts {
     postReportCount: number;
     classified: boolean;
 }
+
+export interface CalendarPosts {
+    postId: number;
+    category: string;
+    title: string;
+    deadline: number;
+}

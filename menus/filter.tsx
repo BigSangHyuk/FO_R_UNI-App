@@ -1,7 +1,8 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Switch } from 'react-native';
 import { CheckBox, Button } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
+import { FilterInfo } from '../data/filter';
 interface FilterProp {
     isFilterOpen: boolean;
     onCloseFilter: () => void;
@@ -18,6 +19,7 @@ const Filter: FC<FilterProp> = ({ isFilterOpen, onCloseFilter }) => {
         { id: 7, title: '봉사', checked: true, color: 'purple' },
         { id: 8, title: '학과', checked: true, color: 'black' },
     ]);
+
 
     const toggleCheckbox = (id: number) => {
         setCheckboxes((prevCheckboxes) =>

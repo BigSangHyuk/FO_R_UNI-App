@@ -4,7 +4,7 @@ interface Filter {
     code: string | null;
     id: number | null;
 }
-export const Filter: Filter[] = [
+export const FilterInfo: Filter[] = [
     { label: '학사', value: '학사', code: 'ACADEMY', id: 246 },
     { label: '학점교류', value: '학점교류', code: 'CREDIT_EXCHANGE', id: 247 },
     { label: '일반/행사/모집', value: '일반/행사/모집', code: 'GENERAL', id: 2611 },
