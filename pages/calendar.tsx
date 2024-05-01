@@ -152,8 +152,9 @@ const CalendarComponent: FC = () => {
 
     const renderItem = ({ item }: { item: CalendarPosts }) => (
         <View style={styles.item}>
-            <Text>{item.title}</Text>
-            <Text>{moment(item.deadline).format('M월D일')}</Text>
+            <Text style={{ width: '100%' }} numberOfLines={1} ellipsizeMode="tail">
+                {item.title}
+            </Text>
         </View>
     );
     const selectedDatePosts = filterPostsBySelectedDate();
