@@ -82,26 +82,10 @@ const Scrap: FC = () => {
     const fetchPostsBySearch = async () => {
         setSearchInitiated(true);
         setIsLoading(true);
-        const accessToken = await getStorage('accessToken');
         try {
-            const res = await fetch(`${Http}/posts/search?keyword=${encodeURIComponent(searchKeyword)}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
-
-            if (res.status === 200) {
-                const result = await res.json();
-                const filteredPosts = result.data.filter((post) =>
-                    post.title.toLowerCase().includes(searchKeyword.toLowerCase())
-                );
-                setFilteredData(filteredPosts);
-            } else {
-                console.log('Search request failed');
-                setFilteredData([]);
-            }
+            const filteredPosts =
+                scrapped?.filter((post) => post.title.toLowerCase().includes(searchKeyword.toLowerCase())) || [];
+            setFilteredData(filteredPosts);
         } catch (error) {
             console.error('Search failed', error);
             setFilteredData([]);
