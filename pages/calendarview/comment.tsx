@@ -66,13 +66,14 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         borderTopWidth: 1,
         borderColor: '#E0E0E0',
+        flex: 1,
     },
     textInputContainer: {
         flex: 1,
         flexDirection: 'row',
         backgroundColor: '#F0F0F0',
         borderRadius: 20,
-        paddingRight: 10, // 추가된 오른쪽 패딩
+        paddingRight: 10,
     },
     input: {
         flex: 1,
@@ -82,8 +83,8 @@ const styles = StyleSheet.create({
     },
     icon: {
         position: 'absolute',
-        right: 10, // 아이콘 위치 조정
-        alignSelf: 'center', // 센터 정렬
+        right: 10,
+        alignSelf: 'center',
     },
     commentsList: {
         flex: 1,

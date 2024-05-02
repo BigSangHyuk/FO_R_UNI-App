@@ -1,5 +1,15 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking, Image } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    Linking,
+    Image,
+    TextInput,
+    KeyboardAvoidingView,
+    Platform,
+} from 'react-native';
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
@@ -40,7 +50,7 @@ const CalendarDetailPage = ({ route }) => {
     }, []);
 
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <View style={{ flex: 1 }}>
                 <Header
                     containerStyle={styles.headerContainer}
@@ -67,10 +77,13 @@ const CalendarDetailPage = ({ route }) => {
                     <TouchableOpacity style={styles.linkStyle} onPress={openURL}>
                         <Text style={styles.linkText}>원문 보기</Text>
                     </TouchableOpacity>
-                    <CommentsSection />
+                    {/* <CommentsSection /> */}
                 </ScrollView>
+                <View style={styles.inputContainer}>
+                    <TextInput style={styles.input} placeholder="댓글 입력..." returnKeyType="send" />
+                </View>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -98,7 +111,7 @@ const styles = StyleSheet.create({
     },
     detailContainer: {
         padding: 10,
-        flex: 1,
+        maxHeight: '90%',
     },
     ftitle: {
         fontSize: 20,
@@ -131,6 +144,47 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         fontSize: 16,
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderColor: '#E0E0E0',
+        backgroundColor: 'white',
+    },
+    input: {
+        flex: 1,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        borderRadius: 20,
+        backgroundColor: '#F0F0F0',
+    },
+    textInputContainer: {
+        flexDirection: 'row',
+        backgroundColor: '#F0F0F0',
+        borderRadius: 20,
+        paddingRight: 10,
+    },
+
+    icon: {
+        position: 'absolute',
+        right: 10,
+        alignSelf: 'center',
+    },
+    commentsList: {
+        flex: 1,
+    },
+    commentItem: {
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#EEEEEE',
+    },
+    commentText: {
+        fontSize: 16,
+    },
+    timestamp: {
+        fontSize: 12,
+        color: 'gray',
     },
 });
 
