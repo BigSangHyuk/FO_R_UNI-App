@@ -21,24 +21,15 @@ const CalendarDetailPage = ({ route }) => {
     const titleParts = post.title.match(/(\[.*?\]|\(.*?\))?(.*)/) || ['', '', ''];
     const firstLine = titleParts[1] || '';
     const secondLine = titleParts[2].trim();
-
     useEffect(() => {
-        const parent = navigation.getParent();
-        if (parent) {
-            parent.setOptions({
-                tabBarStyle: { display: 'none' },
-            });
-        }
+        const unsubscribe = navigation.addListener('focus', () => {
+            navigation.setOptions({ tabBarVisible: false });
+        });
 
         return () => {
-            if (parent) {
-                parent.setOptions({
-                    tabBarStyle: {},
-                });
-            }
+            unsubscribe();
         };
-    }, []);
-
+    });
     return (
         <View style={styles.container}>
             <View style={{ flex: 1 }}>
@@ -67,11 +58,11 @@ const CalendarDetailPage = ({ route }) => {
                     <TouchableOpacity style={styles.linkStyle} onPress={openURL}>
                         <Text style={styles.linkText}>원문 보기</Text>
                     </TouchableOpacity>
-                </ScrollView>
-            </View>
-            <View>
-                <ScrollView>
-                    <CommentsSection />
+                    <View>
+                        <ScrollView>
+                            <CommentsSection />
+                        </ScrollView>
+                    </View>
                 </ScrollView>
             </View>
         </View>
@@ -102,7 +93,6 @@ const styles = StyleSheet.create({
     },
     detailContainer: {
         padding: 10,
-        maxHeight: '50%',
         borderBottomWidth: 2,
     },
     ftitle: {

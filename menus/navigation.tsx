@@ -8,23 +8,28 @@ import Setting from '../pages/setting';
 import UnClassify from '../pages/unclassify';
 import Scrap from '../pages/scrap';
 import { StyleSheet, View } from 'react-native';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
 interface NavigationProps {
     handleLogOut: () => void;
 }
+const hideTabBarScreens = ['CalendarDetailPage'];
 
 const Navigation: FC<NavigationProps> = ({ handleLogOut }) => {
     return (
         <View style={styles.container}>
             <Tab.Navigator
-                initialRouteName="CalendarView"
-                screenOptions={{
-                    tabBarStyle: { backgroundColor: 'transparent' },
+                initialRouteName="Calendar"
+                screenOptions={({ route }) => ({
+                    tabBarStyle: {
+                        display: hideTabBarScreens.includes(getFocusedRouteNameFromRoute(route) ?? '')
+                            ? 'none'
+                            : 'flex',
+                    },
                     headerShown: false,
-                    tabBarIcon: ({ color, size }) => <Icons name="calendar-today" color={color} size={size} />,
-                }}
+                })}
             >
                 <Tab.Screen
                     name="Mypage"
@@ -48,7 +53,6 @@ const Navigation: FC<NavigationProps> = ({ handleLogOut }) => {
                     options={{
                         title: '달력',
                         tabBarIcon: ({ color, size }) => <Icons name="calendar-month" color={color} size={size} />,
-                        
                     }}
                 />
                 <Tab.Screen
