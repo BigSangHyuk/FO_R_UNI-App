@@ -28,17 +28,15 @@ const CommentsSection = () => {
                 )}
                 style={styles.commentsList}
             />
-            <KeyboardAvoidingView behavior="padding" style={styles.inputContainer}>
+            <View style={{ flexDirection: 'row', margin: 10 }}>
                 <TextInput
                     style={styles.input}
                     placeholder="Add a comment..."
                     value={commentText}
                     onChangeText={setCommentText}
                 />
-                <TouchableOpacity style={styles.button} onPress={handleAddComment}>
-                    <Text style={styles.buttonText}>Post</Text>
-                </TouchableOpacity>
-            </KeyboardAvoidingView>
+                <TouchableOpacity onPress={handleAddComment}></TouchableOpacity>
+            </View>
         </View>
     );
 };
@@ -62,17 +60,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         backgroundColor: '#F0F0F0',
         borderRadius: 20,
-    },
-    button: {
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        backgroundColor: '#007AFF',
-        borderRadius: 20,
-        marginLeft: 10,
-    },
-    buttonText: {
-        color: '#ffffff',
-        fontSize: 16,
+        marginBottom: '10%',
     },
     commentsList: {
         flex: 1,
