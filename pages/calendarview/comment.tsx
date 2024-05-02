@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    FlatList,
+    StyleSheet,
+    KeyboardAvoidingView,
+    Platform,
+} from 'react-native';
+import Icons from 'react-native-vector-icons/MaterialIcons';
 
 const CommentsSection = () => {
     const [comments, setComments] = useState([]);
@@ -28,15 +38,19 @@ const CommentsSection = () => {
                 )}
                 style={styles.commentsList}
             />
-            <View style={{ flexDirection: 'row', margin: 10 }}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Add a comment..."
-                    value={commentText}
-                    onChangeText={setCommentText}
-                />
-                <TouchableOpacity onPress={handleAddComment}></TouchableOpacity>
-            </View>
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.inputContainer}>
+                <View style={styles.textInputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Add a comment..."
+                        value={commentText}
+                        onChangeText={setCommentText}
+                    />
+                    <TouchableOpacity onPress={handleAddComment} style={styles.icon}>
+                        <Icons name="send" size={25} color="#000" />
+                    </TouchableOpacity>
+                </View>
+            </KeyboardAvoidingView>
         </View>
     );
 };
@@ -44,23 +58,32 @@ const CommentsSection = () => {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fff',
+        flex: 1,
     },
     inputContainer: {
         flexDirection: 'row',
         paddingHorizontal: 10,
-        paddingBottom: 10,
+        paddingVertical: 10,
         borderTopWidth: 1,
         borderColor: '#E0E0E0',
     },
-    input: {
+    textInputContainer: {
         flex: 1,
-        borderColor: 'transparent',
-        borderWidth: 1,
-        paddingVertical: 8,
-        paddingHorizontal: 10,
+        flexDirection: 'row',
         backgroundColor: '#F0F0F0',
         borderRadius: 20,
-        marginBottom: '10%',
+        paddingRight: 10, // 추가된 오른쪽 패딩
+    },
+    input: {
+        flex: 1,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        borderRadius: 20,
+    },
+    icon: {
+        position: 'absolute',
+        right: 10, // 아이콘 위치 조정
+        alignSelf: 'center', // 센터 정렬
     },
     commentsList: {
         flex: 1,
@@ -75,6 +98,7 @@ const styles = StyleSheet.create({
     },
     timestamp: {
         fontSize: 12,
+        color: 'gray',
     },
 });
 
