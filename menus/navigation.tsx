@@ -48,6 +48,7 @@ const Navigation: FC<NavigationProps> = ({ handleLogOut }) => {
                     options={{
                         title: '달력',
                         tabBarIcon: ({ color, size }) => <Icons name="calendar-month" color={color} size={size} />,
+                        
                     }}
                 />
                 <Tab.Screen

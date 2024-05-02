@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, Image } from 'react-native';
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
-
+import CommentsSection from './comment';
 const CalendarDetailPage = ({ route }) => {
     const navigation = useNavigation();
-    const post = route.params.post.detail; // 수정된 데이터 접근
+    const post = route.params.post.detail;
 
     console.log(post);
     if (!post) {
@@ -18,39 +18,62 @@ const CalendarDetailPage = ({ route }) => {
         Linking.openURL(post.noticeUrl).catch((err) => console.error("Couldn't load page", err));
     };
 
-    // 괄호를 포함하는 제목 분리 로직
     const titleParts = post.title.match(/(\[.*?\]|\(.*?\))?(.*)/) || ['', '', ''];
     const firstLine = titleParts[1] || '';
     const secondLine = titleParts[2].trim();
 
+    useEffect(() => {
+        const parent = navigation.getParent();
+        if (parent) {
+            parent.setOptions({
+                tabBarStyle: { display: 'none' },
+            });
+        }
+
+        return () => {
+            if (parent) {
+                parent.setOptions({
+                    tabBarStyle: {},
+                });
+            }
+        };
+    }, []);
+
     return (
         <View style={styles.container}>
-            <Header
-                containerStyle={styles.headerContainer}
-                barStyle="default"
-                centerComponent={{
-                    text: '상세 보기',
-                    style: styles.headerTitle,
-                }}
-                leftComponent={
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Icons name="arrow-back-ios" size={25} style={styles.backIcon} />
+            <View style={{ flex: 1 }}>
+                <Header
+                    containerStyle={styles.headerContainer}
+                    barStyle="default"
+                    centerComponent={{
+                        text: '상세 보기',
+                        style: styles.headerTitle,
+                    }}
+                    leftComponent={
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                            <Icons name="arrow-back-ios" size={25} style={styles.backIcon} />
+                        </TouchableOpacity>
+                    }
+                />
+                <ScrollView style={styles.detailContainer} contentContainerStyle={styles.scrollViewContent}>
+                    <Text style={styles.ftitle}>{firstLine}</Text>
+                    <Text style={styles.stitle}>{secondLine}</Text>
+                    {post.imageUrl && post.imageUrl.length > 0 && (
+                        <Image source={{ uri: post.imageUrl[0] }} style={styles.image} />
+                    )}
+                    <Text style={styles.content}>{post.content}</Text>
+                    <Text>등록일: {post.postedAt}</Text>
+                    <Text>마감일: {post.deadline}</Text>
+                    <TouchableOpacity style={styles.linkStyle} onPress={openURL}>
+                        <Text style={styles.linkText}>원문 보기</Text>
                     </TouchableOpacity>
-                }
-            />
-            <ScrollView style={styles.detailContainer} contentContainerStyle={styles.scrollViewContent}>
-                <Text style={styles.ftitle}>{firstLine}</Text>
-                <Text style={styles.stitle}>{secondLine}</Text>
-                {post.imageUrl && post.imageUrl.length > 0 && (
-                    <Image source={{ uri: post.imageUrl[0] }} style={styles.image} />
-                )}
-                <Text style={styles.content}>{post.content}</Text>
-                <Text>등록일: {post.postedAt}</Text>
-                <Text>마감일: {post.deadline}</Text>
-                <TouchableOpacity style={styles.linkStyle} onPress={openURL}>
-                    <Text style={styles.linkText}>원문 보기</Text>
-                </TouchableOpacity>
-            </ScrollView>
+                </ScrollView>
+            </View>
+            <View>
+                <ScrollView>
+                    <CommentsSection />
+                </ScrollView>
+            </View>
         </View>
     );
 };
@@ -78,7 +101,9 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
     detailContainer: {
-        padding: 20,
+        padding: 10,
+        maxHeight: '50%',
+        borderBottomWidth: 2,
     },
     ftitle: {
         fontSize: 20,
