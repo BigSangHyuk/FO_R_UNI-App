@@ -16,10 +16,10 @@ import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
 import moment from 'moment';
-import Filter from '../menus/filter';
-import { CalendarPosts } from '../data/types';
-import { getStorage } from '../auth/asyncstorage';
-import Http from '../address/backend_url';
+import Filter from '../../menus/filter';
+import { CalendarPosts } from '../../data/types';
+import { getStorage } from '../../auth/asyncstorage';
+import Http from '../../address/backend_url';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 LocaleConfig.locales['en'] = {

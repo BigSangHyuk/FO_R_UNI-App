@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import CalendarView from '../pages/calendar';
+import CalendarView from '../pages/calendarview/calendar';
 import Mypage from '../pages/mypage';
-import CalendarComponent from '../pages/calendarcomponent';
+import CalendarComponent from '../pages/calendarview/calendarcomponent';
 import Setting from '../pages/setting';
 import UnClassify from '../pages/unclassify';
 import Scrap from '../pages/scrap';

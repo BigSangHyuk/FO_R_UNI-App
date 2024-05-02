@@ -221,7 +221,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     return (
         <TouchableWithoutFeedback onPress={hideImageEditOverlay}>
             <View>
-                <LinearGradient style={styles.linear} colors={['#FF7A85', '#FFC0CB', 'white']}>
+                <LinearGradient style={styles.linear} colors={['#145C97', '#7EAAD7', 'white']}>
                     <Header
                         containerStyle={{
                             borderBottomWidth: 0,
