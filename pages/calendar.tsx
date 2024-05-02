@@ -9,6 +9,7 @@ import {
     PanResponder,
     Dimensions,
     Animated,
+    Button,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Header } from 'react-native-elements';
@@ -19,6 +20,8 @@ import Filter from '../menus/filter';
 import { CalendarPosts } from '../data/types';
 import { getStorage } from '../auth/asyncstorage';
 import Http from '../address/backend_url';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+
 LocaleConfig.locales['en'] = {
     monthNames: [
         'January',
@@ -43,8 +46,11 @@ LocaleConfig.defaultLocale = 'en';
 interface MarkedDates {
     [key: string]: { marked?: boolean; dots?: { color: string; selectedDotColor: string }[] };
 }
+interface CalendarProps {
+    navigation: NavigationProp<any>;
+}
 
-const CalendarComponent: FC = () => {
+const CalendarView: FC<CalendarProps> = ({ navigation }) => {
     const getGradientColorsByMonth = (month: number) => {
         if (month >= 12 || month <= 2) {
             return ['#0064CD', '#5ABEF5', 'white'];
@@ -105,6 +111,27 @@ const CalendarComponent: FC = () => {
         fetchPosts();
     }, [currentMonth, filter]);
 
+    const handlePostPress = async (postId) => {
+        const url = `${Http}/posts/${postId}`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${await getStorage('accessToken')}`,
+                },
+            });
+            const result = await response.json();
+            if (response.status === 200) {
+                navigation.navigate('CalendarDetailPage', { post: result });
+            } else {
+                Alert.alert('Error', 'Failed to fetch post details.');
+            }
+        } catch (error) {
+            console.error('Error fetching post details:', error);
+        }
+    };
+
     const panResponder = useRef(
         PanResponder.create({
             onMoveShouldSetPanResponder: () => true,
@@ -150,12 +177,12 @@ const CalendarComponent: FC = () => {
         return [];
     };
 
-    const renderItem = ({ item }: { item: CalendarPosts }) => (
-        <View style={styles.item}>
+    const renderItem = ({ item }) => (
+        <TouchableOpacity style={styles.item} onPress={() => handlePostPress(item.postId)}>
             <Text style={{ width: '100%' }} numberOfLines={1} ellipsizeMode="tail">
                 {item.title}
             </Text>
-        </View>
+        </TouchableOpacity>
     );
     const selectedDatePosts = filterPostsBySelectedDate();
 
@@ -301,4 +328,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CalendarComponent;
+export default CalendarView;
