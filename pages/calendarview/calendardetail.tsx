@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -9,17 +9,28 @@ import {
     TextInput,
     KeyboardAvoidingView,
     Platform,
+    FlatList,
 } from 'react-native';
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
+import Thumbs from 'react-native-vector-icons/Feather';
+import Reply from 'react-native-vector-icons/Entypo';
+import Report from 'react-native-vector-icons/Octicons';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
-import CommentsSection from './comment';
+import { getStorage } from '../../auth/asyncstorage';
+import Http from '../../address/backend_url';
+
 const CalendarDetailPage = ({ route }) => {
     const navigation = useNavigation();
     const post = route.params.post.detail;
-
     console.log(post);
+    const comments = route.params.post.comments;
+
+    const [commentText, setCommentText] = useState('');
+    const titleParts = post.title.match(/(\[.*?\]|\(.*?\))?(.*)/) || ['', '', ''];
+    const firstLine = titleParts[1] || '';
+    const secondLine = titleParts[2].trim();
     if (!post) {
         return <Text>정보를 불러올 수 없습니다.</Text>;
     }
@@ -28,9 +39,29 @@ const CalendarDetailPage = ({ route }) => {
         Linking.openURL(post.noticeUrl).catch((err) => console.error("Couldn't load page", err));
     };
 
-    const titleParts = post.title.match(/(\[.*?\]|\(.*?\))?(.*)/) || ['', '', ''];
-    const firstLine = titleParts[1] || '';
-    const secondLine = titleParts[2].trim();
+    const handleAddComment = async () => {
+        const accessToken = await getStorage('accessToken');
+        const response = await fetch(Http + `/comments`, {
+            method: 'POST',
+            headers: {
+                Accept: '*/*',
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                postId: post.id,
+                content: commentText,
+            }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Comment added:', data);
+            setCommentText('');
+        } else {
+            console.error('Failed to post comment:', response.status);
+        }
+    };
 
     useEffect(() => {
         const parent = navigation.getParent();
@@ -77,11 +108,53 @@ const CalendarDetailPage = ({ route }) => {
                     <TouchableOpacity style={styles.linkStyle} onPress={openURL}>
                         <Text style={styles.linkText}>원문 보기</Text>
                     </TouchableOpacity>
-                    {/* <CommentsSection /> */}
+                    <View style={styles.container2}>
+                        <FlatList
+                            data={comments}
+                            keyExtractor={(item) => item.id.toString()}
+                            renderItem={({ item }) => (
+                                <View style={styles.commentItem}>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <View>
+                                            <Text style={styles.nickname}>{item.user.nickName}</Text>
+                                            <Text style={styles.commentText}>{item.content}</Text>
+                                        </View>
+                                        <View>
+                                            <View style={styles.actions}>
+                                                <Text style={styles.timestamp}>{item.timestamp}</Text>
+                                                <TouchableOpacity style={styles.actionButton}>
+                                                    <Thumbs name="thumbs-up" size={15} color="#888" />
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={styles.actionButton}>
+                                                    <Reply name="reply" size={15} color="#888" />
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={styles.actionButton}>
+                                                    <Report name="report" size={15} color="#888" />
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                    </View>
+                                </View>
+                            )}
+                        />
+                        <KeyboardAvoidingView
+                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                            style={styles.inputContainer}
+                        >
+                            <View style={styles.textInputContainer}>
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Add a comment..."
+                                    value={commentText}
+                                    onChangeText={setCommentText}
+                                />
+                                <TouchableOpacity onPress={handleAddComment} style={styles.icon}>
+                                    <Icons name="send" size={25} color="#000" />
+                                </TouchableOpacity>
+                            </View>
+                        </KeyboardAvoidingView>
+                    </View>
                 </ScrollView>
-                <View style={styles.inputContainer}>
-                    <TextInput style={styles.input} placeholder="댓글 입력..." returnKeyType="send" />
-                </View>
             </View>
         </KeyboardAvoidingView>
     );
@@ -145,46 +218,67 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 16,
     },
+    container2: {
+        backgroundColor: '#fff',
+        flex: 1,
+    },
     inputContainer: {
         flexDirection: 'row',
         paddingHorizontal: 10,
-        paddingVertical: 5,
+        paddingVertical: 10,
+        borderTopWidth: 1,
         borderColor: '#E0E0E0',
-        backgroundColor: 'white',
+    },
+    textInputContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        backgroundColor: '#F0F0F0',
+        borderRadius: 20,
+        paddingRight: 10,
     },
     input: {
         flex: 1,
         paddingHorizontal: 10,
         paddingVertical: 8,
         borderRadius: 20,
-        backgroundColor: '#F0F0F0',
     },
-    textInputContainer: {
-        flexDirection: 'row',
-        backgroundColor: '#F0F0F0',
-        borderRadius: 20,
-        paddingRight: 10,
-    },
-
     icon: {
         position: 'absolute',
         right: 10,
         alignSelf: 'center',
     },
     commentsList: {
-        flex: 1,
+        flex: 2,
+    },
+    nickname: {
+        fontWeight: 'bold',
+        marginBottom: 5,
     },
     commentItem: {
-        padding: 10,
+        padding: 8,
         borderBottomWidth: 1,
         borderBottomColor: '#EEEEEE',
     },
     commentText: {
         fontSize: 16,
+        marginLeft: '15%',
     },
     timestamp: {
         fontSize: 12,
         color: 'gray',
+    },
+    replyButton: {
+        marginTop: 4,
+        padding: 8,
+        backgroundColor: '#F0F0F0',
+    },
+    actions: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
+    actionButton: {
+        marginLeft: 10,
     },
 });
 
