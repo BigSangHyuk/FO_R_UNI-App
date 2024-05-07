@@ -64,3 +64,9 @@ export interface CalendarPosts {
     title: string;
     deadline: number;
 }
+
+export interface CommentData {
+    postId: number;
+    content: string;
+    parentCommentId?: number;
+}
