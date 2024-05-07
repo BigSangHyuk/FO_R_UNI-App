@@ -20,14 +20,16 @@ import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { getStorage } from '../../auth/asyncstorage';
 import Http from '../../address/backend_url';
+import CommentLike from './commentLike';
 
 const CalendarDetailPage = ({ route }) => {
     const navigation = useNavigation();
     const post = route.params.post.detail;
     console.log(post);
     const comments = route.params.post.comments;
-
     const [commentText, setCommentText] = useState('');
+    const [showKeyboard, setShowKeyboard] = useState<boolean>(false);
+
     const titleParts = post.title.match(/(\[.*?\]|\(.*?\))?(.*)/) || ['', '', ''];
     const firstLine = titleParts[1] || '';
     const secondLine = titleParts[2].trim();
@@ -37,6 +39,13 @@ const CalendarDetailPage = ({ route }) => {
 
     const openURL = () => {
         Linking.openURL(post.noticeUrl).catch((err) => console.error("Couldn't load page", err));
+    };
+
+    const ShowKeyboard = () => {
+        setShowKeyboard(true);
+    };
+    const HideKeyboard = () => {
+        setShowKeyboard(false);
     };
 
     const handleAddComment = async () => {
@@ -58,6 +67,7 @@ const CalendarDetailPage = ({ route }) => {
             const data = await response.json();
             console.log('Comment added:', data);
             setCommentText('');
+            setShowKeyboard(false);
         } else {
             console.error('Failed to post comment:', response.status);
         }
@@ -78,7 +88,7 @@ const CalendarDetailPage = ({ route }) => {
                 });
             }
         };
-    }, []);
+    }, [comments]);
 
     return (
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -105,9 +115,14 @@ const CalendarDetailPage = ({ route }) => {
                     <Text style={styles.content}>{post.content}</Text>
                     <Text>등록일: {post.postedAt}</Text>
                     <Text>마감일: {post.deadline}</Text>
-                    <TouchableOpacity style={styles.linkStyle} onPress={openURL}>
-                        <Text style={styles.linkText}>원문 보기</Text>
-                    </TouchableOpacity>
+                    <View style={{ flexDirection: 'row', gap: 10 }}>
+                        <TouchableOpacity style={styles.linkStyle} onPress={openURL}>
+                            <Text style={styles.linkText}>원문 보기</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.linkStyle} onPress={ShowKeyboard}>
+                            <Text style={styles.linkText}>댓글 달기</Text>
+                        </TouchableOpacity>
+                    </View>
                     <View style={styles.container2}>
                         <FlatList
                             data={comments}
@@ -123,8 +138,9 @@ const CalendarDetailPage = ({ route }) => {
                                             <View style={styles.actions}>
                                                 <Text style={styles.timestamp}>{item.timestamp}</Text>
                                                 <TouchableOpacity style={styles.actionButton}>
-                                                    <Thumbs name="thumbs-up" size={15} color="#888" />
+                                                    <CommentLike comment={item} />
                                                 </TouchableOpacity>
+
                                                 <TouchableOpacity style={styles.actionButton}>
                                                     <Reply name="reply" size={15} color="#888" />
                                                 </TouchableOpacity>
@@ -137,22 +153,25 @@ const CalendarDetailPage = ({ route }) => {
                                 </View>
                             )}
                         />
-                        <KeyboardAvoidingView
-                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                            style={styles.inputContainer}
-                        >
-                            <View style={styles.textInputContainer}>
+                        {showKeyboard && (
+                            <KeyboardAvoidingView
+                                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                                style={styles.inputContainer}
+                            >
                                 <TextInput
                                     style={styles.input}
-                                    placeholder="Add a comment..."
+                                    placeholder="댓글을 달아주세요"
                                     value={commentText}
                                     onChangeText={setCommentText}
+                                    autoFocus={true}
+                                    returnKeyLabel="취소"
+                                    onSubmitEditing={HideKeyboard}
                                 />
                                 <TouchableOpacity onPress={handleAddComment} style={styles.icon}>
                                     <Icons name="send" size={25} color="#000" />
                                 </TouchableOpacity>
-                            </View>
-                        </KeyboardAvoidingView>
+                            </KeyboardAvoidingView>
+                        )}
                     </View>
                 </ScrollView>
             </View>
@@ -211,6 +230,7 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#E8F5E9',
         borderRadius: 5,
+        flex: 1,
     },
     linkText: {
         color: '#2196F3',
@@ -279,6 +299,14 @@ const styles = StyleSheet.create({
 
     actionButton: {
         marginLeft: 10,
+        flexDirection: 'row',
+    },
+    sendButton: {
+        padding: 10,
+        backgroundColor: 'green',
+    },
+    sendButtonText: {
+        color: 'white',
     },
 });
 
