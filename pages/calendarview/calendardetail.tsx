@@ -75,16 +75,18 @@ const CalendarDetailPage = ({ route }) => {
             const newComment = await response.json();
             console.log('Comment added:', newComment);
             setComments((currentComments) => {
-                return currentComments.map((comment) => {
-                    if (comment.id === parentCommentId) {
-                        return { ...comment, children: [...comment.children, newComment] };
-                    }
-                    return comment;
-                });
+                if (parentCommentId) {
+                    return currentComments.map((comment) =>
+                        comment.id === parentCommentId
+                            ? { ...comment, children: [...comment.children, newComment] }
+                            : comment
+                    );
+                }
+                return [...currentComments, newComment];
             });
             setCommentText('');
             setShowKeyboard(false);
-            setParentCommentId(null); // 대댓글 ID 상태 초기화
+            setParentCommentId(null);
         } else {
             console.error('Failed to post comment:', response.status);
         }
@@ -105,7 +107,42 @@ const CalendarDetailPage = ({ route }) => {
                 });
             }
         };
-    }, [comments]);
+    }, []);
+
+    const renderComments = (comments, level = 0) => {
+        return comments.map((comment) => (
+            <View key={comment.id} style={[styles.commentItem, { marginLeft: 20 * level }]}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <View>
+                        <Text style={styles.nickname}>{comment.user.nickName}</Text>
+                        <Text style={styles.commentText}>{comment.content}</Text>
+                    </View>
+                    <View>
+                        <View style={styles.actions}>
+                            <Text style={styles.timestamp}>{new Date(comment.createdAt).toLocaleString()}</Text>
+                            {!comment.isDeleted && (
+                                <React.Fragment>
+                                    <TouchableOpacity style={styles.actionButton}>
+                                        <Thumbs name="thumbs-up" size={15} color="#888" />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.actionButton}
+                                        onPress={() => handleReply(comment.id)}
+                                    >
+                                        <Reply name="reply" size={15} color="#888" />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.actionButton}>
+                                        <Report name="report" size={15} color="#888" />
+                                    </TouchableOpacity>
+                                </React.Fragment>
+                            )}
+                        </View>
+                    </View>
+                </View>
+                {comment.children && renderComments(comment.children, level + 1)}
+            </View>
+        ));
+    };
 
     return (
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -147,38 +184,7 @@ const CalendarDetailPage = ({ route }) => {
                             renderItem={({ item }) => {
                                 const userName = item.user ? item.user.nickName : '익명의 사용자';
                                 const commentText = item.isDeleted ? '삭제된 댓글입니다.' : item.content;
-
-                                return (
-                                    <View style={styles.commentItem}>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                            <View>
-                                                <Text style={styles.nickname}>{userName}</Text>
-                                                <Text style={styles.commentText}>{commentText}</Text>
-                                            </View>
-                                            <View>
-                                                <View style={styles.actions}>
-                                                    <Text style={styles.timestamp}>{item.timestamp}</Text>
-                                                    {!item.isDeleted && (
-                                                        <React.Fragment>
-                                                            <TouchableOpacity style={styles.actionButton}>
-                                                                <Thumbs name="thumbs-up" size={15} color="#888" />
-                                                            </TouchableOpacity>
-                                                            <TouchableOpacity
-                                                                style={styles.actionButton}
-                                                                onPress={() => handleReply(item.id)}
-                                                            >
-                                                                <Reply name="reply" size={15} color="#888" />
-                                                            </TouchableOpacity>
-                                                            <TouchableOpacity style={styles.actionButton}>
-                                                                <Report name="report" size={15} color="#888" />
-                                                            </TouchableOpacity>
-                                                        </React.Fragment>
-                                                    )}
-                                                </View>
-                                            </View>
-                                        </View>
-                                    </View>
-                                );
+                                return renderComments(comments);
                             }}
                         />
 
@@ -329,6 +335,9 @@ const styles = StyleSheet.create({
     actionButton: {
         marginLeft: 10,
         flexDirection: 'row',
+    },
+    commentContent: {
+        backgroundColor: '#F8F8F8',
     },
     sendButton: {
         padding: 10,
