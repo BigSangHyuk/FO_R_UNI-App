@@ -20,15 +20,15 @@ import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { getStorage } from '../../auth/asyncstorage';
 import Http from '../../address/backend_url';
-import CommentLike from './commentLike';
 
 const CalendarDetailPage = ({ route }) => {
     const navigation = useNavigation();
     const post = route.params.post.detail;
     console.log(post);
-    const comments = route.params.post.comments;
+    const [comments, setComments] = useState(route.params.post.comments);
     const [commentText, setCommentText] = useState('');
     const [showKeyboard, setShowKeyboard] = useState<boolean>(false);
+    const [parentCommentId, setParentCommentId] = useState(null);
 
     const titleParts = post.title.match(/(\[.*?\]|\(.*?\))?(.*)/) || ['', '', ''];
     const firstLine = titleParts[1] || '';
@@ -48,8 +48,19 @@ const CalendarDetailPage = ({ route }) => {
         setShowKeyboard(false);
     };
 
+    const handleReply = (commentId) => {
+        setParentCommentId(commentId);
+        setShowKeyboard(true);
+    };
+
     const handleAddComment = async () => {
         const accessToken = await getStorage('accessToken');
+        const commentData = {
+            postId: post.id,
+            content: commentText,
+            parentCommentId,
+        };
+
         const response = await fetch(Http + `/comments`, {
             method: 'POST',
             headers: {
@@ -57,17 +68,23 @@ const CalendarDetailPage = ({ route }) => {
                 Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                postId: post.id,
-                content: commentText,
-            }),
+            body: JSON.stringify(commentData),
         });
 
         if (response.ok) {
-            const data = await response.json();
-            console.log('Comment added:', data);
+            const newComment = await response.json();
+            console.log('Comment added:', newComment);
+            setComments((currentComments) => {
+                return currentComments.map((comment) => {
+                    if (comment.id === parentCommentId) {
+                        return { ...comment, children: [...comment.children, newComment] };
+                    }
+                    return comment;
+                });
+            });
             setCommentText('');
             setShowKeyboard(false);
+            setParentCommentId(null); // 대댓글 ID 상태 초기화
         } else {
             console.error('Failed to post comment:', response.status);
         }
@@ -128,9 +145,8 @@ const CalendarDetailPage = ({ route }) => {
                             data={comments}
                             keyExtractor={(item) => item.id.toString()}
                             renderItem={({ item }) => {
-                                // 삭제된 댓글 처리: 사용자 정보가 없는 경우 '익명의 사용자'로 표시
                                 const userName = item.user ? item.user.nickName : '익명의 사용자';
-                                const commentText = item.isDeleted ? '삭제된 댓글입니다.' : item.content; // 삭제된 댓글 표시
+                                const commentText = item.isDeleted ? '삭제된 댓글입니다.' : item.content;
 
                                 return (
                                     <View style={styles.commentItem}>
@@ -142,12 +158,15 @@ const CalendarDetailPage = ({ route }) => {
                                             <View>
                                                 <View style={styles.actions}>
                                                     <Text style={styles.timestamp}>{item.timestamp}</Text>
-                                                    {!item.isDeleted && ( // 삭제된 댓글에는 액션 버튼을 표시하지 않음
+                                                    {!item.isDeleted && (
                                                         <React.Fragment>
                                                             <TouchableOpacity style={styles.actionButton}>
-                                                                <CommentLike comment={item} />
+                                                                <Thumbs name="thumbs-up" size={15} color="#888" />
                                                             </TouchableOpacity>
-                                                            <TouchableOpacity style={styles.actionButton}>
+                                                            <TouchableOpacity
+                                                                style={styles.actionButton}
+                                                                onPress={() => handleReply(item.id)}
+                                                            >
                                                                 <Reply name="reply" size={15} color="#888" />
                                                             </TouchableOpacity>
                                                             <TouchableOpacity style={styles.actionButton}>
