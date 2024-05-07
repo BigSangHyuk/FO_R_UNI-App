@@ -184,7 +184,40 @@ const CalendarDetailPage = ({ route }) => {
                             renderItem={({ item }) => {
                                 const userName = item.user ? item.user.nickName : '익명의 사용자';
                                 const commentText = item.isDeleted ? '삭제된 댓글입니다.' : item.content;
-                                return renderComments(comments);
+                                return (
+                                    <View key={item.id} style={[styles.commentItem]}>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <View>
+                                                <Text style={styles.nickname}>{userName}</Text>
+                                                <Text style={styles.commentText}>{commentText}</Text>
+                                            </View>
+                                            <View>
+                                                <View style={styles.actions}>
+                                                    <Text style={styles.timestamp}>
+                                                        {new Date(item.createdAt).toLocaleString()}
+                                                    </Text>
+                                                    {!item.isDeleted && (
+                                                        <React.Fragment>
+                                                            <TouchableOpacity style={styles.actionButton}>
+                                                                <Thumbs name="thumbs-up" size={15} color="#888" />
+                                                            </TouchableOpacity>
+                                                            <TouchableOpacity
+                                                                style={styles.actionButton}
+                                                                onPress={() => handleReply(item.id)}
+                                                            >
+                                                                <Reply name="reply" size={15} color="#888" />
+                                                            </TouchableOpacity>
+                                                            <TouchableOpacity style={styles.actionButton}>
+                                                                <Report name="report" size={15} color="#888" />
+                                                            </TouchableOpacity>
+                                                        </React.Fragment>
+                                                    )}
+                                                </View>
+                                            </View>
+                                        </View>
+                                        {item.children && renderComments(item.children, 1)}
+                                    </View>
+                                );
                             }}
                         />
 
