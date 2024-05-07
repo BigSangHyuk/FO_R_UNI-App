@@ -127,32 +127,42 @@ const CalendarDetailPage = ({ route }) => {
                         <FlatList
                             data={comments}
                             keyExtractor={(item) => item.id.toString()}
-                            renderItem={({ item }) => (
-                                <View style={styles.commentItem}>
-                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                        <View>
-                                            <Text style={styles.nickname}>{item.user.nickName}</Text>
-                                            <Text style={styles.commentText}>{item.content}</Text>
-                                        </View>
-                                        <View>
-                                            <View style={styles.actions}>
-                                                <Text style={styles.timestamp}>{item.timestamp}</Text>
-                                                <TouchableOpacity style={styles.actionButton}>
-                                                    <CommentLike comment={item} />
-                                                </TouchableOpacity>
+                            renderItem={({ item }) => {
+                                // 삭제된 댓글 처리: 사용자 정보가 없는 경우 '익명의 사용자'로 표시
+                                const userName = item.user ? item.user.nickName : '익명의 사용자';
+                                const commentText = item.isDeleted ? '삭제된 댓글입니다.' : item.content; // 삭제된 댓글 표시
 
-                                                <TouchableOpacity style={styles.actionButton}>
-                                                    <Reply name="reply" size={15} color="#888" />
-                                                </TouchableOpacity>
-                                                <TouchableOpacity style={styles.actionButton}>
-                                                    <Report name="report" size={15} color="#888" />
-                                                </TouchableOpacity>
+                                return (
+                                    <View style={styles.commentItem}>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <View>
+                                                <Text style={styles.nickname}>{userName}</Text>
+                                                <Text style={styles.commentText}>{commentText}</Text>
+                                            </View>
+                                            <View>
+                                                <View style={styles.actions}>
+                                                    <Text style={styles.timestamp}>{item.timestamp}</Text>
+                                                    {!item.isDeleted && ( // 삭제된 댓글에는 액션 버튼을 표시하지 않음
+                                                        <React.Fragment>
+                                                            <TouchableOpacity style={styles.actionButton}>
+                                                                <CommentLike comment={item} />
+                                                            </TouchableOpacity>
+                                                            <TouchableOpacity style={styles.actionButton}>
+                                                                <Reply name="reply" size={15} color="#888" />
+                                                            </TouchableOpacity>
+                                                            <TouchableOpacity style={styles.actionButton}>
+                                                                <Report name="report" size={15} color="#888" />
+                                                            </TouchableOpacity>
+                                                        </React.Fragment>
+                                                    )}
+                                                </View>
                                             </View>
                                         </View>
                                     </View>
-                                </View>
-                            )}
+                                );
+                            }}
                         />
+
                         {showKeyboard && (
                             <KeyboardAvoidingView
                                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
