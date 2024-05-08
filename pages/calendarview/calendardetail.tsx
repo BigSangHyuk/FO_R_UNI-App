@@ -125,12 +125,15 @@ const CalendarDetailPage = ({ route }) => {
                                     <TouchableOpacity style={styles.actionButton}>
                                         <Thumbs name="thumbs-up" size={15} color="#888" />
                                     </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={styles.actionButton}
-                                        onPress={() => handleReply(comment.id)}
-                                    >
-                                        <Reply name="reply" size={15} color="#888" />
-                                    </TouchableOpacity>
+                                    {!comment.children && (
+                                        <TouchableOpacity
+                                            style={styles.actionButton}
+                                            onPress={() => handleReply(comment.id)}
+                                        >
+                                            <Reply name="reply" size={15} color="#888" />
+                                        </TouchableOpacity>
+                                    )}
+
                                     <TouchableOpacity style={styles.actionButton}>
                                         <Report name="report" size={15} color="#888" />
                                     </TouchableOpacity>
@@ -201,12 +204,14 @@ const CalendarDetailPage = ({ route }) => {
                                                             <TouchableOpacity style={styles.actionButton}>
                                                                 <Thumbs name="thumbs-up" size={15} color="#888" />
                                                             </TouchableOpacity>
+
                                                             <TouchableOpacity
                                                                 style={styles.actionButton}
                                                                 onPress={() => handleReply(item.id)}
                                                             >
                                                                 <Reply name="reply" size={15} color="#888" />
                                                             </TouchableOpacity>
+
                                                             <TouchableOpacity style={styles.actionButton}>
                                                                 <Report name="report" size={15} color="#888" />
                                                             </TouchableOpacity>
