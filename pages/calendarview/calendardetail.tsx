@@ -24,7 +24,6 @@ import Http from '../../address/backend_url';
 const CalendarDetailPage = ({ route }) => {
     const navigation = useNavigation();
     const post = route.params.post.detail;
-    console.log(post);
     const [comments, setComments] = useState(route.params.post.comments);
     const [commentText, setCommentText] = useState('');
     const [showKeyboard, setShowKeyboard] = useState<boolean>(false);
@@ -73,17 +72,8 @@ const CalendarDetailPage = ({ route }) => {
 
         if (response.ok) {
             const newComment = await response.json();
+            fetchComment();
             console.log('Comment added:', newComment);
-            setComments((currentComments) => {
-                if (parentCommentId) {
-                    return currentComments.map((comment) =>
-                        comment.id === parentCommentId
-                            ? { ...comment, children: [...comment.children, newComment] }
-                            : comment
-                    );
-                }
-                return [...currentComments, newComment];
-            });
             setCommentText('');
             setShowKeyboard(false);
             setParentCommentId(null);
@@ -109,13 +99,41 @@ const CalendarDetailPage = ({ route }) => {
         };
     }, []);
 
+    const fetchComment = async () => {
+        const accessToken = await getStorage('accessToken');
+
+        const response = await fetch(Http + `/comments/${post.id}`, {
+            method: 'GET',
+            headers: {
+                Accept: '*/*',
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        console.log(post);
+
+        if (response.ok) {
+            console.log(response);
+            const result = await response.json();
+            console.log(result.data);
+
+            setComments(result.data);
+        } else {
+            console.error('Failed to post comment:', response.status);
+        }
+    };
+
+    useEffect(() => {
+        fetchComment();
+    }, [post.comment]);
+
     const renderComments = (comments, level = 0) => {
         return comments.map((comment) => (
             <View key={comment.id} style={[styles.commentItem, { marginLeft: 20 * level }]}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <View>
-                        <Text style={styles.nickname}>{comment.user.nickName}</Text>
-                        <Text style={styles.commentText}>{comment.content}</Text>
+                        <Text style={styles.nickname}>{comment.user?.nickName}</Text>
+                        <Text style={styles.commentText}>{comment?.content}</Text>
                     </View>
                     <View>
                         <View style={styles.actions}>
@@ -183,7 +201,7 @@ const CalendarDetailPage = ({ route }) => {
                     <View style={styles.container2}>
                         <FlatList
                             data={comments}
-                            keyExtractor={(item) => item.id.toString()}
+                            keyExtractor={(item) => item.id}
                             renderItem={({ item }) => {
                                 const userName = item.user ? item.user.nickName : '익명의 사용자';
                                 const commentText = item.isDeleted ? '삭제된 댓글입니다.' : item.content;
