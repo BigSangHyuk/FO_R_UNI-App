@@ -218,6 +218,23 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
         setEditImageOverlayVisible(false);
     };
 
+    const removeDuplicates = (data) => {
+        if (!data) return [];
+        const postIdSet = new Set();
+        const filteredData = data.filter((item) => {
+            if (postIdSet.has(item.postId)) {
+                return false;
+            } else {
+                postIdSet.add(item.postId);
+                return true;
+            }
+        });
+        return filteredData;
+    };
+
+    const uniqueUserComments = removeDuplicates(userComment);
+    const uniqueUserLikes = removeDuplicates(userLike);
+
     return (
         <TouchableWithoutFeedback onPress={hideImageEditOverlay}>
             <View>
@@ -303,8 +320,8 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                     <View style={styles.listContainer}>
                         {isToggled ? (
                             <FlatList
-                                data={userComment}
-                                extraData={userComment}
+                                data={uniqueUserComments}
+                                extraData={uniqueUserComments}
                                 renderItem={({ item }) => (
                                     <View style={styles.item}>
                                         <Text style={styles.itemTitle} numberOfLines={1} ellipsizeMode="tail">
@@ -322,7 +339,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                             />
                         ) : (
                             <FlatList
-                                data={userLike}
+                                data={uniqueUserLikes}
                                 renderItem={({ item }) => (
                                     <View style={styles.item}>
                                         <Text style={styles.itemTitle}>○ {item.content}</Text>
