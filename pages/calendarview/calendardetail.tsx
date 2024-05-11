@@ -10,9 +10,11 @@ import {
     KeyboardAvoidingView,
     Platform,
     FlatList,
+    Alert,
 } from 'react-native';
 import { Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
+import Add from 'react-native-vector-icons/MaterialCommunityIcons';
 import Thumbs from 'react-native-vector-icons/Feather';
 import Reply from 'react-native-vector-icons/Entypo';
 import Report from 'react-native-vector-icons/Octicons';
@@ -123,6 +125,17 @@ const CalendarDetailPage = ({ route }) => {
         }
     };
 
+    const AddCalender = () => {
+        Alert.alert('외부달력 추가', '외부달력에 추가하시겠습니까?', [
+            {
+                text: '예',
+            },
+            {
+                text: '아니오',
+            },
+        ]);
+    };
+
     useEffect(() => {
         fetchComment();
     }, [post.comment]);
@@ -178,6 +191,11 @@ const CalendarDetailPage = ({ route }) => {
                     leftComponent={
                         <TouchableOpacity onPress={() => navigation.goBack()}>
                             <Icons name="arrow-back-ios" size={25} style={styles.backIcon} />
+                        </TouchableOpacity>
+                    }
+                    rightComponent={
+                        <TouchableOpacity onPress={() => AddCalender()}>
+                            <Add name="calendar-plus" size={25} style={styles.backIcon} />
                         </TouchableOpacity>
                     }
                 />
