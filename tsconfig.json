@@ -2,7 +2,8 @@
     "compilerOptions": {
         "jsx": "react",
         "lib": ["dom", "ESNext"],
-        "strict": false
+        "strict": false,
+        "esModuleInterop": true
     },
     "extends": "@tsconfig/react-native/tsconfig.json"
 }

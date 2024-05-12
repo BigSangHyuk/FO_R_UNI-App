@@ -9,8 +9,9 @@ import Info from './auth/info';
 import Navigation from './menus/navigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { LogBox } from 'react-native';
 const Stack = createNativeStackNavigator();
-
+LogBox.ignoreAllLogs();
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
