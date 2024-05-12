@@ -135,6 +135,31 @@ const CalendarDetailPage = ({ route }) => {
             },
         ]);
     };
+    const toggleLike = async (comment) => {
+        const accessToken = await getStorage('accessToken');
+        const url = comment.isLiked ? `${Http}/comments/unlike/${comment.id}` : `${Http}/comments/like/${comment.id}`;
+
+        const method = comment.isLiked ? 'DELETE' : 'POST';
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    Accept: '*/*',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            if (response.ok) {
+                console.log(`좋아요 ${comment.isLiked ? '취소' : '추가'} 성공!`);
+                fetchComment();
+            } else {
+                throw new Error(`Failed to ${comment.isLiked ? 'unlike' : 'like'} the comment`);
+            }
+        } catch (error) {
+            console.error('좋아요 처리 에러:', error);
+        }
+    };
 
     useEffect(() => {
         fetchComment();
@@ -180,8 +205,12 @@ const CalendarDetailPage = ({ route }) => {
                             <Text style={styles.timestamp}>{CreateTime(comment.createdAt)}</Text>
                             {!comment.isDeleted && (
                                 <React.Fragment>
-                                    <TouchableOpacity style={styles.actionButton}>
-                                        <Thumbs name="thumbs-up" size={15} color="#888" />
+                                    <TouchableOpacity style={styles.actionButton} onPress={() => toggleLike(comment)}>
+                                        <Thumbs
+                                            name="thumbs-up"
+                                            size={15}
+                                            color={comment.isLiked ? '#46AAFF' : '#888'}
+                                        />
                                         <Text style={styles.likeCount}>{comment.commentLike}</Text>
                                     </TouchableOpacity>
                                     {!comment.children && (
@@ -263,8 +292,15 @@ const CalendarDetailPage = ({ route }) => {
                                                     <Text style={styles.timestamp}>{CreateTime(item.createdAt)}</Text>
                                                     {!item.isDeleted && (
                                                         <React.Fragment>
-                                                            <TouchableOpacity style={styles.actionButton}>
-                                                                <Thumbs name="thumbs-up" size={15} color="#888" />
+                                                            <TouchableOpacity
+                                                                style={styles.actionButton}
+                                                                onPress={() => toggleLike(item)}
+                                                            >
+                                                                <Thumbs
+                                                                    name="thumbs-up"
+                                                                    size={15}
+                                                                    color={item.isLiked ? '#46AAFF' : '#888'}
+                                                                />
                                                                 <Text style={styles.likeCount}>{item.commentLike}</Text>
                                                             </TouchableOpacity>
 
