@@ -33,8 +33,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "sdkVersion": "50.0.0"
+    }
   },
   "name": "fo_r_uni-app"
 }
