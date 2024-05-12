@@ -64,8 +64,8 @@ const CalendarDetailPage = ({ route }) => {
     };
 
     const handleReportPress = (comment) => {
+        console.log('dkdk', comment?.content);
         setSelectedComment(comment);
-        console.log(comment.content);
         setModalVisible(true);
     };
     const handleAddComment = async () => {
@@ -245,7 +245,10 @@ const CalendarDetailPage = ({ route }) => {
                                         )}
                                         <TouchableOpacity
                                             style={styles.actionButton}
-                                            onPress={() => handleReportPress(comment.id)}
+                                            onPress={() => {
+                                                console.log('Item on press:', comment);
+                                                handleReportPress(comment);
+                                            }}
                                         >
                                             <Report name="report" size={15} color="#888" />
                                         </TouchableOpacity>
@@ -343,7 +346,10 @@ const CalendarDetailPage = ({ route }) => {
 
                                                             <TouchableOpacity
                                                                 style={styles.actionButton}
-                                                                onPress={() => handleReportPress(item.id)}
+                                                                onPress={() => {
+                                                                    console.log('Item on press:', item); // item 구조 확인
+                                                                    handleReportPress(item);
+                                                                }}
                                                             >
                                                                 <Report name="report" size={15} color="#888" />
                                                             </TouchableOpacity>
