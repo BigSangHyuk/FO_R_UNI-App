@@ -23,6 +23,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { getStorage } from '../../auth/asyncstorage';
 import Http from '../../address/backend_url';
 import { useUserContext } from '../../AuthProvider';
+import ReportModal from '../modals/report';
 
 const CalendarDetailPage = ({ route }) => {
     const navigation = useNavigation();
@@ -32,6 +33,9 @@ const CalendarDetailPage = ({ route }) => {
     const [showKeyboard, setShowKeyboard] = useState<boolean>(false);
     const [parentCommentId, setParentCommentId] = useState(null);
     const { userData, setUserData } = useUserContext();
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [selectedComment, setSelectedComment] = useState(null);
+
     useEffect(() => {
         console.log(userData?.nickName);
     }, [userData]);
@@ -59,6 +63,11 @@ const CalendarDetailPage = ({ route }) => {
         setShowKeyboard(true);
     };
 
+    const handleReportPress = (comment) => {
+        setSelectedComment(comment);
+        console.log(comment.content);
+        setModalVisible(true);
+    };
     const handleAddComment = async () => {
         const accessToken = await getStorage('accessToken');
         const commentData = {
@@ -234,7 +243,10 @@ const CalendarDetailPage = ({ route }) => {
                                                 <Reply name="reply" size={15} color="#888" />
                                             </TouchableOpacity>
                                         )}
-                                        <TouchableOpacity style={styles.actionButton}>
+                                        <TouchableOpacity
+                                            style={styles.actionButton}
+                                            onPress={() => handleReportPress(comment.id)}
+                                        >
                                             <Report name="report" size={15} color="#888" />
                                         </TouchableOpacity>
                                     </React.Fragment>
@@ -329,7 +341,10 @@ const CalendarDetailPage = ({ route }) => {
                                                                 <Reply name="reply" size={15} color="#888" />
                                                             </TouchableOpacity>
 
-                                                            <TouchableOpacity style={styles.actionButton}>
+                                                            <TouchableOpacity
+                                                                style={styles.actionButton}
+                                                                onPress={() => handleReportPress(item.id)}
+                                                            >
                                                                 <Report name="report" size={15} color="#888" />
                                                             </TouchableOpacity>
                                                         </React.Fragment>
@@ -337,6 +352,14 @@ const CalendarDetailPage = ({ route }) => {
                                                 </View>
                                             </View>
                                         </View>
+                                        {modalVisible && (
+                                            <ReportModal
+                                                modalVisible={modalVisible}
+                                                setModalVisible={setModalVisible}
+                                                commentId={selectedComment.id}
+                                                comment={selectedComment.content}
+                                            />
+                                        )}
                                         {item.children && renderComments(item.children, 1)}
                                     </View>
                                 );

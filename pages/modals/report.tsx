@@ -1,8 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
+import {
+    View,
+    Text,
+    TextInput,
+    Button,
+    StyleSheet,
+    ScrollView,
+    Modal,
+    Dimensions,
+    TouchableOpacity,
+} from 'react-native';
+import Icons from 'react-native-vector-icons/MaterialIcons';
 import { RadioButton } from 'react-native-paper';
-
-const ReportModal = () => {
+const { height } = Dimensions.get('window');
+const ReportModal = ({ modalVisible, setModalVisible, commentId, comment }) => {
     const [selectedReason, setSelectedReason] = useState('');
     const [detail, setDetail] = useState('');
 
@@ -17,7 +28,7 @@ const ReportModal = () => {
 
     const submitReport = async () => {
         const reportData = {
-            commentId: 0,
+            commentId: commentId,
             reason: selectedReason,
             detail,
         };
@@ -33,6 +44,7 @@ const ReportModal = () => {
 
             if (response.ok) {
                 alert('신고가 접수되었습니다.');
+                setModalVisible(false);
             } else {
                 throw new Error('Failed to submit report');
             }
@@ -40,33 +52,74 @@ const ReportModal = () => {
             alert('신고 접수 중 오류가 발생했습니다: ' + error.message);
         }
     };
-
+    console.log(comment);
     return (
-        <ScrollView style={styles.container}>
-            <Text style={styles.title}>신고하기</Text>
-            <RadioButton.Group onValueChange={(newValue) => setSelectedReason(newValue)} value={selectedReason}>
-                {reasons.map((reason, index) => (
-                    <View key={index} style={styles.radioButtonContainer}>
-                        <RadioButton value={reason.value} />
-                        <Text>{reason.label}</Text>
-                    </View>
-                ))}
-            </RadioButton.Group>
-            <TextInput style={styles.input} onChangeText={setDetail} value={detail} placeholder="상세 사유" multiline />
-            <Button title="신고하기" onPress={submitReport} />
-        </ScrollView>
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => setModalVisible(false)}
+        >
+            <View style={styles.container}>
+                <View style={styles.modalView}>
+                    <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                        <Icons name="close" size={25} style={styles.closeButtonText} />
+                    </TouchableOpacity>
+                    <ScrollView style={styles.scrollView}>
+                        <Text style={styles.title}>신고하기</Text>
+                        <Text style={styles.commentContent}>내용: {comment}</Text>
+                        <RadioButton.Group
+                            onValueChange={(newValue) => setSelectedReason(newValue)}
+                            value={selectedReason}
+                        >
+                            {reasons.map((reason, index) => (
+                                <View key={index} style={styles.radioButtonContainer}>
+                                    <RadioButton value={reason.value} />
+                                    <Text>{reason.label}</Text>
+                                </View>
+                            ))}
+                        </RadioButton.Group>
+
+                        <Button title="신고하기" onPress={submitReport} />
+                    </ScrollView>
+                </View>
+            </View>
+        </Modal>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    scrollView: {
+        flexGrow: 1,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 25,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+        width: '90%',
+        maxHeight: height * 0.7,
     },
     title: {
         fontSize: 22,
         fontWeight: 'bold',
         marginBottom: 20,
+        margin: 'auto',
     },
     radioButtonContainer: {
         flexDirection: 'row',
@@ -80,6 +133,21 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         height: 100,
         textAlignVertical: 'top',
+    },
+    commentContent: {
+        fontSize: 14,
+        marginBottom: 4,
+    },
+    closeButton: {
+        position: 'absolute',
+        right: 15,
+        top: 15,
+        padding: 10,
+        zIndex: 1,
+    },
+    closeButtonText: {
+        fontSize: 16,
+        color: '#333',
     },
 });
 
