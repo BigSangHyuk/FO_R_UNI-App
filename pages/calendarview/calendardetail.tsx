@@ -199,7 +199,6 @@ const CalendarDetailPage = ({ route }) => {
     }
     const renderComments = (comments, level = 0) => {
         return comments.map((comment) => {
-            // 각 댓글에 대해 스타일 동적 설정
             const userNameStyle =
                 comment.user && userData && comment.user.nickName === userData.nickName
                     ? styles.nicknameHighlighted
@@ -227,7 +226,7 @@ const CalendarDetailPage = ({ route }) => {
                                             />
                                             <Text style={styles.likeCount}>{comment.commentLike}</Text>
                                         </TouchableOpacity>
-                                        {comment.children && (
+                                        {!comment.children && (
                                             <TouchableOpacity
                                                 style={styles.actionButton}
                                                 onPress={() => handleReply(comment.id)}
