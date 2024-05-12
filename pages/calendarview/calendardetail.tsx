@@ -32,6 +32,9 @@ const CalendarDetailPage = ({ route }) => {
     const [showKeyboard, setShowKeyboard] = useState<boolean>(false);
     const [parentCommentId, setParentCommentId] = useState(null);
     const { userData, setUserData } = useUserContext();
+    useEffect(() => {
+        console.log(userData?.nickName);
+    }, [userData]);
 
     const titleParts = post.title.match(/(\[.*?\]|\(.*?\))?(.*)/) || ['', '', ''];
     const firstLine = titleParts[1] || '';
@@ -195,46 +198,55 @@ const CalendarDetailPage = ({ route }) => {
         return '방금 전';
     }
     const renderComments = (comments, level = 0) => {
-        return comments.map((comment) => (
-            <View key={comment.id} style={[styles.commentItem, { marginLeft: 20 * level }]}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <View>
-                        <Text style={styles.nickname}>{comment.user?.nickName}</Text>
-                        <Text style={styles.commentText}>{comment?.content}</Text>
-                    </View>
-                    <View>
-                        <View style={styles.actions}>
-                            <Text style={styles.timestamp}>{CreateTime(comment.createdAt)}</Text>
-                            {!comment.isDeleted && (
-                                <React.Fragment>
-                                    <TouchableOpacity style={styles.actionButton} onPress={() => toggleLike(comment)}>
-                                        <Thumbs
-                                            name="thumbs-up"
-                                            size={15}
-                                            color={comment.isLiked ? '#46AAFF' : '#888'}
-                                        />
-                                        <Text style={styles.likeCount}>{comment.commentLike}</Text>
-                                    </TouchableOpacity>
-                                    {!comment.children && (
+        return comments.map((comment) => {
+            // 각 댓글에 대해 스타일 동적 설정
+            const userNameStyle =
+                comment.user && userData && comment.user.nickName === userData.nickName
+                    ? styles.nicknameHighlighted
+                    : styles.nickname;
+            return (
+                <View key={comment.id} style={[styles.commentItem, { marginLeft: 20 * level }]}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <View>
+                            <Text style={userNameStyle}>{comment.user ? comment.user.nickName : '익명의 사용자'}</Text>
+                            <Text style={styles.commentText}>{comment.content}</Text>
+                        </View>
+                        <View>
+                            <View style={styles.actions}>
+                                <Text style={styles.timestamp}>{CreateTime(comment.createdAt)}</Text>
+                                {!comment.isDeleted && (
+                                    <React.Fragment>
                                         <TouchableOpacity
                                             style={styles.actionButton}
-                                            onPress={() => handleReply(comment.id)}
+                                            onPress={() => toggleLike(comment)}
                                         >
-                                            <Reply name="reply" size={15} color="#888" />
+                                            <Thumbs
+                                                name="thumbs-up"
+                                                size={15}
+                                                color={comment.isLiked ? '#46AAFF' : '#888'}
+                                            />
+                                            <Text style={styles.likeCount}>{comment.commentLike}</Text>
                                         </TouchableOpacity>
-                                    )}
-
-                                    <TouchableOpacity style={styles.actionButton}>
-                                        <Report name="report" size={15} color="#888" />
-                                    </TouchableOpacity>
-                                </React.Fragment>
-                            )}
+                                        {comment.children && (
+                                            <TouchableOpacity
+                                                style={styles.actionButton}
+                                                onPress={() => handleReply(comment.id)}
+                                            >
+                                                <Reply name="reply" size={15} color="#888" />
+                                            </TouchableOpacity>
+                                        )}
+                                        <TouchableOpacity style={styles.actionButton}>
+                                            <Report name="report" size={15} color="#888" />
+                                        </TouchableOpacity>
+                                    </React.Fragment>
+                                )}
+                            </View>
                         </View>
                     </View>
+                    {comment.children && renderComments(comment.children, level + 1)}
                 </View>
-                {comment.children && renderComments(comment.children, level + 1)}
-            </View>
-        ));
+            );
+        });
     };
 
     return (
@@ -278,15 +290,20 @@ const CalendarDetailPage = ({ route }) => {
                     <View style={styles.container2}>
                         <FlatList
                             data={comments}
-                            keyExtractor={(item) => item.id}
+                            keyExtractor={(item) => item.id.toString()}
                             renderItem={({ item }) => {
                                 const userName = item.user ? item.user.nickName : '익명의 사용자';
                                 const commentText = item.isDeleted ? '삭제된 댓글입니다.' : item.content;
+
+                                const userNameStyle =
+                                    item.user && userData && item.user.nickName === userData.nickName
+                                        ? styles.nicknameHighlighted
+                                        : styles.nickname;
                                 return (
                                     <View key={item.id} style={[styles.commentItem]}>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                             <View>
-                                                <Text style={styles.nickname}>{userName}</Text>
+                                                <Text style={userNameStyle}>{userName}</Text>
                                                 <Text style={styles.commentText}>{commentText}</Text>
                                             </View>
                                             <View>
@@ -453,6 +470,11 @@ const styles = StyleSheet.create({
     nickname: {
         fontWeight: 'bold',
         marginBottom: 5,
+    },
+    nicknameHighlighted: {
+        fontWeight: 'bold',
+        marginBottom: 5,
+        color: '#46AAFF',
     },
     commentItem: {
         padding: 8,
