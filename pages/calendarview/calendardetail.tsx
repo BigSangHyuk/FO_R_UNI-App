@@ -22,6 +22,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { getStorage } from '../../auth/asyncstorage';
 import Http from '../../address/backend_url';
+import { useUserContext } from '../../AuthProvider';
 
 const CalendarDetailPage = ({ route }) => {
     const navigation = useNavigation();
@@ -30,6 +31,7 @@ const CalendarDetailPage = ({ route }) => {
     const [commentText, setCommentText] = useState('');
     const [showKeyboard, setShowKeyboard] = useState<boolean>(false);
     const [parentCommentId, setParentCommentId] = useState(null);
+    const { userData, setUserData } = useUserContext();
 
     const titleParts = post.title.match(/(\[.*?\]|\(.*?\))?(.*)/) || ['', '', ''];
     const firstLine = titleParts[1] || '';
