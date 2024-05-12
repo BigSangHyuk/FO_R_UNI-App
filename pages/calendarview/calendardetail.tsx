@@ -140,6 +140,33 @@ const CalendarDetailPage = ({ route }) => {
         fetchComment();
     }, [post.comment]);
 
+    function CreateTime(timestamp) {
+        if (!timestamp) {
+            return '알수없음';
+        }
+
+        const now = new Date();
+        const past = new Date(timestamp);
+        const timeDiff = now.getTime() - past.getTime();
+        const seconds = Math.floor(timeDiff / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+
+        if (days >= 7) {
+            const Month = past.getMonth() + 1;
+            const Day = past.getDate();
+            return `${Month}월 ${Day}일`;
+        } else if (days >= 1) {
+            return `${days}일 전`;
+        } else if (hours >= 1) {
+            return `${hours}시간 전`;
+        } else if (minutes >= 1) {
+            return `${minutes}분 전`;
+        }
+
+        return '방금 전';
+    }
     const renderComments = (comments, level = 0) => {
         return comments.map((comment) => (
             <View key={comment.id} style={[styles.commentItem, { marginLeft: 20 * level }]}>
@@ -150,11 +177,12 @@ const CalendarDetailPage = ({ route }) => {
                     </View>
                     <View>
                         <View style={styles.actions}>
-                            <Text style={styles.timestamp}>{new Date(comment.createdAt).toLocaleString()}</Text>
+                            <Text style={styles.timestamp}>{CreateTime(comment.createdAt)}</Text>
                             {!comment.isDeleted && (
                                 <React.Fragment>
                                     <TouchableOpacity style={styles.actionButton}>
                                         <Thumbs name="thumbs-up" size={15} color="#888" />
+                                        <Text style={styles.likeCount}>{comment.commentLike}</Text>
                                     </TouchableOpacity>
                                     {!comment.children && (
                                         <TouchableOpacity
@@ -232,13 +260,12 @@ const CalendarDetailPage = ({ route }) => {
                                             </View>
                                             <View>
                                                 <View style={styles.actions}>
-                                                    <Text style={styles.timestamp}>
-                                                        {new Date(item.createdAt).toLocaleString()}
-                                                    </Text>
+                                                    <Text style={styles.timestamp}>{CreateTime(item.createdAt)}</Text>
                                                     {!item.isDeleted && (
                                                         <React.Fragment>
                                                             <TouchableOpacity style={styles.actionButton}>
                                                                 <Thumbs name="thumbs-up" size={15} color="#888" />
+                                                                <Text style={styles.likeCount}>{item.commentLike}</Text>
                                                             </TouchableOpacity>
 
                                                             <TouchableOpacity
@@ -319,6 +346,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
     },
+
     stitle: {
         fontSize: 17,
         fontWeight: 'bold',
@@ -333,6 +361,11 @@ const styles = StyleSheet.create({
         height: 200,
         resizeMode: 'contain',
         marginBottom: 20,
+    },
+    likeCount: {
+        marginLeft: 5,
+        color: '#888',
+        fontSize: 12,
     },
     linkStyle: {
         marginTop: 10,
