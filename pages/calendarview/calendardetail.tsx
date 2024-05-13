@@ -32,13 +32,32 @@ const CalendarDetailPage = ({ route }) => {
     const [commentText, setCommentText] = useState('');
     const [showKeyboard, setShowKeyboard] = useState<boolean>(false);
     const [parentCommentId, setParentCommentId] = useState(null);
-    const { userData, setUserData } = useUserContext();
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [selectedComment, setSelectedComment] = useState(null);
+    const [myName, setMyName] = useState<string>('');
 
     useEffect(() => {
-        console.log(userData?.nickName);
-    }, [userData]);
+        const handleUserInfo = async () => {
+            const accessToken = await getStorage('accessToken');
+            const response = await fetch(Http + `/users/info`, {
+                method: 'GET',
+                headers: {
+                    Accept: '*/*',
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log(result.nickName);
+                setMyName(result.nickName);
+            } else {
+                console.error('Failed to fetch user info:', response.status);
+            }
+        };
+        handleUserInfo();
+    }, []);
 
     const titleParts = post.title.match(/(\[.*?\]|\(.*?\))?(.*)/) || ['', '', ''];
     const firstLine = titleParts[1] || '';
@@ -209,9 +228,8 @@ const CalendarDetailPage = ({ route }) => {
     const renderComments = (comments, level = 0) => {
         return comments.map((comment) => {
             const userNameStyle =
-                comment.user && userData && comment.user.nickName === userData.nickName
-                    ? styles.nicknameHighlighted
-                    : styles.nickname;
+                comment.user && comment.user.nickName === myName ? styles.nicknameHighlighted : styles.nickname;
+
             return (
                 <View key={comment.id} style={[styles.commentItem, { marginLeft: 20 * level }]}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -310,7 +328,7 @@ const CalendarDetailPage = ({ route }) => {
                                 const commentText = item.isDeleted ? '삭제된 댓글입니다.' : item.content;
 
                                 const userNameStyle =
-                                    item.user && userData && item.user.nickName === userData.nickName
+                                    item.user && item.user.nickName === myName
                                         ? styles.nicknameHighlighted
                                         : styles.nickname;
                                 return (
