@@ -2,7 +2,9 @@ import React, { FC, useState, useEffect, Dispatch, SetStateAction, useMemo } fro
 import { StyleSheet, View, Text, Switch } from 'react-native';
 import { CheckBox, Button } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import { FilterInfo } from '../data/filter';
+import { getStorage } from '../auth/asyncstorage';
+import Http from '../address/backend_url';
+
 interface FilterProp {
     isFilterOpen: boolean;
     onCloseFilter: () => void;
@@ -12,7 +14,29 @@ interface FilterProp {
 const Filter: FC<FilterProp> = ({ isFilterOpen, onCloseFilter, setParentFilter, filter }) => {
     const [allChecked, setAllChecked] = useState(true);
     const [checkboxes, setCheckboxes] = useState([]);
+    const [deptId, setDeptId] = useState('');
+
+    const handleUserInfo = async () => {
+        const accessToken = await getStorage('accessToken');
+        const response = await fetch(Http + `/users/info`, {
+            method: 'GET',
+            headers: {
+                Accept: '*/*',
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log(result.deptId);
+            setDeptId(result.deptId);
+        } else {
+            console.error('Failed to post comment:', response.status);
+        }
+    };
     useEffect(() => {
+        handleUserInfo();
         const initialCheckboxesState = [
             { id: 246, title: '학사', checked: filter.includes('246'), color: '#dcdcdc' },
             { id: 247, title: '학점교류', checked: filter.includes('247'), color: 'red' },
@@ -21,8 +45,9 @@ const Filter: FC<FilterProp> = ({ isFilterOpen, onCloseFilter, setParentFilter, 
             { id: 250, title: '등록금 납부', checked: filter.includes('250'), color: 'green' },
             { id: 252, title: '교육시험', checked: filter.includes('252'), color: 'blue' },
             { id: 253, title: '봉사', checked: filter.includes('253'), color: 'purple' },
-            { id: 0, title: '학과', checked: filter.includes('0'), color: 'black' },
+            { id: deptId, title: '학과', checked: filter.includes('0'), color: 'black' },
         ];
+        console.log(deptId);
 
         const allSelected = initialCheckboxesState.every((checkbox) => checkbox.checked);
         setAllChecked(allSelected);
