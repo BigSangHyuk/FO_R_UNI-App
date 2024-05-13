@@ -107,7 +107,7 @@ const CalendarView: FC<CalendarProps> = ({ navigation }) => {
                 console.error('Fetch API failed', error);
             }
         };
-
+        console.log('필터변경', filter);
         fetchPosts();
     }, [currentMonth, filter]);
 
@@ -264,7 +264,12 @@ const CalendarView: FC<CalendarProps> = ({ navigation }) => {
                     style={[styles.overlay, { transform: [{ translateX: filterTranslateX }] }]}
                     {...panResponder.panHandlers}
                 >
-                    <Filter isFilterOpen={true} onCloseFilter={() => setIsFilterOpen(false)} />
+                    <Filter
+                        isFilterOpen={true}
+                        onCloseFilter={() => setIsFilterOpen(false)}
+                        setParentFilter={setFilter}
+                        filter={filter}
+                    />
                 </Animated.View>
             )}
             <View style={{ flex: 1, marginTop: 100 }}>
