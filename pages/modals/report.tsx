@@ -20,11 +20,11 @@ const ReportModal = ({ modalVisible, setModalVisible, commentId, comment }) => {
     const [detail, setDetail] = useState('');
 
     const reasons = [
-        { label: '욕설/비하', value: '욕설_비하가_포함된_내용이에요' },
-        { label: '상업적 광고 및 판매', value: '상업적_광고_및_판매' },
-        { label: '음란물/청소년에게 부적합', value: '음란물_청소년에게_부적합' },
-        { label: '사칭/사기', value: '사칭_사기' },
-        { label: '낚시/도배', value: '낚시_도배' },
+        { label: '욕설 비하가 포함된 내용이에요', value: '욕설_비하가_포함된_내용이에요' },
+        { label: '상업적 광고가 포함된 내용이에요', value: '상업적_광고가_포함된_내용이에요' },
+        { label: '선정적이에요', value: '선정적이에요' },
+        { label: '사칭 사기가 포함된 내용이에요', value: '사칭_사기가_포함된_내용이에요' },
+        { label: '낚시성 도배성 댓글이에요', value: '낚시성_도배성_댓글이에요' },
         { label: '저작권 위반', value: '저작권_위반' },
     ];
 
@@ -33,6 +33,7 @@ const ReportModal = ({ modalVisible, setModalVisible, commentId, comment }) => {
         const reportData = {
             commentId: commentId,
             reason: selectedReason,
+            detail: detail,
         };
         console.log(commentId, selectedReason);
 
