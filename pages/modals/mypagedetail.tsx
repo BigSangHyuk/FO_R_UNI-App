@@ -7,15 +7,23 @@ const MyPageDetail = ({ modalVisible, selectedPost, setModalVisible }) => {
         Linking.openURL(selectedPost.detail.noticeUrl).catch((err) => console.error("Couldn't load page", err));
     };
 
-    // const renderComments = (comments) => {
-    //     return comments.map((comment) => (
-    //         <View key={comment.id} style={styles.commentContainer}>
-    //             <Text style={styles.commentNickname}>{comment.user?.nickName}</Text>
-    //             <Text style={styles.commentContent}>{comment?.content}</Text>
-    //             {comment.children && renderComments(comment.children)}
-    //         </View>
-    //     ));
-    // };
+    const renderComments = (comments) => {
+        return comments
+            .map((comment) => {
+                if (comment.isDeleted) {
+                    return null; // 삭제된 댓글은 렌더링하지 않습니다.
+                }
+
+                return (
+                    <View key={comment.id} style={styles.commentContainer}>
+                        <Text style={styles.commentNickname}>{comment.user?.nickName}</Text>
+                        <Text style={styles.commentContent}>{comment?.content}</Text>
+                        {comment.children && renderComments(comment.children)}
+                    </View>
+                );
+            })
+            .filter((comment) => comment !== null); // null 값을 제거하여 렌더링 목록에서 삭제
+    };
 
     return (
         <Modal
