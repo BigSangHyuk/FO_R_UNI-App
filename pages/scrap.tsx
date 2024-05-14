@@ -17,9 +17,13 @@ import { Scrapped } from '../data/types';
 import { Posts } from '../data/types';
 import Icons from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import ScrapDetail from './modals/scrapdetail';
 
-const Scrap: FC = () => {
+import { NavigationProp } from '@react-navigation/native';
+
+interface ScrapProps {
+    navigation: NavigationProp<any>;
+}
+const Scrap: FC<ScrapProps> = ({ navigation }) => {
     const [scrapped, setScrapped] = useState<Scrapped[] | null>(null);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [selectedPost, setSelectedPost] = useState<Posts[] | null>(null);
@@ -149,6 +153,26 @@ const Scrap: FC = () => {
             </TouchableOpacity>
         );
     };
+    const handlePostPress = async (postId) => {
+        const url = `${Http}/posts/${postId}`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${await getStorage('accessToken')}`,
+                },
+            });
+            const result = await response.json();
+            if (response.status === 200) {
+                navigation.navigate('CalendarDetailPage', { post: result });
+            } else {
+                Alert.alert('Error', 'Failed to fetch post details.');
+            }
+        } catch (error) {
+            console.error('Error fetching post details:', error);
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -168,7 +192,7 @@ const Scrap: FC = () => {
                             ref={swipeableRef}
                             renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item.postId)}
                         >
-                            <TouchableWithoutFeedback onPress={() => fetchPostDetails(item.postId)}>
+                            <TouchableWithoutFeedback onPress={() => handlePostPress(item.postId)}>
                                 <View style={styles.item}>
                                     <Text style={styles.itemTitle} numberOfLines={1}>
                                         {item.title}
@@ -182,13 +206,6 @@ const Scrap: FC = () => {
                     onRefresh={handleRefresh}
                     refreshing={isRefreshing}
                 />
-                {selectedPost && (
-                    <ScrapDetail
-                        modalVisible={modalVisible}
-                        selectedPost={selectedPost}
-                        setModalVisible={setModalVisible}
-                    />
-                )}
             </View>
         </View>
     );
