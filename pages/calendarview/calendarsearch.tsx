@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, StatusBar, TextInput, TouchableOpacity, FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { View, Text, StyleSheet, StatusBar, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
 import { getStorage } from '../../auth/asyncstorage';
 import { UnClassified } from '../../data/types';
 import Http from '../../address/backend_url';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 
-const CalendarSearch = () => {
+interface CalendarSearchProps {
+    navigation: NavigationProp<any>;
+}
+
+const CalendarSearch: FC<CalendarSearchProps> = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const [filteredData, setFilteredData] = useState<UnClassified[] | null>(null);
     const [searchInitiated, setSearchInitiated] = useState<boolean>(false);
-    const navigation = useNavigation();
-
+    const inputRef = useRef(null);
     useEffect(() => {
         const parent = navigation.getParent();
         if (parent) {
@@ -26,6 +29,24 @@ const CalendarSearch = () => {
                     tabBarStyle: { display: 'flex' },
                 });
             }
+        };
+    }, [navigation]);
+
+    useEffect(() => {
+        const focusUnsubscribe = navigation.addListener('focus', () => {
+            setSearchKeyword('');
+            setFilteredData([]);
+            setSearchInitiated(false);
+
+            setTimeout(() => {
+                if (inputRef.current) {
+                    inputRef.current.focus();
+                }
+            }, 0);
+        });
+
+        return () => {
+            focusUnsubscribe();
         };
     }, [navigation]);
 
@@ -63,11 +84,33 @@ const CalendarSearch = () => {
         setSearchInitiated(true);
     };
 
+    const handlePostPress = async (postId) => {
+        const url = `${Http}/posts/${postId}`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${await getStorage('accessToken')}`,
+                },
+            });
+            const result = await response.json();
+            if (response.status === 200) {
+                navigation.navigate('CalendarDetailPage', { post: result });
+            } else {
+                Alert.alert('Error', 'Failed to fetch post details.');
+            }
+        } catch (error) {
+            console.error('Error fetching post details:', error);
+        }
+    };
+
     return (
         <View style={styles.container}>
             <StatusBar barStyle="light-content" />
             <View style={styles.searchContainer}>
                 <TextInput
+                    ref={inputRef}
                     style={styles.searchInput}
                     placeholder="검색하고 싶은 제목을 입력해주세요"
                     autoFocus={true}
@@ -97,7 +140,11 @@ const CalendarSearch = () => {
                     <FlatList
                         data={filteredData}
                         keyExtractor={(item) => item.postId.toString()}
-                        renderItem={({ item }) => <Text style={styles.itemText}>{item.title}</Text>}
+                        renderItem={({ item }) => (
+                            <Text style={styles.itemText} onPress={() => handlePostPress(item.postId)}>
+                                {item.title}
+                            </Text>
+                        )}
                     />
                 ) : (
                     <View style={styles.contentContainer}>
