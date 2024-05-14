@@ -40,7 +40,7 @@ const Filter: FC<FilterProp> = ({ isFilterOpen, onCloseFilter, setParentFilter, 
         const initialCheckboxesState = [
             { id: 246, title: '학사', checked: filter.includes('246'), color: '#dcdcdc' },
             { id: 247, title: '학점교류', checked: filter.includes('247'), color: 'red' },
-            { id: 248, title: '일반/행사/모집', checked: filter.includes('248'), color: 'orange' },
+            { id: 2611, title: '일반/행사/모집', checked: filter.includes('248'), color: 'orange' },
             { id: 249, title: '장학금', checked: filter.includes('249'), color: 'yellow' },
             { id: 250, title: '등록금 납부', checked: filter.includes('250'), color: 'green' },
             { id: 252, title: '교육시험', checked: filter.includes('252'), color: 'blue' },
