@@ -19,14 +19,14 @@ import Thumbs from 'react-native-vector-icons/Feather';
 import Reply from 'react-native-vector-icons/Entypo';
 import Report from 'react-native-vector-icons/Octicons';
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { getStorage } from '../../auth/asyncstorage';
 import Http from '../../address/backend_url';
 import ReportModal from '../modals/report';
-import Swipeable from 'react-native-gesture-handler';
 
 const CalendarDetailPage = ({ route }) => {
     const navigation = useNavigation();
+
     const post = route.params.post?.detail;
     const [comments, setComments] = useState(route.params.post?.comments);
     const [commentText, setCommentText] = useState('');
@@ -36,7 +36,7 @@ const CalendarDetailPage = ({ route }) => {
     const [selectedComment, setSelectedComment] = useState(null);
     const [myName, setMyName] = useState<string>('');
     const [myId, setMyId] = useState<number>();
-    const swipeableRef = useRef(null);
+
     useEffect(() => {
         const handleUserInfo = async () => {
             const accessToken = await getStorage('accessToken');
@@ -118,9 +118,6 @@ const CalendarDetailPage = ({ route }) => {
         }
     };
     const handleDelete = (postId: number) => {
-        if (swipeableRef.current) {
-            swipeableRef.current.close();
-        }
         Alert.alert('댓글 삭제', '해당 댓글을 삭제하시겠습니까?', [
             {
                 text: '예',
@@ -130,25 +127,33 @@ const CalendarDetailPage = ({ route }) => {
             },
         ]);
     };
-    const handleEdit = (postId: number) => {
-        if (swipeableRef.current) {
-            swipeableRef.current.close();
+    const handleEdit = (postId: number) => {};
+
+    const handleLongPress = (comment) => {
+        if (comment.user?.userId === myId) {
+            Alert.alert(
+                '댓글 옵션',
+                `댓글 내용 : ${comment.content}`,
+                [
+                    {
+                        text: '삭제',
+                        onPress: () => console.log('Delete Comment'),
+                        style: 'destructive',
+                    },
+                    {
+                        text: '수정',
+                        onPress: () => console.log('Edit Comment'),
+                    },
+                    {
+                        text: '취소',
+                        onPress: () => console.log('Cancel'),
+                        style: 'cancel',
+                    },
+                ],
+                { cancelable: true }
+            );
         }
     };
-
-    const renderRightActions = (progress, dragX, postId) => {
-        return (
-            <View style={styles.rightActionContainer}>
-                <TouchableOpacity onPress={() => handleEdit(postId)} style={styles.actionButton}>
-                    <Icons name="edit" size={25} color="blue" />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleDelete(postId)} style={styles.actionButton}>
-                    <Icons name="delete-outline" size={25} color="red" />
-                </TouchableOpacity>
-            </View>
-        );
-    };
-
     useEffect(() => {
         const parent = navigation.getParent();
         if (parent) {
@@ -264,49 +269,53 @@ const CalendarDetailPage = ({ route }) => {
 
             return (
                 <View key={comment.id} style={[styles.commentItem, { marginLeft: 20 * level }]}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <View>
-                            <Text style={userNameStyle}>{comment.user ? comment.user.nickName : '익명의 사용자'}</Text>
-                            <Text style={styles.commentText}>{comment.content}</Text>
-                        </View>
-                        <View>
-                            <View style={styles.actions}>
-                                <Text style={styles.timestamp}>{CreateTime(comment.createdAt)}</Text>
-                                {!comment.isDeleted && (
-                                    <React.Fragment>
-                                        <TouchableOpacity
-                                            style={styles.actionButton}
-                                            onPress={() => toggleLike(comment)}
-                                        >
-                                            <Thumbs
-                                                name="thumbs-up"
-                                                size={15}
-                                                color={comment.isLiked ? '#46AAFF' : '#888'}
-                                            />
-                                            <Text style={styles.likeCount}>{comment.commentLike}</Text>
-                                        </TouchableOpacity>
-                                        {!comment.children && (
+                    <TouchableWithoutFeedback onLongPress={() => handleLongPress(comment)}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <View>
+                                <Text style={userNameStyle}>
+                                    {comment.user ? comment.user.nickName : '익명의 사용자'}
+                                </Text>
+                                <Text style={styles.commentText}>{comment.content}</Text>
+                            </View>
+                            <View>
+                                <View style={styles.actions}>
+                                    <Text style={styles.timestamp}>{CreateTime(comment.createdAt)}</Text>
+                                    {!comment.isDeleted && (
+                                        <React.Fragment>
                                             <TouchableOpacity
                                                 style={styles.actionButton}
-                                                onPress={() => handleReply(comment.id)}
+                                                onPress={() => toggleLike(comment)}
                                             >
-                                                <Reply name="reply" size={15} color="#888" />
+                                                <Thumbs
+                                                    name="thumbs-up"
+                                                    size={15}
+                                                    color={comment.isLiked ? '#46AAFF' : '#888'}
+                                                />
+                                                <Text style={styles.likeCount}>{comment.commentLike}</Text>
                                             </TouchableOpacity>
-                                        )}
-                                        <TouchableOpacity
-                                            style={styles.actionButton}
-                                            onPress={() => {
-                                                console.log('Item on press:', comment);
-                                                handleReportPress(comment);
-                                            }}
-                                        >
-                                            <Report name="report" size={15} color="#888" />
-                                        </TouchableOpacity>
-                                    </React.Fragment>
-                                )}
+                                            {!comment.children && (
+                                                <TouchableOpacity
+                                                    style={styles.actionButton}
+                                                    onPress={() => handleReply(comment.id)}
+                                                >
+                                                    <Reply name="reply" size={15} color="#888" />
+                                                </TouchableOpacity>
+                                            )}
+                                            <TouchableOpacity
+                                                style={styles.actionButton}
+                                                onPress={() => {
+                                                    console.log('Item on press:', comment);
+                                                    handleReportPress(comment);
+                                                }}
+                                            >
+                                                <Report name="report" size={15} color="#888" />
+                                            </TouchableOpacity>
+                                        </React.Fragment>
+                                    )}
+                                </View>
                             </View>
                         </View>
-                    </View>
+                    </TouchableWithoutFeedback>
                     {comment.children && renderComments(comment.children, level + 1)}
                 </View>
             );
@@ -365,58 +374,64 @@ const CalendarDetailPage = ({ route }) => {
                                         : styles.nickname;
                                 return (
                                     <View key={item.id} style={[styles.commentItem]}>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                            <View>
-                                                <Text style={userNameStyle}>{userName}</Text>
-                                                <Text style={styles.commentText}>{commentText}</Text>
-                                            </View>
-                                            <View>
-                                                <View style={styles.actions}>
-                                                    <Text style={styles.timestamp}>{CreateTime(item.createdAt)}</Text>
-                                                    {!item.isDeleted && (
-                                                        <React.Fragment>
-                                                            <TouchableOpacity
-                                                                style={styles.actionButton}
-                                                                onPress={() => toggleLike(item)}
-                                                            >
-                                                                <Thumbs
-                                                                    name="thumbs-up"
-                                                                    size={15}
-                                                                    color={item.isLiked ? '#46AAFF' : '#888'}
-                                                                />
-                                                                <Text style={styles.likeCount}>{item.commentLike}</Text>
-                                                            </TouchableOpacity>
+                                        <TouchableWithoutFeedback onLongPress={() => handleLongPress(item)}>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                <View>
+                                                    <Text style={userNameStyle}>{userName}</Text>
+                                                    <Text style={styles.commentText}>{commentText}</Text>
+                                                </View>
+                                                <View>
+                                                    <View style={styles.actions}>
+                                                        <Text style={styles.timestamp}>
+                                                            {CreateTime(item.createdAt)}
+                                                        </Text>
+                                                        {!item.isDeleted && (
+                                                            <React.Fragment>
+                                                                <TouchableOpacity
+                                                                    style={styles.actionButton}
+                                                                    onPress={() => toggleLike(item)}
+                                                                >
+                                                                    <Thumbs
+                                                                        name="thumbs-up"
+                                                                        size={15}
+                                                                        color={item.isLiked ? '#46AAFF' : '#888'}
+                                                                    />
+                                                                    <Text style={styles.likeCount}>
+                                                                        {item.commentLike}
+                                                                    </Text>
+                                                                </TouchableOpacity>
 
-                                                            <TouchableOpacity
-                                                                style={styles.actionButton}
-                                                                onPress={() => handleReply(item.id)}
-                                                            >
-                                                                <Reply name="reply" size={15} color="#888" />
-                                                            </TouchableOpacity>
+                                                                <TouchableOpacity
+                                                                    style={styles.actionButton}
+                                                                    onPress={() => handleReply(item.id)}
+                                                                >
+                                                                    <Reply name="reply" size={15} color="#888" />
+                                                                </TouchableOpacity>
 
-                                                            <TouchableOpacity
-                                                                style={styles.actionButton}
-                                                                onPress={() => {
-                                                                    console.log('Item on press:', item); // item 구조 확인
-                                                                    handleReportPress(item);
-                                                                }}
-                                                            >
-                                                                <Report name="report" size={15} color="#888" />
-                                                            </TouchableOpacity>
-                                                        </React.Fragment>
-                                                    )}
+                                                                <TouchableOpacity
+                                                                    style={styles.actionButton}
+                                                                    onPress={() => {
+                                                                        console.log('Item on press:', item); // item 구조 확인
+                                                                        handleReportPress(item);
+                                                                    }}
+                                                                >
+                                                                    <Report name="report" size={15} color="#888" />
+                                                                </TouchableOpacity>
+                                                            </React.Fragment>
+                                                        )}
+                                                    </View>
                                                 </View>
                                             </View>
-                                        </View>
-                                        {modalVisible && (
-                                            <ReportModal
-                                                modalVisible={modalVisible}
-                                                setModalVisible={setModalVisible}
-                                                commentId={selectedComment.id}
-                                                comment={selectedComment.content}
-                                            />
-                                        )}
-                                        {item.children && renderComments(item.children, 1)}
+                                            {modalVisible && (
+                                                <ReportModal
+                                                    modalVisible={modalVisible}
+                                                    setModalVisible={setModalVisible}
+                                                    commentId={selectedComment.id}
+                                                    comment={selectedComment.content}
+                                                />
+                                            )}
+                                            {item.children && renderComments(item.children, 1)}
+                                        </TouchableWithoutFeedback>
                                     </View>
                                 );
                             }}
