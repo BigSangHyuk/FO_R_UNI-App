@@ -78,13 +78,16 @@ const UnClassify: FC = () => {
         setIsLoading(true);
         const accessToken = await getStorage('accessToken');
         try {
-            const res = await fetch(`${Http}/posts/search?keyword=${encodeURIComponent(searchKeyword)}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
+            const res = await fetch(
+                `${Http}/posts/search?keyword=${encodeURIComponent(searchKeyword)}&classified=false`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
 
             if (res.status === 200) {
                 const result = await res.json();
