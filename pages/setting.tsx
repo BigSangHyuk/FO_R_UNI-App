@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from 'react';
+import React, { FC, useCallback, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Switch, TextInput, Alert, Animated } from 'react-native';
 import { Header, Button } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
@@ -17,18 +17,26 @@ const Setting: FC<SettingProps> = ({ handleLogOut }) => {
     const [english, setEnglish] = useState<boolean>(false);
     const [about, setAbout] = useState<boolean>(false);
     const [contact, setContact] = useState<boolean>(false);
-    const [feedback, setFeedback] = useState<string>('');
-    const [isToggled, setIsToggled] = useState<boolean>(false);
     const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
-    const slideAnimation = useRef(new Animated.Value(0)).current;
+    const [inquiry, setInquiry] = useState<string>('');
 
-    const handleToggle = () => {
-        setIsToggled((previousState) => !previousState);
-        Animated.timing(slideAnimation, {
-            toValue: isToggled ? 0 : 1,
-            duration: 400,
-            useNativeDriver: false,
-        }).start();
+    const handleInquiry = async () => {
+        const accessToken = await getStorage('accessToken');
+        const res = await fetch(Http + `/emails/inquiry`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({ inquiry }),
+        });
+        if (res.status == 200) {
+            Alert.alert('문의가 접수되었습니다.');
+            setInquiry('');
+            setContact(false);
+        } else {
+            console.log('문제 발생');
+        }
     };
 
     const togglePushSwitch = () => {
@@ -36,11 +44,13 @@ const Setting: FC<SettingProps> = ({ handleLogOut }) => {
     };
 
     const toggleDarkModeSwitch = () => {
-        setDarkModeEnabled((prevState) => !prevState);
+        // setDarkModeEnabled((prevState) => !prevState);
+        Alert.alert('준비중22~');
     };
 
     const toggleEnglishSwitch = () => {
-        setEnglish((prevState) => !prevState);
+        // setEnglish((prevState) => !prevState);
+        Alert.alert('준비중~');
     };
 
     const toggleAbout = () => {
@@ -49,10 +59,6 @@ const Setting: FC<SettingProps> = ({ handleLogOut }) => {
 
     const toggleContact = () => {
         setContact((prev) => !prev);
-    };
-
-    const handleSendFeedback = () => {
-        console.log('Feedback submitted:', feedback);
     };
 
     const withdraw = async () => {
@@ -183,11 +189,11 @@ const Setting: FC<SettingProps> = ({ handleLogOut }) => {
                             <TextInput
                                 style={styles.feedbackInput}
                                 placeholder="어떤점이 불편하세요?"
-                                value={feedback}
-                                onChangeText={(text) => setFeedback(text)}
+                                value={inquiry}
+                                onChangeText={setInquiry}
                                 multiline
                             />
-                            <Button title="전송" onPress={handleSendFeedback} buttonStyle={styles.sendButton} />
+                            <Button title="전송" onPress={handleInquiry} buttonStyle={styles.sendButton} />
                         </View>
                     </View>
                 )}

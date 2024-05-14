@@ -8,6 +8,7 @@ import {
     FlatList,
     Image,
     TouchableWithoutFeedback,
+    Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Header } from 'react-native-elements';
@@ -29,7 +30,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     const [userLike, setUserLike] = useState<UserLike[]>(null);
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [editImageOverlayVisible, setEditImageOverlayVisible] = useState<boolean>(false);
-
+    const IMG = '../data/default.png';
     const slideAnimation = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
@@ -147,14 +148,6 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
         }
     };
 
-    const handleToggle = () => {
-        setIsToggled((previousState) => !previousState);
-        Animated.timing(slideAnimation, {
-            toValue: isToggled ? 0 : 1,
-            duration: 400,
-            useNativeDriver: false,
-        }).start();
-    };
     const uploadImage = async (imageUri) => {
         const accessToken = await getStorage('accessToken');
         const uriParts = imageUri.split('.');
@@ -211,6 +204,19 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
         }
     };
 
+    const handleToggle = () => {
+        setIsToggled(!isToggled);
+        Animated.timing(slideAnimation, {
+            toValue: isToggled ? 0 : 1,
+            duration: 300,
+            useNativeDriver: true,
+        }).start();
+    };
+    const sliderPosition = slideAnimation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 171.5],
+    });
+
     const toggleEditImageOverlay = () => {
         setEditImageOverlayVisible(!editImageOverlayVisible);
     };
@@ -230,6 +236,27 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
             }
         });
         return filteredData;
+    };
+
+    const handlePostPress = async (postId) => {
+        const url = `${Http}/posts/${postId}`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${await getStorage('accessToken')}`,
+                },
+            });
+            const result = await response.json();
+            if (response.status === 200) {
+                navigation.navigate('CalendarDetailPage', { post: result });
+            } else {
+                Alert.alert('Error', 'Failed to fetch post details.');
+            }
+        } catch (error) {
+            console.error('Error fetching post details:', error);
+        }
     };
 
     const uniqueUserComments = removeDuplicates(userComment);
@@ -278,7 +305,10 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                             onPress={editImageOverlayVisible ? pickImage : toggleEditImageOverlay}
                             style={styles.imageTouchable}
                         >
-                            {userInfo?.image && <Image source={{ uri: userInfo.image }} style={styles.profileImage} />}
+                            <Image
+                                source={userInfo?.image ? { uri: userInfo.image } : require(IMG)} // 이 방법은 동작하지 않습니다. 아래 설명 참조
+                                style={styles.profileImage}
+                            />
                             {editImageOverlayVisible && (
                                 <TouchableOpacity style={styles.overlay} onPress={pickImage}>
                                     <Text style={styles.overlayText}>이미지 변경</Text>
@@ -294,26 +324,20 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                             <Text style={styles.depart}>{userInfo?.department}</Text>
                         </View>
                     </View>
-                    <TouchableOpacity style={styles.toggleContainer} onPress={handleToggle}>
-                        <Animated.View
-                            style={[
-                                styles.toggle,
-                                {
-                                    transform: [
-                                        {
-                                            translateX: slideAnimation.interpolate({
-                                                inputRange: [0, 1],
-                                                outputRange: [0, 171.5],
-                                            }),
-                                        },
-                                    ],
-                                },
-                            ]}
-                        >
-                            <Text style={{ fontSize: 16, fontWeight: '600' }}>
-                                {isToggled ? '내가 댓글 남긴 글' : '좋아요한 댓글'}
-                            </Text>
-                        </Animated.View>
+                    <TouchableOpacity onPress={handleToggle} style={styles.toggleContainer}>
+                        <View style={styles.sliderContainer}>
+                            <Animated.View style={[styles.slider, { transform: [{ translateX: sliderPosition }] }]}>
+                                <Text style={styles.sliderText}>{isToggled ? '댓글 남긴 글' : '좋아요한 댓글'}</Text>
+                            </Animated.View>
+                            <View style={styles.textContainer}>
+                                <Text style={[styles.text, isToggled ? styles.inactiveText : styles.activeText]}>
+                                    좋아요한 댓글
+                                </Text>
+                                <Text style={[styles.text, isToggled ? styles.activeText : styles.inactiveText]}>
+                                    댓글 남긴 글
+                                </Text>
+                            </View>
+                        </View>
                     </TouchableOpacity>
                 </View>
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -323,12 +347,14 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                                 data={uniqueUserComments}
                                 extraData={uniqueUserComments}
                                 renderItem={({ item }) => (
-                                    <View style={styles.item}>
-                                        <Text style={styles.itemTitle} numberOfLines={1} ellipsizeMode="tail">
-                                            ○ {item.title}
-                                        </Text>
-                                        <Text style={styles.itemDuration}>{item.deadline}</Text>
-                                    </View>
+                                    <TouchableOpacity onPress={() => handlePostPress(item.postId)}>
+                                        <View style={styles.item}>
+                                            <Text style={styles.itemTitle} numberOfLines={1} ellipsizeMode="tail">
+                                                ○ {item.title}
+                                            </Text>
+                                            <Text style={styles.itemDuration}>{item.deadline}</Text>
+                                        </View>
+                                    </TouchableOpacity>
                                 )}
                                 keyExtractor={(item) => item.postId.toString()}
                                 ListEmptyComponent={() => (
@@ -340,10 +366,13 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                         ) : (
                             <FlatList
                                 data={uniqueUserLikes}
+                                extraData={uniqueUserLikes}
                                 renderItem={({ item }) => (
-                                    <View style={styles.item}>
-                                        <Text style={styles.itemTitle}>○ {item.content}</Text>
-                                    </View>
+                                    <TouchableOpacity onPress={() => handlePostPress(item.postId)}>
+                                        <View style={styles.item}>
+                                            <Text style={styles.itemTitle}>○ {item.content}</Text>
+                                        </View>
+                                    </TouchableOpacity>
                                 )}
                                 keyExtractor={(item) => item.postId.toString()}
                                 ListEmptyComponent={() => (
@@ -467,6 +496,46 @@ const styles = StyleSheet.create({
     emptyText: {
         fontSize: 20,
         color: 'gray',
+    },
+    sliderContainer: {
+        position: 'relative',
+        flex: 1,
+        justifyContent: 'center',
+    },
+    slider: {
+        position: 'absolute',
+        width: '50%',
+        height: 46,
+        backgroundColor: 'white',
+        borderRadius: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1,
+    },
+    sliderText: {
+        fontWeight: 'bold',
+        color: '#000',
+        fontSize: 16,
+        textAlign: 'center',
+        lineHeight: 46,
+    },
+    textContainer: {
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent: 'space-around',
+        paddingHorizontal: 20,
+    },
+    text: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    activeText: {
+        color: '#000',
+        opacity: 1,
+    },
+    inactiveText: {
+        color: '#000',
+        opacity: 0.5,
     },
 });
 

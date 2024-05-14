@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useState, useEffect, useCallback } from 'react';
 import { Input, InputProps, Button, Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import { TextStyle, ViewStyle, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { TextStyle, ViewStyle, StyleSheet, View, TouchableOpacity, Alert } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Http from '../address/backend_url';
 
@@ -46,6 +46,7 @@ const FindPass: React.FC<findPassProps> = ({ style, navigation }) => {
         });
         if (res.status === 200) {
             console.log(res);
+            Alert.alert('임시 비밀번호 발급 완료. 메일을 확인해주세요');
             navigation.navigate('LogIn');
         } else {
             console.error(Error);

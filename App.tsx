@@ -9,8 +9,10 @@ import Info from './auth/info';
 import Navigation from './menus/navigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { LogBox } from 'react-native';
+import { UserProvider } from './AuthProvider';
 const Stack = createNativeStackNavigator();
-
+LogBox.ignoreAllLogs();
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -44,36 +46,38 @@ const App = () => {
     }, []);
 
     return (
-        <GestureHandlerRootView>
-            <View style={styles.container}>
-                <NavigationContainer
-                    theme={{
-                        ...DefaultTheme,
-                        colors: {
-                            ...DefaultTheme.colors,
-                            background: 'white',
-                        },
-                    }}
-                >
-                    <Stack.Navigator>
-                        {isLoggedIn ? (
-                            <Stack.Screen
-                                name="Navigation"
-                                component={() => <Navigation handleLogOut={handleLogOut} />}
-                                options={{ headerShown: false }}
-                            />
-                        ) : (
-                            <Stack.Screen name="LogIn" options={{ headerShown: false }}>
-                                {(props) => <LogIn {...props} handleLogin={handleLogin} />}
-                            </Stack.Screen>
-                        )}
-                        <Stack.Screen name="Info" component={Info} options={{ headerShown: false }} />
-                        <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
-                        <Stack.Screen name="FindPass" component={FindPass} options={{ headerShown: false }} />
-                    </Stack.Navigator>
-                </NavigationContainer>
-            </View>
-        </GestureHandlerRootView>
+        <UserProvider>
+            <GestureHandlerRootView>
+                <View style={styles.container}>
+                    <NavigationContainer
+                        theme={{
+                            ...DefaultTheme,
+                            colors: {
+                                ...DefaultTheme.colors,
+                                background: 'white',
+                            },
+                        }}
+                    >
+                        <Stack.Navigator>
+                            {isLoggedIn ? (
+                                <Stack.Screen
+                                    name="Navigation"
+                                    component={() => <Navigation handleLogOut={handleLogOut} />}
+                                    options={{ headerShown: false }}
+                                />
+                            ) : (
+                                <Stack.Screen name="LogIn" options={{ headerShown: false }}>
+                                    {(props) => <LogIn {...props} handleLogin={handleLogin} />}
+                                </Stack.Screen>
+                            )}
+                            <Stack.Screen name="Info" component={Info} options={{ headerShown: false }} />
+                            <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
+                            <Stack.Screen name="FindPass" component={FindPass} options={{ headerShown: false }} />
+                        </Stack.Navigator>
+                    </NavigationContainer>
+                </View>
+            </GestureHandlerRootView>
+        </UserProvider>
     );
 };
 

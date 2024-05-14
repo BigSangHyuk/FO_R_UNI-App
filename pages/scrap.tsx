@@ -16,10 +16,13 @@ import { Swipeable } from 'react-native-gesture-handler';
 import { Scrapped } from '../data/types';
 import { Posts } from '../data/types';
 import Icons from 'react-native-vector-icons/Feather';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import ScrapDetail from './modals/scrapdetail';
 
-const Scrap: FC = () => {
+import { NavigationProp } from '@react-navigation/native';
+
+interface ScrapProps {
+    navigation: NavigationProp<any>;
+}
+const Scrap: FC<ScrapProps> = ({ navigation }) => {
     const [scrapped, setScrapped] = useState<Scrapped[] | null>(null);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [selectedPost, setSelectedPost] = useState<Posts[] | null>(null);
@@ -29,7 +32,7 @@ const Scrap: FC = () => {
     const [searchInitiated, setSearchInitiated] = useState<boolean>(false);
     const [refreshData, setRefreshData] = useState<boolean>(false);
     const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-    const swipeableRef = useRef(null);
+    const swipeableRefs = useRef(new Map()).current;
 
     useEffect(() => {
         fetchScrapped();
@@ -79,35 +82,6 @@ const Scrap: FC = () => {
         await fetchScrapped();
         setIsRefreshing(false);
     };
-    const fetchPostsBySearch = async () => {
-        setSearchInitiated(true);
-        setIsLoading(true);
-        const accessToken = await getStorage('accessToken');
-        try {
-            const res = await fetch(`${Http}/posts/search?keyword=${encodeURIComponent(searchKeyword)}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
-
-            if (res.status === 200) {
-                const result = await res.json();
-                const filteredPosts = result.data.filter((post) =>
-                    post.title.toLowerCase().includes(searchKeyword.toLowerCase())
-                );
-                setFilteredData(filteredPosts);
-            } else {
-                console.log('Search request failed');
-                setFilteredData([]);
-            }
-        } catch (error) {
-            console.error('Search failed', error);
-            setFilteredData([]);
-        }
-        setIsLoading(false);
-    };
 
     const unscrapPost = async (postId: number) => {
         const accessToken = await getStorage('accessToken');
@@ -121,6 +95,7 @@ const Scrap: FC = () => {
             });
 
             if (res.status === 200) {
+                Alert.alert('스크랩 삭제 성공');
                 setFilteredData((currentData) => currentData.filter((item) => item.postId !== postId));
                 setRefreshData((old) => !old);
             } else {
@@ -133,7 +108,7 @@ const Scrap: FC = () => {
     };
 
     const renderEmptyComponent = () => {
-        if (searchInitiated) {
+        if (!filteredData || filteredData.length === 0) {
             return (
                 <View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>아무것도 스크랩하지 않았습니다.</Text>
@@ -151,10 +126,19 @@ const Scrap: FC = () => {
         );
     }
 
-    const handleDelete = (postId: number) => {
-        if (swipeableRef.current) {
-            swipeableRef.current.close();
+    const handleSwipeableRef = (ref, postId) => {
+        if (ref && !swipeableRefs.has(postId)) {
+            swipeableRefs.set(postId, ref);
         }
+    };
+
+    const handleDelete = (postId: number) => {
+        const swipeableItem = swipeableRefs.get(postId);
+
+        if (swipeableItem) {
+            swipeableItem.close();
+        }
+
         Alert.alert('스크랩 삭제하기', '스크랩한 게시물을 삭제하시겠습니까?', [
             {
                 text: '예',
@@ -177,6 +161,41 @@ const Scrap: FC = () => {
             </TouchableOpacity>
         );
     };
+    const handlePostPress = async (postId) => {
+        const url = `${Http}/posts/${postId}`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${await getStorage('accessToken')}`,
+                },
+            });
+            const result = await response.json();
+            if (response.status === 200) {
+                navigation.navigate('CalendarDetailPage', { post: result });
+            } else {
+                Alert.alert('Error', 'Failed to fetch post details.');
+            }
+        } catch (error) {
+            console.error('Error fetching post details:', error);
+        }
+    };
+
+    const renderItem = ({ item }) => (
+        <Swipeable
+            ref={(ref) => handleSwipeableRef(ref, item.postId)}
+            renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item.postId)}
+        >
+            <TouchableWithoutFeedback onPress={() => fetchPostDetails(item.postId)}>
+                <View style={styles.item}>
+                    <Text style={styles.itemTitle} numberOfLines={1}>
+                        {item.title}
+                    </Text>
+                </View>
+            </TouchableWithoutFeedback>
+        </Swipeable>
+    );
 
     return (
         <View style={styles.container}>
@@ -188,44 +207,15 @@ const Scrap: FC = () => {
                 }}
             />
             <View style={styles.contentContainer}>
-                <View style={styles.searchContainer}>
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="검색할 제목을 입력하세요"
-                        value={searchKeyword}
-                        onChangeText={(text) => setSearchKeyword(text)}
-                    />
-                    <TouchableOpacity onPress={fetchPostsBySearch}>
-                        <Icon name="search" size={25} color="#000" />
-                    </TouchableOpacity>
-                </View>
                 <FlatList
                     data={filteredData}
                     ListEmptyComponent={renderEmptyComponent}
-                    renderItem={({ item }) => (
-                        <Swipeable
-                            ref={swipeableRef}
-                            renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item.postId)}
-                        >
-                            <TouchableWithoutFeedback onPress={() => fetchPostDetails(item.postId)}>
-                                <View style={styles.item}>
-                                    <Text style={styles.itemTitle}>{item.title}</Text>
-                                </View>
-                            </TouchableWithoutFeedback>
-                        </Swipeable>
-                    )}
+                    renderItem={renderItem}
                     keyExtractor={(item) => item.postId.toString()}
                     contentContainerStyle={styles.listContainer}
                     onRefresh={handleRefresh}
                     refreshing={isRefreshing}
                 />
-                {selectedPost && (
-                    <ScrapDetail
-                        modalVisible={modalVisible}
-                        selectedPost={selectedPost}
-                        setModalVisible={setModalVisible}
-                    />
-                )}
             </View>
         </View>
     );

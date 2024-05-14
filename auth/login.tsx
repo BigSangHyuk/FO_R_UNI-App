@@ -7,6 +7,7 @@ import Http from '../address/backend_url';
 import { CheckBox } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setStorage } from './asyncstorage';
+import { useUserContext } from '../AuthProvider';
 
 interface LogInProps {
     navigation: NavigationProp<any>;
@@ -22,7 +23,7 @@ const LogIn: React.FC<LogInProps> = ({ navigation, handleLogin }) => {
     const [isEmail, setIsEmail] = useState<boolean>(false);
     const [isPassword, setIsPassword] = useState<boolean>(false);
     const [autoLogin, setAutoLogin] = useState<boolean>(false);
-
+    const { userData, setUserData } = useUserContext();
     const onChangeEmail = useCallback((value: string) => {
         const EmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         setEmail(value);
@@ -84,6 +85,9 @@ const LogIn: React.FC<LogInProps> = ({ navigation, handleLogin }) => {
                 setStorage('refreshToken', data.token.refreshToken);
                 setStorage('userId', data.token.userId);
                 handleLogin();
+                setUserData(data);
+                console.log('ddddd', userData);
+
                 if (autoLogin) {
                     await AsyncStorage.setItem('autoLogin', 'true');
                 } else {

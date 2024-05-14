@@ -18,15 +18,16 @@ interface NavigationProps {
 const hideTabBarScreens = ['CalendarDetailPage'];
 
 const Navigation: FC<NavigationProps> = ({ handleLogOut }) => {
+    // Pre-defined component for setting, to prevent recreation on re-render
+    const SettingScreen = () => <Setting handleLogOut={handleLogOut} />;
+
     return (
         <View style={styles.container}>
             <Tab.Navigator
                 initialRouteName="Calendar"
                 screenOptions={({ route }) => ({
                     tabBarStyle: {
-                        display: hideTabBarScreens.includes(getFocusedRouteNameFromRoute(route) ?? '')
-                            ? 'none'
-                            : 'flex',
+                        display: getFocusedRouteNameFromRoute(route) === 'CalendarDetailPage' ? 'none' : 'flex',
                     },
                     headerShown: false,
                 })}
@@ -65,7 +66,7 @@ const Navigation: FC<NavigationProps> = ({ handleLogOut }) => {
                 />
                 <Tab.Screen
                     name="Setting"
-                    component={() => <Setting handleLogOut={handleLogOut} />}
+                    component={SettingScreen} // Use pre-defined component
                     options={{
                         title: '설정',
                         tabBarIcon: ({ color, size }) => <Icons name="settings" color={color} size={size} />,

@@ -107,7 +107,7 @@ const CalendarView: FC<CalendarProps> = ({ navigation }) => {
                 console.error('Fetch API failed', error);
             }
         };
-
+        console.log('필터변경', filter);
         fetchPosts();
     }, [currentMonth, filter]);
 
@@ -219,6 +219,11 @@ const CalendarView: FC<CalendarProps> = ({ navigation }) => {
                         text: selectedMonth,
                         style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
                     }}
+                    leftComponent={
+                        <TouchableOpacity onPress={() => navigation.navigate('CalendarSearch')}>
+                            <Icons name="search" size={30} style={{ color: '#BDBDBD' }} />
+                        </TouchableOpacity>
+                    }
                     rightComponent={
                         <TouchableOpacity>
                             <Icons
@@ -230,6 +235,7 @@ const CalendarView: FC<CalendarProps> = ({ navigation }) => {
                         </TouchableOpacity>
                     }
                     rightContainerStyle={{ justifyContent: 'center' }}
+                    leftContainerStyle={{ justifyContent: 'center' }}
                 />
             </LinearGradient>
             <View style={styles.calendarContainer}>
@@ -264,7 +270,12 @@ const CalendarView: FC<CalendarProps> = ({ navigation }) => {
                     style={[styles.overlay, { transform: [{ translateX: filterTranslateX }] }]}
                     {...panResponder.panHandlers}
                 >
-                    <Filter isFilterOpen={true} onCloseFilter={() => setIsFilterOpen(false)} />
+                    <Filter
+                        isFilterOpen={true}
+                        onCloseFilter={() => setIsFilterOpen(false)}
+                        setParentFilter={setFilter}
+                        filter={filter}
+                    />
                 </Animated.View>
             )}
             <View style={{ flex: 1, marginTop: 100 }}>
