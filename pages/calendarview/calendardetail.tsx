@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     View,
     Text,
@@ -24,18 +24,20 @@ import { getStorage } from '../../auth/asyncstorage';
 import Http from '../../address/backend_url';
 import { useUserContext } from '../../AuthProvider';
 import ReportModal from '../modals/report';
+import Swipeable from 'react-native-gesture-handler';
 
 const CalendarDetailPage = ({ route }) => {
     const navigation = useNavigation();
-    const post = route.params.post.detail;
-    const [comments, setComments] = useState(route.params.post.comments);
+    const post = route.params.post?.detail;
+    const [comments, setComments] = useState(route.params.post?.comments);
     const [commentText, setCommentText] = useState('');
     const [showKeyboard, setShowKeyboard] = useState<boolean>(false);
     const [parentCommentId, setParentCommentId] = useState(null);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [selectedComment, setSelectedComment] = useState(null);
     const [myName, setMyName] = useState<string>('');
-
+    const [myId, setMyId] = useState<number>();
+    const swipeableRef = useRef(null);
     useEffect(() => {
         const handleUserInfo = async () => {
             const accessToken = await getStorage('accessToken');
@@ -50,16 +52,16 @@ const CalendarDetailPage = ({ route }) => {
 
             if (response.ok) {
                 const result = await response.json();
-                console.log(result.nickName);
                 setMyName(result.nickName);
+                setMyId(result.id);
             } else {
                 console.error('Failed to fetch user info:', response.status);
             }
         };
         handleUserInfo();
-    }, []);
+    }, [myId, myName]);
 
-    const titleParts = post.title.match(/(\[.*?\]|\(.*?\))?(.*)/) || ['', '', ''];
+    const titleParts = post?.title.match(/(\[.*?\]|\(.*?\))?(.*)/) || ['', '', ''];
     const firstLine = titleParts[1] || '';
     const secondLine = titleParts[2].trim();
     if (!post) {
@@ -115,6 +117,37 @@ const CalendarDetailPage = ({ route }) => {
         } else {
             console.error('Failed to post comment:', response.status);
         }
+    };
+    const handleDelete = (postId: number) => {
+        if (swipeableRef.current) {
+            swipeableRef.current.close();
+        }
+        Alert.alert('댓글 삭제', '해당 댓글을 삭제하시겠습니까?', [
+            {
+                text: '예',
+            },
+            {
+                text: '아니오',
+            },
+        ]);
+    };
+    const handleEdit = (postId: number) => {
+        if (swipeableRef.current) {
+            swipeableRef.current.close();
+        }
+    };
+
+    const renderRightActions = (progress, dragX, postId) => {
+        return (
+            <View style={styles.rightActionContainer}>
+                <TouchableOpacity onPress={() => handleEdit(postId)} style={styles.actionButton}>
+                    <Icons name="edit" size={25} color="blue" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleDelete(postId)} style={styles.actionButton}>
+                    <Icons name="delete-outline" size={25} color="red" />
+                </TouchableOpacity>
+            </View>
+        );
     };
 
     useEffect(() => {
@@ -558,6 +591,12 @@ const styles = StyleSheet.create({
     },
     sendButtonText: {
         color: 'white',
+    },
+    rightActionContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        marginRight: 10,
     },
 });
 

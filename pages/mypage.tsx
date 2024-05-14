@@ -18,6 +18,7 @@ import Http from '../address/backend_url';
 import { getStorage, refreshAccessToken } from '../auth/asyncstorage';
 import { UserEdit, UserComment, UserInfo, UserLike } from '../data/types';
 import * as ImagePicker from 'expo-image-picker';
+import MyPageDetail from './modals/mypagedetail';
 interface MypageProps {
     navigation: NavigationProp<any>;
 }
@@ -29,6 +30,8 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     const [userLike, setUserLike] = useState<UserLike[]>(null);
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [editImageOverlayVisible, setEditImageOverlayVisible] = useState<boolean>(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedPost, setSelectedPost] = useState(null);
 
     const slideAnimation = useRef(new Animated.Value(0)).current;
 
@@ -232,6 +235,32 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
         return filteredData;
     };
 
+    const fetchPostDetails = async (postId) => {
+        try {
+            const accessToken = await getStorage('accessToken');
+            const response = await fetch(`${Http}/posts/${postId}`, {
+                method: 'GET',
+                headers: {
+                    accept: '*/*',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            const data = await response.json();
+            if (response.status === 200) {
+                setSelectedPost(data);
+                setModalVisible(true);
+            } else {
+                console.error('Failed to fetch post details:', data);
+            }
+        } catch (error) {
+            console.error('An error occurred while fetching post details:', error);
+        }
+    };
+
+    const handlePostSelect = (item) => {
+        fetchPostDetails(item.postId);
+    };
+
     const uniqueUserComments = removeDuplicates(userComment);
     const uniqueUserLikes = removeDuplicates(userLike);
 
@@ -323,12 +352,14 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                                 data={uniqueUserComments}
                                 extraData={uniqueUserComments}
                                 renderItem={({ item }) => (
-                                    <View style={styles.item}>
-                                        <Text style={styles.itemTitle} numberOfLines={1} ellipsizeMode="tail">
-                                            ○ {item.title}
-                                        </Text>
-                                        <Text style={styles.itemDuration}>{item.deadline}</Text>
-                                    </View>
+                                    <TouchableOpacity onPress={() => handlePostSelect(item)}>
+                                        <View style={styles.item}>
+                                            <Text style={styles.itemTitle} numberOfLines={1} ellipsizeMode="tail">
+                                                ○ {item.title}
+                                            </Text>
+                                            <Text style={styles.itemDuration}>{item.deadline}</Text>
+                                        </View>
+                                    </TouchableOpacity>
                                 )}
                                 keyExtractor={(item) => item.postId.toString()}
                                 ListEmptyComponent={() => (
@@ -340,10 +371,13 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                         ) : (
                             <FlatList
                                 data={uniqueUserLikes}
+                                extraData={uniqueUserLikes}
                                 renderItem={({ item }) => (
-                                    <View style={styles.item}>
-                                        <Text style={styles.itemTitle}>○ {item.content}</Text>
-                                    </View>
+                                    <TouchableOpacity onPress={() => handlePostSelect(item)}>
+                                        <View style={styles.item}>
+                                            <Text style={styles.itemTitle}>○ {item.content}</Text>
+                                        </View>
+                                    </TouchableOpacity>
                                 )}
                                 keyExtractor={(item) => item.postId.toString()}
                                 ListEmptyComponent={() => (
@@ -354,6 +388,13 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                             />
                         )}
                     </View>
+                    {selectedPost && (
+                        <MyPageDetail
+                            modalVisible={modalVisible}
+                            selectedPost={selectedPost}
+                            setModalVisible={setModalVisible}
+                        />
+                    )}
                 </View>
             </View>
         </TouchableWithoutFeedback>
