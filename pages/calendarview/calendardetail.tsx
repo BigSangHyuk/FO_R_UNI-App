@@ -364,14 +364,14 @@ const CalendarDetailPage = ({ route }) => {
 
             return (
                 <View key={comment.id} style={[styles.commentItem, { marginLeft: 20 * level }]}>
-                    <TouchableWithoutFeedback onLongPress={() => handleLongPress(comment)}>
+                    <View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <View>
+                            <TouchableWithoutFeedback onLongPress={() => handleLongPress(comment)}>
                                 <Text style={userNameStyle}>
                                     {comment.user ? comment.user.nickName : '익명의 사용자'}
                                 </Text>
                                 <Text style={styles.commentText}>{comment.content}</Text>
-                            </View>
+                            </TouchableWithoutFeedback>
                             <View>
                                 <View style={styles.actions}>
                                     <Text style={styles.timestamp}>{CreateTime(comment.createdAt)}</Text>
@@ -410,7 +410,7 @@ const CalendarDetailPage = ({ route }) => {
                                 </View>
                             </View>
                         </View>
-                    </TouchableWithoutFeedback>
+                    </View>
                     {comment.children && renderComments(comment.children, level + 1)}
                 </View>
             );
@@ -474,12 +474,12 @@ const CalendarDetailPage = ({ route }) => {
                                         : styles.nickname;
                                 return (
                                     <View key={item.id} style={[styles.commentItem]}>
-                                        <TouchableWithoutFeedback onLongPress={() => handleLongPress(item)}>
+                                        <View>
                                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                                <View>
+                                                <TouchableWithoutFeedback onLongPress={() => handleLongPress(item)}>
                                                     <Text style={userNameStyle}>{userName}</Text>
                                                     <Text style={styles.commentText}>{commentText}</Text>
-                                                </View>
+                                                </TouchableWithoutFeedback>
                                                 <View>
                                                     <View style={styles.actions}>
                                                         <Text style={styles.timestamp}>
@@ -531,7 +531,7 @@ const CalendarDetailPage = ({ route }) => {
                                                 />
                                             )}
                                             {item.children && renderComments(item.children, 1)}
-                                        </TouchableWithoutFeedback>
+                                        </View>
                                     </View>
                                 );
                             }}

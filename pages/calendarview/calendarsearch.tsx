@@ -183,6 +183,8 @@ const styles = StyleSheet.create({
     contentContainer: {
         marginTop: '50%',
         alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'black',
     },
     noContentText: {
         fontSize: 25,
