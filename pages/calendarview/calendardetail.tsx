@@ -169,8 +169,8 @@ const CalendarDetailPage = ({ route }) => {
     const handleLongPress = (comment) => {
         if (comment.user?.userId === myId) {
             Alert.alert(
-                '댓글 옵션',
-                `댓글 내용 : ${comment.content}`,
+                '댓글 내용',
+                `${comment.content}`,
                 [
                     {
                         text: '삭제',
