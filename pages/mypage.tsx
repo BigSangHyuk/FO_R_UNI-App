@@ -19,7 +19,6 @@ import Http from '../address/backend_url';
 import { getStorage, refreshAccessToken } from '../auth/asyncstorage';
 import { UserEdit, UserComment, UserInfo, UserLike } from '../data/types';
 import * as ImagePicker from 'expo-image-picker';
-import MyPageDetail from './modals/mypagedetail';
 interface MypageProps {
     navigation: NavigationProp<any>;
 }
