@@ -207,7 +207,9 @@ const UnClassify: FC = () => {
                         >
                             <TouchableWithoutFeedback onPress={() => fetchPostDetails(item.postId)}>
                                 <View style={styles.item}>
-                                    <Text style={styles.itemTitle}>{item.title}</Text>
+                                    <Text style={styles.itemTitle} numberOfLines={1}>
+                                        {item.title}
+                                    </Text>
                                 </View>
                             </TouchableWithoutFeedback>
                         </Swipeable>
