@@ -148,14 +148,6 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
         }
     };
 
-    const handleToggle = () => {
-        setIsToggled((previousState) => !previousState);
-        Animated.timing(slideAnimation, {
-            toValue: isToggled ? 0 : 1,
-            duration: 400,
-            useNativeDriver: false,
-        }).start();
-    };
     const uploadImage = async (imageUri) => {
         const accessToken = await getStorage('accessToken');
         const uriParts = imageUri.split('.');
@@ -212,6 +204,19 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
         }
     };
 
+    const handleToggle = () => {
+        setIsToggled(!isToggled);
+        Animated.timing(slideAnimation, {
+            toValue: isToggled ? 0 : 1,
+            duration: 300,
+            useNativeDriver: true,
+        }).start();
+    };
+    const sliderPosition = slideAnimation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 171.5],
+    });
+
     const toggleEditImageOverlay = () => {
         setEditImageOverlayVisible(!editImageOverlayVisible);
     };
@@ -252,11 +257,6 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
         } catch (error) {
             console.error('Error fetching post details:', error);
         }
-    };
-
-    const handlePostSelect = (item) => {
-        navigation.navigate('CalendarDetailPage', { post: item.postId });
-        console.log(item.postId);
     };
 
     const uniqueUserComments = removeDuplicates(userComment);
@@ -321,26 +321,20 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                             <Text style={styles.depart}>{userInfo?.department}</Text>
                         </View>
                     </View>
-                    <TouchableOpacity style={styles.toggleContainer} onPress={handleToggle}>
-                        <Animated.View
-                            style={[
-                                styles.toggle,
-                                {
-                                    transform: [
-                                        {
-                                            translateX: slideAnimation.interpolate({
-                                                inputRange: [0, 1],
-                                                outputRange: [0, 171.5],
-                                            }),
-                                        },
-                                    ],
-                                },
-                            ]}
-                        >
-                            <Text style={{ fontSize: 16, fontWeight: '600' }}>
-                                {isToggled ? '내가 댓글 남긴 글' : '좋아요한 댓글'}
-                            </Text>
-                        </Animated.View>
+                    <TouchableOpacity onPress={handleToggle} style={styles.toggleContainer}>
+                        <View style={styles.sliderContainer}>
+                            <Animated.View style={[styles.slider, { transform: [{ translateX: sliderPosition }] }]}>
+                                <Text style={styles.sliderText}>{isToggled ? '댓글 남긴 글' : '좋아요한 댓글'}</Text>
+                            </Animated.View>
+                            <View style={styles.textContainer}>
+                                <Text style={[styles.text, isToggled ? styles.inactiveText : styles.activeText]}>
+                                    좋아요한 댓글
+                                </Text>
+                                <Text style={[styles.text, isToggled ? styles.activeText : styles.inactiveText]}>
+                                    댓글 남긴 글
+                                </Text>
+                            </View>
+                        </View>
                     </TouchableOpacity>
                 </View>
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -499,6 +493,46 @@ const styles = StyleSheet.create({
     emptyText: {
         fontSize: 20,
         color: 'gray',
+    },
+    sliderContainer: {
+        position: 'relative',
+        flex: 1,
+        justifyContent: 'center',
+    },
+    slider: {
+        position: 'absolute',
+        width: '50%',
+        height: 46,
+        backgroundColor: 'white',
+        borderRadius: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1,
+    },
+    sliderText: {
+        fontWeight: 'bold',
+        color: '#000',
+        fontSize: 16,
+        textAlign: 'center',
+        lineHeight: 46,
+    },
+    textContainer: {
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent: 'space-around',
+        paddingHorizontal: 20,
+    },
+    text: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    activeText: {
+        color: '#000',
+        opacity: 1,
+    },
+    inactiveText: {
+        color: '#000',
+        opacity: 0.5,
     },
 });
 
