@@ -30,8 +30,6 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     const [userLike, setUserLike] = useState<UserLike[]>(null);
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [editImageOverlayVisible, setEditImageOverlayVisible] = useState<boolean>(false);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [selectedPost, setSelectedPost] = useState(null);
 
     const slideAnimation = useRef(new Animated.Value(0)).current;
 
