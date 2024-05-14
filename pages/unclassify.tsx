@@ -115,6 +115,7 @@ const UnClassify: FC = () => {
             });
 
             if (res.status === 200) {
+                Alert.alert('스크랩 성공');
                 console.log('성공');
             } else {
                 console.log('스크랩 실패');

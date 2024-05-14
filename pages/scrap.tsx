@@ -79,35 +79,6 @@ const Scrap: FC = () => {
         await fetchScrapped();
         setIsRefreshing(false);
     };
-    const fetchPostsBySearch = async () => {
-        setSearchInitiated(true);
-        setIsLoading(true);
-        const accessToken = await getStorage('accessToken');
-        try {
-            const res = await fetch(`${Http}/posts/search?keyword=${encodeURIComponent(searchKeyword)}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
-
-            if (res.status === 200) {
-                const result = await res.json();
-                const filteredPosts = result.data.filter((post) =>
-                    post.title.toLowerCase().includes(searchKeyword.toLowerCase())
-                );
-                setFilteredData(filteredPosts);
-            } else {
-                console.log('Search request failed');
-                setFilteredData([]);
-            }
-        } catch (error) {
-            console.error('Search failed', error);
-            setFilteredData([]);
-        }
-        setIsLoading(false);
-    };
 
     const unscrapPost = async (postId: number) => {
         const accessToken = await getStorage('accessToken');
@@ -121,6 +92,7 @@ const Scrap: FC = () => {
             });
 
             if (res.status === 200) {
+                Alert.alert('스크랩 삭제 성공');
                 setFilteredData((currentData) => currentData.filter((item) => item.postId !== postId));
                 setRefreshData((old) => !old);
             } else {
