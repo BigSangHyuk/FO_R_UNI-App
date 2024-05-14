@@ -30,7 +30,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     const [userLike, setUserLike] = useState<UserLike[]>(null);
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [editImageOverlayVisible, setEditImageOverlayVisible] = useState<boolean>(false);
-
+    const IMG = '../data/default.png';
     const slideAnimation = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
@@ -305,7 +305,10 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                             onPress={editImageOverlayVisible ? pickImage : toggleEditImageOverlay}
                             style={styles.imageTouchable}
                         >
-                            {userInfo?.image && <Image source={{ uri: userInfo.image }} style={styles.profileImage} />}
+                            <Image
+                                source={userInfo?.image ? { uri: userInfo.image } : require(IMG)} // 이 방법은 동작하지 않습니다. 아래 설명 참조
+                                style={styles.profileImage}
+                            />
                             {editImageOverlayVisible && (
                                 <TouchableOpacity style={styles.overlay} onPress={pickImage}>
                                     <Text style={styles.overlayText}>이미지 변경</Text>
