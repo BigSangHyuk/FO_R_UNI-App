@@ -29,6 +29,7 @@ const CalendarDetailPage = ({ route }) => {
     const postId = route.params.post?.detail.id;
     const post = route.params.post?.detail;
     console.log(post);
+    console.log(postId);
     const [comments, setComments] = useState(route.params.post?.comments);
     const [commentText, setCommentText] = useState('');
     const [editingComment, setEditingComment] = useState(null);
@@ -40,6 +41,7 @@ const CalendarDetailPage = ({ route }) => {
     const [selectedComment, setSelectedComment] = useState(null);
     const [myName, setMyName] = useState<string>('');
     const [myId, setMyId] = useState<number>();
+    const [icsUrl, setIcsUrl] = useState<string>('');
 
     useEffect(() => {
         const handleUserInfo = async () => {
@@ -238,13 +240,40 @@ const CalendarDetailPage = ({ route }) => {
         }
     };
 
-    const AddCalender = () => {
+    const AddCalendar = () => {
+        const handleics = async () => {
+            const accessToken = await getStorage('accessToken');
+            const response = await fetch(Http + `/s3/ics?postid=${postId}`, {
+                method: 'POST',
+                headers: {
+                    Accept: '*/*',
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (response.ok) {
+                const result = await response.json();
+                console.log(result.data);
+                setIcsUrl(result?.imageUrl);
+
+                Linking.openURL(icsUrl).catch((err) => {
+                    console.error('Failed to open URL:', err);
+                });
+            } else {
+                console.error('ics 에러:', response.status);
+            }
+        };
+
         Alert.alert('외부달력 추가', '외부달력에 추가하시겠습니까?', [
             {
                 text: '예',
+                onPress: () => {
+                    handleics();
+                },
             },
             {
                 text: '아니오',
+                style: 'cancel',
             },
         ]);
     };
@@ -408,7 +437,7 @@ const CalendarDetailPage = ({ route }) => {
                             <TouchableOpacity onPress={openURL}>
                                 <Add name="link" size={25} style={styles.backIcon} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => AddCalender()}>
+                            <TouchableOpacity onPress={() => AddCalendar()}>
                                 <Add name="calendar-plus" size={25} style={styles.backIcon} />
                             </TouchableOpacity>
                         </View>
