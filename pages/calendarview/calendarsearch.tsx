@@ -105,6 +105,10 @@ const CalendarSearch: FC<CalendarSearchProps> = ({ navigation }) => {
         }
     };
 
+    const ItemSeparator = () => {
+        return <View style={styles.itemSeparator} />;
+    };
+
     return (
         <View style={styles.container}>
             <StatusBar barStyle="light-content" />
@@ -141,10 +145,15 @@ const CalendarSearch: FC<CalendarSearchProps> = ({ navigation }) => {
                         data={filteredData}
                         keyExtractor={(item) => item.postId.toString()}
                         renderItem={({ item }) => (
-                            <Text style={styles.itemText} onPress={() => handlePostPress(item.postId)}>
+                            <Text
+                                style={styles.itemText}
+                                numberOfLines={1}
+                                onPress={() => handlePostPress(item.postId)}
+                            >
                                 {item.title}
                             </Text>
                         )}
+                        ItemSeparatorComponent={ItemSeparator}
                     />
                 ) : (
                     <View style={styles.contentContainer}>
@@ -183,8 +192,6 @@ const styles = StyleSheet.create({
     contentContainer: {
         marginTop: '50%',
         alignItems: 'center',
-        borderWidth: 1,
-        borderColor: 'black',
     },
     noContentText: {
         fontSize: 25,
@@ -194,6 +201,11 @@ const styles = StyleSheet.create({
     itemText: {
         fontSize: 16,
         padding: 10,
+    },
+    itemSeparator: {
+        height: 1, // 구분선의 높이
+        width: '100%', // 구분선의 너비
+        backgroundColor: '#ccc', // 구분선의 색상
     },
 });
 export default CalendarSearch;
