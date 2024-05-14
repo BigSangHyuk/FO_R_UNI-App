@@ -26,8 +26,9 @@ import ReportModal from '../modals/report';
 
 const CalendarDetailPage = ({ route }) => {
     const navigation = useNavigation();
-
+    const postId = route.params.post?.detail.id;
     const post = route.params.post?.detail;
+    console.log(post);
     const [comments, setComments] = useState(route.params.post?.comments);
     const [commentText, setCommentText] = useState('');
     const [editingComment, setEditingComment] = useState(null);
@@ -273,6 +274,29 @@ const CalendarDetailPage = ({ route }) => {
         }
     };
 
+    const scrapPost = async (postId: number) => {
+        const accessToken = await getStorage('accessToken');
+        console.log(postId);
+        try {
+            const res = await fetch(`${Http}/posts/scrap/${postId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            if (res.status === 200) {
+                Alert.alert('스크랩 성공');
+                console.log('성공');
+            } else {
+                console.log('스크랩 실패');
+            }
+        } catch (error) {
+            console.error('Add failed', error);
+        }
+    };
+
     useEffect(() => {
         fetchComment();
     }, [post.comment]);
@@ -380,9 +404,14 @@ const CalendarDetailPage = ({ route }) => {
                         </TouchableOpacity>
                     }
                     rightComponent={
-                        <TouchableOpacity onPress={() => AddCalender()}>
-                            <Add name="calendar-plus" size={25} style={styles.backIcon} />
-                        </TouchableOpacity>
+                        <View style={{ flexDirection: 'row', gap: 10 }}>
+                            <TouchableOpacity onPress={openURL}>
+                                <Add name="link" size={25} style={styles.backIcon} />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => AddCalender()}>
+                                <Add name="calendar-plus" size={25} style={styles.backIcon} />
+                            </TouchableOpacity>
+                        </View>
                     }
                 />
                 <ScrollView style={styles.detailContainer} contentContainerStyle={styles.scrollViewContent}>
@@ -395,8 +424,8 @@ const CalendarDetailPage = ({ route }) => {
                     <Text>등록일: {post.postedAt}</Text>
                     <Text>마감일: {post.deadline}</Text>
                     <View style={{ flexDirection: 'row', gap: 10 }}>
-                        <TouchableOpacity style={styles.linkStyle} onPress={openURL}>
-                            <Text style={styles.linkText}>원문 보기</Text>
+                        <TouchableOpacity style={styles.linkStyle} onPress={() => scrapPost(postId)}>
+                            <Text style={styles.linkText}>스크랩 하기</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.linkStyle} onPress={ShowKeyboard}>
                             <Text style={styles.linkText}>댓글 달기</Text>
@@ -453,7 +482,7 @@ const CalendarDetailPage = ({ route }) => {
                                                                 <TouchableOpacity
                                                                     style={styles.actionButton}
                                                                     onPress={() => {
-                                                                        console.log('Item on press:', item); // item 구조 확인
+                                                                        console.log('Item on press:', item);
                                                                         handleReportPress(item);
                                                                     }}
                                                                 >
@@ -579,12 +608,12 @@ const styles = StyleSheet.create({
     linkStyle: {
         marginTop: 10,
         padding: 10,
-        backgroundColor: '#E8F5E9',
+        backgroundColor: '#46AAFF',
         borderRadius: 5,
         flex: 1,
     },
     linkText: {
-        color: '#2196F3',
+        color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
         fontSize: 16,
