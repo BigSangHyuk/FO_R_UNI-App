@@ -219,11 +219,11 @@ const CalendarView: FC<CalendarProps> = ({ navigation }) => {
                         text: selectedMonth,
                         style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
                     }}
-                    // leftComponent={
-                    //     <TouchableOpacity onPress={() => navigation.goBack()}>
-                    //         <Icons name="search" size={30} style={{ color: '#BDBDBD' }} />
-                    //     </TouchableOpacity>
-                    // }
+                    leftComponent={
+                        <TouchableOpacity onPress={() => navigation.navigate('CalendarSearch')}>
+                            <Icons name="search" size={30} style={{ color: '#BDBDBD' }} />
+                        </TouchableOpacity>
+                    }
                     rightComponent={
                         <TouchableOpacity>
                             <Icons
