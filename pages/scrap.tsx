@@ -32,7 +32,7 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
     const [searchInitiated, setSearchInitiated] = useState<boolean>(false);
     const [refreshData, setRefreshData] = useState<boolean>(false);
     const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-    const swipeableRef = useRef(null);
+    const swipeableRefs = useRef(new Map()).current;
 
     useEffect(() => {
         fetchScrapped();
@@ -126,10 +126,19 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
         );
     }
 
-    const handleDelete = (postId: number) => {
-        if (swipeableRef.current) {
-            swipeableRef.current.close();
+    const handleSwipeableRef = (ref, postId) => {
+        if (ref && !swipeableRefs.has(postId)) {
+            swipeableRefs.set(postId, ref);
         }
+    };
+
+    const handleDelete = (postId: number) => {
+        const swipeableItem = swipeableRefs.get(postId);
+
+        if (swipeableItem) {
+            swipeableItem.close();
+        }
+
         Alert.alert('스크랩 삭제하기', '스크랩한 게시물을 삭제하시겠습니까?', [
             {
                 text: '예',
@@ -173,6 +182,21 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
         }
     };
 
+    const renderItem = ({ item }) => (
+        <Swipeable
+            ref={(ref) => handleSwipeableRef(ref, item.postId)}
+            renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item.postId)}
+        >
+            <TouchableWithoutFeedback onPress={() => fetchPostDetails(item.postId)}>
+                <View style={styles.item}>
+                    <Text style={styles.itemTitle} numberOfLines={1}>
+                        {item.title}
+                    </Text>
+                </View>
+            </TouchableWithoutFeedback>
+        </Swipeable>
+    );
+
     return (
         <View style={styles.container}>
             <Header
@@ -185,21 +209,7 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
             <View style={styles.contentContainer}>
                 <FlatList
                     data={filteredData}
-                    ListEmptyComponent={renderEmptyComponent}
-                    renderItem={({ item }) => (
-                        <Swipeable
-                            ref={swipeableRef}
-                            renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item.postId)}
-                        >
-                            <TouchableWithoutFeedback onPress={() => handlePostPress(item.postId)}>
-                                <View style={styles.item}>
-                                    <Text style={styles.itemTitle} numberOfLines={1}>
-                                        {item.title}
-                                    </Text>
-                                </View>
-                            </TouchableWithoutFeedback>
-                        </Swipeable>
-                    )}
+                    renderItem={renderItem}
                     keyExtractor={(item) => item.postId.toString()}
                     contentContainerStyle={styles.listContainer}
                     onRefresh={handleRefresh}
