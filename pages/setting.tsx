@@ -21,16 +21,19 @@ const Setting: FC<SettingProps> = ({ handleLogOut }) => {
     const [inquiry, setInquiry] = useState<string>('');
 
     const handleInquiry = async () => {
+        const accessToken = await getStorage('accessToken');
         const res = await fetch(Http + `/emails/inquiry`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
             },
             body: JSON.stringify({ inquiry }),
         });
         if (res.status == 200) {
             Alert.alert('문의가 접수되었습니다.');
             setInquiry('');
+            setContact(false);
         } else {
             console.log('문제 발생');
         }
