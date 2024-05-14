@@ -108,7 +108,7 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
     };
 
     const renderEmptyComponent = () => {
-        if (searchInitiated) {
+        if (!filteredData || filteredData.length === 0) {
             return (
                 <View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>아무것도 스크랩하지 않았습니다.</Text>
@@ -209,6 +209,7 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
             <View style={styles.contentContainer}>
                 <FlatList
                     data={filteredData}
+                    ListEmptyComponent={renderEmptyComponent}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.postId.toString()}
                     contentContainerStyle={styles.listContainer}
