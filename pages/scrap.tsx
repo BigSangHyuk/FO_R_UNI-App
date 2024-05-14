@@ -188,17 +188,6 @@ const Scrap: FC = () => {
                 }}
             />
             <View style={styles.contentContainer}>
-                <View style={styles.searchContainer}>
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="검색할 제목을 입력하세요"
-                        value={searchKeyword}
-                        onChangeText={(text) => setSearchKeyword(text)}
-                    />
-                    <TouchableOpacity onPress={fetchPostsBySearch}>
-                        <Icon name="search" size={25} color="#000" />
-                    </TouchableOpacity>
-                </View>
                 <FlatList
                     data={filteredData}
                     ListEmptyComponent={renderEmptyComponent}
