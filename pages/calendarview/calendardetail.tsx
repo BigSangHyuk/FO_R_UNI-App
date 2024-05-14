@@ -363,14 +363,19 @@ const CalendarDetailPage = ({ route }) => {
                 comment.user && comment.user.nickName === myName ? styles.nicknameHighlighted : styles.nickname;
 
             return (
-                <View key={comment.id} style={[styles.commentItem, { marginLeft: 20 * level }]}>
+                <View
+                    key={comment.id}
+                    style={[styles.commentItem, { marginLeft: 20 * level }, level === 0 ? styles.underline : {}]}
+                >
                     <View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <TouchableWithoutFeedback onLongPress={() => handleLongPress(comment)}>
-                                <Text style={userNameStyle}>
-                                    {comment.user ? comment.user.nickName : '익명의 사용자'}
-                                </Text>
-                                <Text style={styles.commentText}>{comment.content}</Text>
+                                <View>
+                                    <Text style={userNameStyle}>
+                                        {comment.user ? comment.user.nickName : '익명의 사용자'}
+                                    </Text>
+                                    <Text style={styles.commentText}>{comment.content}</Text>
+                                </View>
                             </TouchableWithoutFeedback>
                             <View>
                                 <View style={styles.actions}>
@@ -472,13 +477,19 @@ const CalendarDetailPage = ({ route }) => {
                                     item.user && item.user.nickName === myName
                                         ? styles.nicknameHighlighted
                                         : styles.nickname;
+
+                                const commentStyle =
+                                    item.level != 0 ? [styles.commentItem, styles.underline] : styles.commentItem;
+
                                 return (
-                                    <View key={item.id} style={[styles.commentItem]}>
+                                    <View key={item.id} style={commentStyle}>
                                         <View>
                                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                                 <TouchableWithoutFeedback onLongPress={() => handleLongPress(item)}>
-                                                    <Text style={userNameStyle}>{userName}</Text>
-                                                    <Text style={styles.commentText}>{commentText}</Text>
+                                                    <View>
+                                                        <Text style={userNameStyle}>{userName}</Text>
+                                                        <Text style={styles.commentText}>{commentText}</Text>
+                                                    </View>
                                                 </TouchableWithoutFeedback>
                                                 <View>
                                                     <View style={styles.actions}>
@@ -522,14 +533,7 @@ const CalendarDetailPage = ({ route }) => {
                                                     </View>
                                                 </View>
                                             </View>
-                                            {modalVisible && (
-                                                <ReportModal
-                                                    modalVisible={modalVisible}
-                                                    setModalVisible={setModalVisible}
-                                                    commentId={selectedComment.id}
-                                                    comment={selectedComment.content}
-                                                />
-                                            )}
+
                                             {item.children && renderComments(item.children, 1)}
                                         </View>
                                     </View>
@@ -641,6 +645,10 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         flex: 1,
     },
+    underline: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#CCC',
+    },
     linkText: {
         color: 'white',
         fontWeight: 'bold',
@@ -690,8 +698,6 @@ const styles = StyleSheet.create({
     },
     commentItem: {
         padding: 8,
-        borderBottomWidth: 1,
-        borderBottomColor: '#EEEEEE',
     },
     commentText: {
         fontSize: 16,

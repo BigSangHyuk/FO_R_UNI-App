@@ -16,7 +16,6 @@ import { Swipeable } from 'react-native-gesture-handler';
 import { Scrapped } from '../data/types';
 import { Posts } from '../data/types';
 import Icons from 'react-native-vector-icons/Feather';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { NavigationProp } from '@react-navigation/native';
 
