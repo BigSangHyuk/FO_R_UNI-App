@@ -219,6 +219,11 @@ const CalendarView: FC<CalendarProps> = ({ navigation }) => {
                         text: selectedMonth,
                         style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
                     }}
+                    // leftComponent={
+                    //     <TouchableOpacity onPress={() => navigation.goBack()}>
+                    //         <Icons name="search" size={30} style={{ color: '#BDBDBD' }} />
+                    //     </TouchableOpacity>
+                    // }
                     rightComponent={
                         <TouchableOpacity>
                             <Icons
@@ -230,6 +235,7 @@ const CalendarView: FC<CalendarProps> = ({ navigation }) => {
                         </TouchableOpacity>
                     }
                     rightContainerStyle={{ justifyContent: 'center' }}
+                    leftContainerStyle={{ justifyContent: 'center' }}
                 />
             </LinearGradient>
             <View style={styles.calendarContainer}>
