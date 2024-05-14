@@ -22,7 +22,6 @@ import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { getStorage } from '../../auth/asyncstorage';
 import Http from '../../address/backend_url';
-import { useUserContext } from '../../AuthProvider';
 import ReportModal from '../modals/report';
 import Swipeable from 'react-native-gesture-handler';
 

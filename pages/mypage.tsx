@@ -8,6 +8,7 @@ import {
     FlatList,
     Image,
     TouchableWithoutFeedback,
+    Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Header } from 'react-native-elements';
@@ -235,30 +236,30 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
         return filteredData;
     };
 
-    const fetchPostDetails = async (postId) => {
+    const handlePostPress = async (postId) => {
+        const url = `${Http}/posts/${postId}`;
         try {
-            const accessToken = await getStorage('accessToken');
-            const response = await fetch(`${Http}/posts/${postId}`, {
+            const response = await fetch(url, {
                 method: 'GET',
                 headers: {
-                    accept: '*/*',
-                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${await getStorage('accessToken')}`,
                 },
             });
-            const data = await response.json();
+            const result = await response.json();
             if (response.status === 200) {
-                setSelectedPost(data);
-                setModalVisible(true);
+                navigation.navigate('CalendarDetailPage', { post: result });
             } else {
-                console.error('Failed to fetch post details:', data);
+                Alert.alert('Error', 'Failed to fetch post details.');
             }
         } catch (error) {
-            console.error('An error occurred while fetching post details:', error);
+            console.error('Error fetching post details:', error);
         }
     };
 
     const handlePostSelect = (item) => {
-        fetchPostDetails(item.postId);
+        navigation.navigate('CalendarDetailPage', { post: item.postId });
+        console.log(item.postId);
     };
 
     const uniqueUserComments = removeDuplicates(userComment);
@@ -352,7 +353,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                                 data={uniqueUserComments}
                                 extraData={uniqueUserComments}
                                 renderItem={({ item }) => (
-                                    <TouchableOpacity onPress={() => handlePostSelect(item)}>
+                                    <TouchableOpacity onPress={() => handlePostPress(item.postId)}>
                                         <View style={styles.item}>
                                             <Text style={styles.itemTitle} numberOfLines={1} ellipsizeMode="tail">
                                                 ○ {item.title}
@@ -373,7 +374,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                                 data={uniqueUserLikes}
                                 extraData={uniqueUserLikes}
                                 renderItem={({ item }) => (
-                                    <TouchableOpacity onPress={() => handlePostSelect(item)}>
+                                    <TouchableOpacity onPress={() => handlePostPress(item.postId)}>
                                         <View style={styles.item}>
                                             <Text style={styles.itemTitle}>○ {item.content}</Text>
                                         </View>
@@ -388,13 +389,6 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                             />
                         )}
                     </View>
-                    {selectedPost && (
-                        <MyPageDetail
-                            modalVisible={modalVisible}
-                            selectedPost={selectedPost}
-                            setModalVisible={setModalVisible}
-                        />
-                    )}
                 </View>
             </View>
         </TouchableWithoutFeedback>
