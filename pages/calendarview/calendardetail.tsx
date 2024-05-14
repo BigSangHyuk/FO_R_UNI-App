@@ -30,7 +30,10 @@ const CalendarDetailPage = ({ route }) => {
     const post = route.params.post?.detail;
     const [comments, setComments] = useState(route.params.post?.comments);
     const [commentText, setCommentText] = useState('');
+    const [editingComment, setEditingComment] = useState(null);
+    const [newCommentText, setNewCommentText] = useState('');
     const [showKeyboard, setShowKeyboard] = useState<boolean>(false);
+    const [showKeyboard2, setShowKeyboard2] = useState<boolean>(false);
     const [parentCommentId, setParentCommentId] = useState(null);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [selectedComment, setSelectedComment] = useState(null);
@@ -117,17 +120,51 @@ const CalendarDetailPage = ({ route }) => {
             console.error('Failed to post comment:', response.status);
         }
     };
-    const handleDelete = (postId: number) => {
-        Alert.alert('댓글 삭제', '해당 댓글을 삭제하시겠습니까?', [
-            {
-                text: '예',
+    const handleEdit = async () => {
+        if (!editingComment) {
+            console.error('선택되지 않았어요');
+            return;
+        }
+
+        const accessToken = await getStorage('accessToken');
+        const response = await fetch(`${Http}/comments/${editingComment.id}`, {
+            method: 'PUT',
+            headers: {
+                Accept: '*/*',
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
             },
-            {
-                text: '아니오',
-            },
-        ]);
+            body: JSON.stringify({ content: newCommentText }),
+        });
+
+        if (response.ok) {
+            Alert.alert('댓글이 수정되었습니다.');
+            fetchComment();
+            setShowKeyboard2(false);
+            setNewCommentText('');
+            setEditingComment(null);
+        } else {
+            console.error('댓글 수정 실패:', response.status);
+        }
     };
-    const handleEdit = (postId: number) => {};
+    const handleDelete = async (comment) => {
+        const accessToken = await getStorage('accessToken');
+        const response = await fetch(Http + `/comments/${comment.id}`, {
+            method: 'DELETE',
+            headers: {
+                Accept: '*/*',
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        if (response.ok) {
+            Alert.alert('삭제되었습니다.');
+            fetchComment();
+            console.log('Comment deleted');
+        } else {
+            console.error('실패', response.status);
+        }
+    };
 
     const handleLongPress = (comment) => {
         if (comment.user?.userId === myId) {
@@ -137,12 +174,17 @@ const CalendarDetailPage = ({ route }) => {
                 [
                     {
                         text: '삭제',
-                        onPress: () => console.log('Delete Comment'),
+                        onPress: () => handleDelete(comment),
+
                         style: 'destructive',
                     },
                     {
                         text: '수정',
-                        onPress: () => console.log('Edit Comment'),
+                        onPress: () => {
+                            setShowKeyboard2(true);
+                            setNewCommentText(comment.content);
+                            setEditingComment(comment);
+                        },
                     },
                     {
                         text: '취소',
@@ -456,6 +498,25 @@ const CalendarDetailPage = ({ route }) => {
                                 </TouchableOpacity>
                             </KeyboardAvoidingView>
                         )}
+                        {showKeyboard2 && (
+                            <KeyboardAvoidingView
+                                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                                style={styles.inputContainer}
+                            >
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder={commentText}
+                                    value={newCommentText}
+                                    onChangeText={setNewCommentText}
+                                    autoFocus={true}
+                                    returnKeyLabel="Done"
+                                    onSubmitEditing={handleEdit}
+                                />
+                                <TouchableOpacity onPress={() => handleEdit()} style={styles.icon}>
+                                    <Icons name="edit" size={25} color="#000" />
+                                </TouchableOpacity>
+                            </KeyboardAvoidingView>
+                        )}
                     </View>
                 </ScrollView>
             </View>
@@ -530,7 +591,7 @@ const styles = StyleSheet.create({
     },
     container2: {
         backgroundColor: '#fff',
-        flex: 1,
+        flex: 0.1,
     },
     inputContainer: {
         flexDirection: 'row',
