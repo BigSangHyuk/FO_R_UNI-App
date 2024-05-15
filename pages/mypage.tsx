@@ -306,7 +306,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                             style={styles.imageTouchable}
                         >
                             <Image
-                                source={userInfo?.image ? { uri: userInfo.image } : require(IMG)} // 이 방법은 동작하지 않습니다. 아래 설명 참조
+                                source={userInfo?.image ? { uri: userInfo.image } : require(IMG)} 
                                 style={styles.profileImage}
                             />
                             {editImageOverlayVisible && (
