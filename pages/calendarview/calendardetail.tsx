@@ -380,7 +380,9 @@ const CalendarDetailPage = ({ route }) => {
                                     <Text style={userNameStyle}>
                                         {comment.user ? comment.user.nickName : '익명의 사용자'}
                                     </Text>
-                                    <Text style={styles.commentText}>{comment.content}</Text>
+                                    <Text style={styles.commentText}>
+                                        {comment.content ? comment.content : '삭제된 댓글입니다'}
+                                    </Text>
                                 </View>
                             </TouchableWithoutFeedback>
                             <View>
@@ -538,6 +540,7 @@ const CalendarDetailPage = ({ route }) => {
                                                         )}
                                                     </View>
                                                 </View>
+                                                
                                             </View>
 
                                             {item.children && renderComments(item.children, 1)}

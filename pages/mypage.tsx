@@ -305,10 +305,7 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                             onPress={editImageOverlayVisible ? pickImage : toggleEditImageOverlay}
                             style={styles.imageTouchable}
                         >
-                            <Image
-                                source={userInfo?.image ? { uri: userInfo.image } : require(IMG)} 
-                                style={styles.profileImage}
-                            />
+                            {userInfo?.image && <Image source={{ uri: userInfo.image }} style={styles.profileImage} />}
                             {editImageOverlayVisible && (
                                 <TouchableOpacity style={styles.overlay} onPress={pickImage}>
                                     <Text style={styles.overlayText}>이미지 변경</Text>

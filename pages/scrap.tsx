@@ -16,6 +16,7 @@ import { Swipeable } from 'react-native-gesture-handler';
 import { Scrapped } from '../data/types';
 import { Posts } from '../data/types';
 import Icons from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { NavigationProp } from '@react-navigation/native';
 
@@ -108,7 +109,7 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
     };
 
     const renderEmptyComponent = () => {
-        if (!filteredData || filteredData.length === 0) {
+        if (searchInitiated) {
             return (
                 <View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>아무것도 스크랩하지 않았습니다.</Text>
@@ -139,7 +140,7 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
             swipeableItem.close();
         }
 
-        Alert.alert('스크랩 삭제하기', '스크랩한 게시물을 삭제하시겠습니까?', [
+        Alert.alert('스크랩 하기', '해당 게시물을 스크랩하시겠습니까?', [
             {
                 text: '예',
                 onPress: () => unscrapPost(postId),
@@ -187,7 +188,7 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
             ref={(ref) => handleSwipeableRef(ref, item.postId)}
             renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item.postId)}
         >
-            <TouchableWithoutFeedback onPress={() => fetchPostDetails(item.postId)}>
+            <TouchableWithoutFeedback onPress={() => handlePostPress(item.postId)}>
                 <View style={styles.item}>
                     <Text style={styles.itemTitle} numberOfLines={1}>
                         {item.title}
