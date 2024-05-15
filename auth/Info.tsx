@@ -1,5 +1,14 @@
 import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, ScrollView, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
+import {
+    View,
+    StyleSheet,
+    TouchableOpacity,
+    Text,
+    ScrollView,
+    TouchableWithoutFeedback,
+    Keyboard,
+    Alert,
+} from 'react-native';
 import { Input, Button, Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { NavigationProp, RouteProp, useNavigation } from '@react-navigation/native';
@@ -128,10 +137,12 @@ const Info: React.FC<InfoProps> = ({ route, navigation }) => {
         if (res.status === 200) {
             const data = await res.json();
             console.log(data);
-            Alert.alert('회원가입 성공!')
+            Alert.alert('회원가입 성공!');
             navigation.navigate('LogIn');
-        } else {
-            console.log('이상함');
+        }
+        if (res.status === 403) {
+            Alert.alert('이미 가입된 이메일입니다.');
+            navigation.navigate('LogIn');
         }
     };
 

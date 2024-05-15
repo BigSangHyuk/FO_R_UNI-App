@@ -239,6 +239,13 @@ const CalendarDetailPage = ({ route }) => {
             console.error('Failed to post comment:', response.status);
         }
     };
+    useEffect(() => {
+        if (icsUrl) {
+            Linking.openURL(icsUrl).catch((err) => {
+                console.error('Failed to open URL:', err);
+            });
+        }
+    }, [icsUrl]);
 
     const AddCalendar = () => {
         const handleics = async () => {
@@ -254,22 +261,21 @@ const CalendarDetailPage = ({ route }) => {
             if (response.ok) {
                 const result = await response.json();
                 console.log(result.data);
-                setIcsUrl(result?.imageUrl);
-
-                Linking.openURL(icsUrl).catch((err) => {
-                    console.error('Failed to open URL:', err);
-                });
+                const imageUrl = result?.imageUrl;
+                if (imageUrl) {
+                    Linking.openURL(imageUrl).catch((err) => {
+                        console.error('Failed to open URL:', err);
+                    });
+                }
             } else {
                 console.error('ics 에러:', response.status);
             }
         };
 
-        Alert.alert('외부달력 추가', '외부달력에 추가하시겠습니까?', [
+        return Alert.alert('외부달력 추가', '외부달력에 추가하시겠습니까?', [
             {
                 text: '예',
-                onPress: () => {
-                    handleics();
-                },
+                onPress: () => handleics(),
             },
             {
                 text: '아니오',
