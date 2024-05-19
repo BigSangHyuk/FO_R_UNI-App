@@ -15,6 +15,8 @@ const CalendarSearch: FC<CalendarSearchProps> = ({ navigation }) => {
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const [filteredData, setFilteredData] = useState<UnClassified[] | null>(null);
     const [searchInitiated, setSearchInitiated] = useState<boolean>(false);
+    const [orderBy, setOrderBy] = useState<string>('latest');
+    const [orderByColor, setOrderByColor] = useState<string>();
     const inputRef = useRef(null);
     useEffect(() => {
         const parent = navigation.getParent();
@@ -31,6 +33,24 @@ const CalendarSearch: FC<CalendarSearchProps> = ({ navigation }) => {
             }
         };
     }, [navigation]);
+
+    const handleOrderBy = (orderOption) => {
+        setOrderBy(orderOption);
+        fetchPostsBySearch();
+    };
+
+    const Dropdown = () => (
+        <View style={styles.dropdown}>
+            <TouchableOpacity onPress={() => handleOrderBy('latest')}>
+                <Text style={orderBy === 'latest' ? styles.dropdownText : styles.dropdownTextInactive}>최신순</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleOrderBy('deadline')}>
+                <Text style={orderBy === 'deadline' ? styles.dropdownText : styles.dropdownTextInactive}>
+                    마감 가까운 순
+                </Text>
+            </TouchableOpacity>
+        </View>
+    );
 
     useEffect(() => {
         const focusUnsubscribe = navigation.addListener('focus', () => {
@@ -53,8 +73,10 @@ const CalendarSearch: FC<CalendarSearchProps> = ({ navigation }) => {
     const fetchPostsBySearch = async () => {
         setIsLoading(true);
         const accessToken = await getStorage('accessToken');
+        const url = `${Http}/posts/search?orderBy=${orderBy}&keyword=${encodeURIComponent(searchKeyword)}`;
+
         try {
-            const res = await fetch(`${Http}/posts/search?keyword=${encodeURIComponent(searchKeyword)}`, {
+            const res = await fetch(url, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -64,21 +86,16 @@ const CalendarSearch: FC<CalendarSearchProps> = ({ navigation }) => {
 
             if (res.status === 200) {
                 const result = await res.json();
-                console.log(result);
-                const filteredPosts = result.data.filter((post) =>
-                    post.title.toLowerCase().includes(searchKeyword.toLowerCase())
-                );
-                setFilteredData(filteredPosts);
+                setFilteredData(result.data);
             } else {
-                console.log('Search request failed');
-                setFilteredData([]);
+                Alert.alert('Error', 'Failed to fetch posts.');
             }
         } catch (error) {
             console.error('Search failed', error);
-            setFilteredData([]);
+        } finally {
+            setIsLoading(false);
+            setSearchInitiated(true);
         }
-        setIsLoading(false);
-        setSearchInitiated(true);
     };
 
     const handlePostPress = async (postId) => {
@@ -138,23 +155,26 @@ const CalendarSearch: FC<CalendarSearchProps> = ({ navigation }) => {
             {!isLoading &&
                 searchInitiated &&
                 (filteredData.length > 0 ? (
-                    <FlatList
-                        data={filteredData}
-                        keyExtractor={(item) => item.postId.toString()}
-                        renderItem={({ item }) => (
-                            <View>
-                                <Text
-                                    style={styles.itemText}
-                                    numberOfLines={1}
-                                    onPress={() => handlePostPress(item.postId)}
-                                >
-                                    {item.title}
-                                </Text>
-                                <Text style={styles.itemDeadLine}>{item.deadline}</Text>
-                            </View>
-                        )}
-                        ItemSeparatorComponent={ItemSeparator}
-                    />
+                    <View>
+                        <Dropdown />
+                        <FlatList
+                            data={filteredData}
+                            keyExtractor={(item) => item.postId.toString()}
+                            renderItem={({ item }) => (
+                                <View>
+                                    <Text
+                                        style={styles.itemText}
+                                        numberOfLines={1}
+                                        onPress={() => handlePostPress(item.postId)}
+                                    >
+                                        {item.title}
+                                    </Text>
+                                    <Text style={styles.itemDeadLine}>{item.deadline}</Text>
+                                </View>
+                            )}
+                            ItemSeparatorComponent={ItemSeparator}
+                        />
+                    </View>
                 ) : (
                     <View style={styles.contentContainer}>
                         <Icons name="search-off" size={120} color="#ccc" />
@@ -200,7 +220,7 @@ const styles = StyleSheet.create({
     },
     itemText: {
         fontSize: 15,
-        padding: 5,
+        padding: 10,
     },
     itemDeadLine: {
         fontSize: 12,
@@ -211,6 +231,20 @@ const styles = StyleSheet.create({
         height: 1,
         width: '100%',
         backgroundColor: '#ccc',
+    },
+    dropdown: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        padding: 10,
+        backgroundColor: 'white',
+    },
+    dropdownText: {
+        fontSize: 18,
+        color: '#50C8FF',
+    },
+    dropdownTextInactive: {
+        fontSize: 18,
+        color: 'grey',
     },
 });
 export default CalendarSearch;
