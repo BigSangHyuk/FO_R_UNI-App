@@ -106,50 +106,48 @@ const AddDepart: React.FC<AddDepartProps> = ({ isVisible, onClose, userInfo, onE
         }
     };
 
-    // const userEdit = async () => {
-    //     const accessToken = await getStorage('accessToken');
-    //     const res = await fetch(Http + `/users/edit`, {
-    //         method: 'PATCH',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             Authorization: `Bearer ${accessToken}`,
-    //             accept: '*/*',
-    //         },
-    //         body: JSON.stringify({
-    //             departmentType: departCode,
-    //             nickName: nickName,
-    //         }),
-    //     });
-    //     if (res.status === 200) {
-    //         setUserInfo({
-    //             ...inituserInfo,
-    //             nickName: nickName,
-    //             department: departCode,
-    //         });
-    //         console.log(inituserInfo);
-    //         onClose();
-    //         onEditSuccess();
-    //     } else if (res.status === 400) {
-    //         try {
-    //             const newAccessToken = await refreshAccessToken();
-    //             if (newAccessToken) {
-    //                 userEdit();
-    //             } else {
-    //                 console.log('토큰 재발급 실패');
-    //             }
-    //         } catch (error) {
-    //             console.error('Refresh token process failed:', error);
-    //         }
-    //     } else {
-    //         console.error('Error fetching user info:', res.status);
-    //     }
-    // };
+    const userEdit = async () => {
+        const accessToken = await getStorage('accessToken');
+        const res = await fetch(Http + `/users/edit`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+                accept: '*/*',
+            },
+            body: JSON.stringify({
+                departmentTypeSec: departCode,
+            }),
+        });
+        if (res.status === 200) {
+            setUserInfo({
+                ...inituserInfo,
+                departmentSec: departCode,
+            });
+            console.log(inituserInfo);
+            onClose();
+            onEditSuccess();
+        } else if (res.status === 400) {
+            try {
+                const newAccessToken = await refreshAccessToken();
+                if (newAccessToken) {
+                    userEdit();
+                } else {
+                    console.log('토큰 재발급 실패');
+                }
+            } catch (error) {
+                console.error('Refresh token process failed:', error);
+            }
+        } else {
+            console.error('Error fetching user info:', res.status);
+        }
+    };
 
     return (
         <Modal visible={isVisible} animationType="slide" transparent={true}>
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                    <Text style={styles.title}>복º부전공 추가</Text>
+                    <Text style={styles.title}>부복수전공 추가</Text>
                     <View style={{ marginTop: 32, zIndex: 1 }}>
                         <TouchableOpacity onPress={handleUniToggle} style={styles.dropdownToggle}>
                             <Text style={[styles.dropdownText, { color: uni ? 'black' : '#ADB3BC' }]}>
@@ -198,7 +196,7 @@ const AddDepart: React.FC<AddDepartProps> = ({ isVisible, onClose, userInfo, onE
                     )}
                     <View style={{ marginTop: 150, flexDirection: 'row' }}>
                         <Button
-                            // onPress={userEdit}
+                            onPress={userEdit}
                             buttonStyle={{ width: 50, borderRadius: 120, height: 50 }}
                             containerStyle={{ margin: 5, alignItems: 'center', justifyContent: 'center' }}
                             disabledTitleStyle={{ color: 'white' }}

@@ -338,8 +338,14 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                         <Text style={{ fontSize: 30, textAlign: 'center', fontWeight: '600' }}>
                             {userInfo?.nickName}
                         </Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                        <View style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                             <Text style={styles.depart}>{userInfo?.department}</Text>
+                            {userInfo?.departmentSec && userInfo.departmentSec !== '선택 안됨' && (
+                                <Text style={styles.depart}>
+                                    <Text style={{ color: 'grey' }}>부복수전공 &nbsp;</Text>
+                                    {userInfo.departmentSec}
+                                </Text>
+                            )}
                         </View>
                     </View>
                     <TouchableOpacity onPress={handleToggle} style={styles.toggleContainer}>
@@ -430,13 +436,12 @@ const styles = StyleSheet.create({
         borderRadius: 158,
     },
     infoContainer: {
-        width: 133,
+        width: 200,
         height: 72,
         marginTop: 15,
         backgroundColor: 'transparent',
     },
     depart: {
-        marginBottom: 9,
         marginTop: 10,
         fontSize: 16,
         fontWeight: '600',
