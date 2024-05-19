@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useRef } from 'react';
+import React, { FC, useState, useEffect, useRef, useCallback } from 'react';
 import {
     View,
     Text,
@@ -17,6 +17,7 @@ import UnclassifyDetail from './modals/unclassifydetail';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Swipeable } from 'react-native-gesture-handler';
+import { useFocusEffect } from '@react-navigation/native';
 
 const UnClassify: FC = () => {
     const [unclass, setUnclass] = useState<UnClassified[] | null>(null);
@@ -28,30 +29,32 @@ const UnClassify: FC = () => {
     const [searchInitiated, setSearchInitiated] = useState<boolean>(false);
     const swipeableRefs = useRef(new Map()).current;
 
-    useEffect(() => {
-        const unclassified = async () => {
-            setIsLoading(true);
-            const accessToken = await getStorage('accessToken');
-            const res = await fetch(Http + '/posts/unclassified', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${accessToken}`,
-                    accept: 'application/json',
-                },
-            });
-            if (res.status === 200) {
-                const result = await res.json();
-                setUnclass(result.data);
-                setFilteredData(result.data);
-            } else {
-                console.log('Request failed');
-            }
-            setIsLoading(false);
-        };
+    useFocusEffect(
+        useCallback(() => {
+            const unclassified = async () => {
+                setIsLoading(true);
+                const accessToken = await getStorage('accessToken');
+                const res = await fetch(Http + '/posts/unclassified', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${accessToken}`,
+                        accept: 'application/json',
+                    },
+                });
+                if (res.status === 200) {
+                    const result = await res.json();
+                    setUnclass(result.data);
+                    setFilteredData(result.data);
+                } else {
+                    console.log('Request failed');
+                }
+                setIsLoading(false);
+            };
 
-        unclassified();
-    }, []);
+            unclassified();
+        }, [])
+    );
 
     const fetchPostDetails = async (postId: number) => {
         setIsLoading(true);

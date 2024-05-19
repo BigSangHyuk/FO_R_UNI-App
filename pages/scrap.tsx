@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useRef } from 'react';
+import React, { FC, useState, useEffect, useRef, useCallback } from 'react';
 import {
     View,
     Text,
@@ -17,7 +17,7 @@ import { Scrapped } from '../data/types';
 import { Posts } from '../data/types';
 import Icons from 'react-native-vector-icons/Feather';
 
-import { NavigationProp } from '@react-navigation/native';
+import { NavigationProp, useFocusEffect } from '@react-navigation/native';
 
 interface ScrapProps {
     navigation: NavigationProp<any>;
@@ -34,11 +34,7 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
     const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
     const swipeableRefs = useRef(new Map()).current;
 
-    useEffect(() => {
-        fetchScrapped();
-    }, [refreshData]);
-
-    const fetchScrapped = async () => {
+    const fetchScrapped = async (setIsLoading, setScrapped, setFilteredData) => {
         setIsLoading(true);
         const accessToken = await getStorage('accessToken');
         const res = await fetch(Http + '/posts/scrapped', {
@@ -58,6 +54,17 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
         }
         setIsLoading(false);
     };
+
+    useEffect(() => {
+        fetchScrapped(setIsLoading, setScrapped, setFilteredData);
+    }, [refreshData]);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchScrapped(setIsLoading, setScrapped, setFilteredData);
+        }, [])
+    );
+
     const fetchPostDetails = async (postId: number) => {
         setIsLoading(true);
         const accessToken = await getStorage('accessToken');
@@ -79,7 +86,7 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
     };
     const handleRefresh = async () => {
         setIsRefreshing(true);
-        await fetchScrapped();
+        await fetchScrapped(setIsLoading, setScrapped, setFilteredData);
         setIsRefreshing(false);
     };
 
