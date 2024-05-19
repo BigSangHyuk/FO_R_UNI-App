@@ -14,7 +14,8 @@ interface FilterProp {
 const Filter: FC<FilterProp> = ({ isFilterOpen, onCloseFilter, setParentFilter, filter }) => {
     const [allChecked, setAllChecked] = useState(true);
     const [checkboxes, setCheckboxes] = useState([]);
-    const [deptId, setDeptId] = useState('');
+    const [deptId, setDeptId] = useState<number>();
+    const [deptIdSec, setDeptIdSec] = useState<number>();
 
     const handleUserInfo = async () => {
         const accessToken = await getStorage('accessToken');
@@ -30,30 +31,17 @@ const Filter: FC<FilterProp> = ({ isFilterOpen, onCloseFilter, setParentFilter, 
         if (response.ok) {
             const result = await response.json();
             console.log(result.deptId);
+            console.log(result.deptIdSec);
             setDeptId(result.deptId);
+            setDeptIdSec(result.deptIdSec);
         } else {
             console.error('Failed to post comment:', response.status);
         }
     };
+
     useEffect(() => {
         handleUserInfo();
-        const initialCheckboxesState = [
-            { id: 246, title: '학사', checked: filter.includes('246'), color: '#dcdcdc' },
-            { id: 247, title: '학점교류', checked: filter.includes('247'), color: 'red' },
-            { id: 2611, title: '일반/행사/모집', checked: filter.includes('248'), color: 'orange' },
-            { id: 249, title: '장학금', checked: filter.includes('249'), color: 'yellow' },
-            { id: 250, title: '등록금 납부', checked: filter.includes('250'), color: 'green' },
-            { id: 252, title: '교육시험', checked: filter.includes('252'), color: 'blue' },
-            { id: 253, title: '봉사', checked: filter.includes('253'), color: 'purple' },
-            { id: deptId, title: '학과', checked: filter.includes('0'), color: 'black' },
-        ];
-        console.log(deptId);
-
-        const allSelected = initialCheckboxesState.every((checkbox) => checkbox.checked);
-        setAllChecked(allSelected);
-
-        setCheckboxes(initialCheckboxesState);
-    }, [filter]);
+    }, []);
 
     const toggleCheckbox = (id: number) => {
         setCheckboxes((prevCheckboxes) => {
@@ -68,9 +56,36 @@ const Filter: FC<FilterProp> = ({ isFilterOpen, onCloseFilter, setParentFilter, 
         });
     };
 
+    useEffect(() => {
+        const filterArray = filter.split('-').map(Number);
+        let initialCheckboxesState = [
+            { id: 246, title: '학사', checked: filterArray.includes(246), color: '#dcdcdc' },
+            { id: 247, title: '학점교류', checked: filterArray.includes(247), color: 'red' },
+            { id: 2611, title: '일반/행사/모집', checked: filterArray.includes(2611), color: 'orange' },
+            { id: 249, title: '장학금', checked: filterArray.includes(249), color: 'yellow' },
+            { id: 250, title: '등록금 납부', checked: filterArray.includes(250), color: 'green' },
+            { id: 252, title: '교육시험', checked: filterArray.includes(252), color: 'blue' },
+            { id: 253, title: '봉사', checked: filterArray.includes(253), color: 'purple' },
+            { id: deptId, title: '전공', checked: filterArray.includes(deptId), color: 'black' },
+        ];
+
+        if (deptIdSec !== -1) {
+            initialCheckboxesState.push({
+                id: deptIdSec,
+                title: '부복수전공',
+                checked: filterArray.includes(deptIdSec),
+                color: 'grey',
+            });
+        }
+
+        setCheckboxes(initialCheckboxesState);
+        const allSelected = initialCheckboxesState.every((checkbox) => checkbox.checked);
+        setAllChecked(allSelected);
+    }, [filter, deptId, deptIdSec]);
+
     const applyFilter = () => {
         const selectedFilterIds = checkboxes
-            .filter((c) => c.checked)
+            .filter((c) => c.checked && c.id != null)
             .map((c) => c.id)
             .join('-');
         setParentFilter(selectedFilterIds);
