@@ -10,38 +10,12 @@ interface FilterProp {
     onCloseFilter: () => void;
     setParentFilter: (filter: string) => void;
     filter: string;
+    deptId: number;
+    deptIdSec: number;
 }
-const Filter: FC<FilterProp> = ({ isFilterOpen, onCloseFilter, setParentFilter, filter }) => {
+const Filter: FC<FilterProp> = ({ isFilterOpen, onCloseFilter, setParentFilter, filter, deptId, deptIdSec }) => {
     const [allChecked, setAllChecked] = useState(true);
     const [checkboxes, setCheckboxes] = useState([]);
-    const [deptId, setDeptId] = useState<number>();
-    const [deptIdSec, setDeptIdSec] = useState<number>();
-
-    const handleUserInfo = async () => {
-        const accessToken = await getStorage('accessToken');
-        const response = await fetch(Http + `/users/info`, {
-            method: 'GET',
-            headers: {
-                Accept: '*/*',
-                Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            console.log(result.deptId);
-            console.log(result.deptIdSec);
-            setDeptId(result.deptId);
-            setDeptIdSec(result.deptIdSec);
-        } else {
-            console.error('Failed to post comment:', response.status);
-        }
-    };
-
-    useEffect(() => {
-        handleUserInfo();
-    }, []);
 
     const toggleCheckbox = (id: number) => {
         setCheckboxes((prevCheckboxes) => {

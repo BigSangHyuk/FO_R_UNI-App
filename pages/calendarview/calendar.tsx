@@ -71,8 +71,41 @@ const CalendarView: FC<CalendarProps> = ({ navigation }) => {
     const [posts, setPosts] = useState<CalendarPosts[]>([]);
     const filterTranslateX = useRef(new Animated.Value(Dimensions.get('window').width)).current;
     const [currentDate, setCurrentDate] = useState(moment().format('YYYY-MM-DD'));
-    const [filter, setFilter] = useState('246-247-248-249-250-252-253');
+    const [filter, setFilter] = useState(`246-247-2611-249-250-252-253`);
     const [currentMonth, setCurrentMonth] = useState(moment().format('YYYY-MM'));
+    const [deptId, setDeptId] = useState<number>();
+    const [deptIdSec, setDeptIdSec] = useState<number>();
+
+    const handleUserInfo = async () => {
+        const accessToken = await getStorage('accessToken');
+        const response = await fetch(Http + `/users/info`, {
+            method: 'GET',
+            headers: {
+                Accept: '*/*',
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log(result.deptId);
+            console.log(result.deptIdSec);
+            setDeptId(result.deptId);
+            setDeptIdSec(result.deptIdSec);
+        } else {
+            console.error('Failed to post comment:', response.status);
+        }
+    };
+    useEffect(() => {
+        handleUserInfo();
+        if (deptId !== undefined) {
+            setFilter(`246-247-2611-249-250-252-253-${deptId}`);
+        }
+        if (deptIdSec !== -1) {
+            setFilter(`246-247-2611-249-250-252-253-${deptId}-${deptIdSec}`);
+        }
+    }, [deptId, deptIdSec]);
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -275,6 +308,8 @@ const CalendarView: FC<CalendarProps> = ({ navigation }) => {
                         onCloseFilter={() => setIsFilterOpen(false)}
                         setParentFilter={setFilter}
                         filter={filter}
+                        deptId={deptId}
+                        deptIdSec={deptIdSec}
                     />
                 </Animated.View>
             )}
