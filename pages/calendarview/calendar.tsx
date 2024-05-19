@@ -1,4 +1,4 @@
-import React, { useState, FC, useEffect, useRef } from 'react';
+import React, { useState, FC, useEffect, useRef, useCallback } from 'react';
 import {
     View,
     StyleSheet,
@@ -20,7 +20,7 @@ import Filter from '../../menus/filter';
 import { CalendarPosts } from '../../data/types';
 import { getStorage } from '../../auth/asyncstorage';
 import Http from '../../address/backend_url';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native';
 
 LocaleConfig.locales['en'] = {
     monthNames: [
@@ -97,15 +97,17 @@ const CalendarView: FC<CalendarProps> = ({ navigation }) => {
             console.error('Failed to post comment:', response.status);
         }
     };
-    useEffect(() => {
-        handleUserInfo();
-        if (deptId !== undefined) {
-            setFilter(`246-247-2611-249-250-252-253-${deptId}`);
-        }
-        if (deptIdSec !== -1) {
-            setFilter(`246-247-2611-249-250-252-253-${deptId}-${deptIdSec}`);
-        }
-    }, [deptId, deptIdSec]);
+    useFocusEffect(
+        useCallback(() => {
+            handleUserInfo();
+            if (deptId !== undefined) {
+                setFilter(`246-247-2611-249-250-252-253-${deptId}`);
+            }
+            if (deptIdSec !== -1) {
+                setFilter(`246-247-2611-249-250-252-253-${deptId}-${deptIdSec}`);
+            }
+        }, [deptId, deptIdSec])
+    );
 
     useEffect(() => {
         const fetchPosts = async () => {
