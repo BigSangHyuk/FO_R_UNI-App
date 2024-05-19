@@ -16,7 +16,6 @@ const CalendarSearch: FC<CalendarSearchProps> = ({ navigation }) => {
     const [filteredData, setFilteredData] = useState<UnClassified[] | null>(null);
     const [searchInitiated, setSearchInitiated] = useState<boolean>(false);
     const [orderBy, setOrderBy] = useState<string>('latest');
-    const [orderByColor, setOrderByColor] = useState<string>();
     const inputRef = useRef(null);
     useEffect(() => {
         const parent = navigation.getParent();
@@ -42,16 +41,13 @@ const CalendarSearch: FC<CalendarSearchProps> = ({ navigation }) => {
     const Dropdown = () => (
         <View style={styles.dropdown}>
             <TouchableOpacity onPress={() => handleOrderBy('latest')}>
-                <Text style={orderBy === 'latest' ? styles.dropdownText : styles.dropdownTextInactive}>최신순</Text>
+                <Text style={orderBy === 'latest' ? styles.dropdownText : styles.dropdownTextInactive}>마감근접순</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => handleOrderBy('deadline')}>
-                <Text style={orderBy === 'deadline' ? styles.dropdownText : styles.dropdownTextInactive}>
-                    마감 가까운 순
-                </Text>
+                <Text style={orderBy === 'deadline' ? styles.dropdownText : styles.dropdownTextInactive}>최신순</Text>
             </TouchableOpacity>
         </View>
     );
-
     useEffect(() => {
         const focusUnsubscribe = navigation.addListener('focus', () => {
             setSearchKeyword('');
@@ -169,7 +165,9 @@ const CalendarSearch: FC<CalendarSearchProps> = ({ navigation }) => {
                                     >
                                         {item.title}
                                     </Text>
-                                    <Text style={styles.itemDeadLine}>{item.deadline}</Text>
+                                    <Text style={styles.itemDeadLine}>
+                                        {orderBy === 'latest' ? `마감일: ${item.deadline}` : `등록일: ${item.postedAt}`}
+                                    </Text>
                                 </View>
                             )}
                             ItemSeparatorComponent={ItemSeparator}

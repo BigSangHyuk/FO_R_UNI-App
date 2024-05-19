@@ -32,7 +32,8 @@ export interface UserEdit {
 
 export interface UnClassified {
     postId: number;
-    deadline: null;
+    deadline: number;
+    postedAt: number;
     title: string;
     category: string;
 }

@@ -218,7 +218,10 @@ const UnClassify: FC = () => {
                         value={searchKeyword}
                         onChangeText={(text) => setSearchKeyword(text)}
                     />
-                    <TouchableOpacity onPress={fetchPostsBySearch} style={{ padding: 10 }}>
+                    <TouchableOpacity
+                        onPress={fetchPostsBySearch}
+                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    >
                         <Icons name="search" size={25} color="#000" />
                     </TouchableOpacity>
                 </View>
