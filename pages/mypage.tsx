@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
         borderRadius: 158,
     },
     infoContainer: {
-        width: 200,
+        width: 350,
         height: 72,
         marginTop: 15,
         backgroundColor: 'transparent',
