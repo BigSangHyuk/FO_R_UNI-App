@@ -302,6 +302,7 @@ const styles = StyleSheet.create({
     },
     searchInput: {
         flex: 1,
+        padding: 4,
         borderColor: '#ddd',
         borderWidth: 1,
         borderRadius: 5,
