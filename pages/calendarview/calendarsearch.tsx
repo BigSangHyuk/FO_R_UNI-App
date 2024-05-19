@@ -142,13 +142,16 @@ const CalendarSearch: FC<CalendarSearchProps> = ({ navigation }) => {
                         data={filteredData}
                         keyExtractor={(item) => item.postId.toString()}
                         renderItem={({ item }) => (
-                            <Text
-                                style={styles.itemText}
-                                numberOfLines={1}
-                                onPress={() => handlePostPress(item.postId)}
-                            >
-                                {item.title}
-                            </Text>
+                            <View>
+                                <Text
+                                    style={styles.itemText}
+                                    numberOfLines={1}
+                                    onPress={() => handlePostPress(item.postId)}
+                                >
+                                    {item.title}
+                                </Text>
+                                <Text style={styles.itemDeadLine}>{item.deadline}</Text>
+                            </View>
                         )}
                         ItemSeparatorComponent={ItemSeparator}
                     />
@@ -196,13 +199,18 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     itemText: {
-        fontSize: 16,
-        padding: 10,
+        fontSize: 15,
+        padding: 5,
+    },
+    itemDeadLine: {
+        fontSize: 12,
+        textAlign: 'right',
+        marginRight: '3%',
     },
     itemSeparator: {
-        height: 1, // 구분선의 높이
-        width: '100%', // 구분선의 너비
-        backgroundColor: '#ccc', // 구분선의 색상
+        height: 1,
+        width: '100%',
+        backgroundColor: '#ccc',
     },
 });
 export default CalendarSearch;
