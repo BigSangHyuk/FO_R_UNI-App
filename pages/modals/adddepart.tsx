@@ -28,6 +28,7 @@ import {
     LifeScience,
     NortheastAsia,
     Law,
+    Null,
 } from '../../data/department';
 import Http from '../../address/backend_url';
 import { getStorage, refreshAccessToken } from '../../auth/asyncstorage';
@@ -102,7 +103,7 @@ const AddDepart: React.FC<AddDepartProps> = ({ isVisible, onClose, userInfo, onE
             case '법학부':
                 return Law;
             case '없음':
-                return null;
+                return Null;
         }
     };
 

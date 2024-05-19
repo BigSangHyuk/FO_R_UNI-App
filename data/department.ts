@@ -123,4 +123,4 @@ export const NortheastAsia: Department[] = [
 ];
 
 export const Law: Department[] = [{ label: '법학부', value: '법학부', code: 'LAW', id: 1299 }];
-export const Null: Department[] = [{ label: '없음', value: '없음', code: 'null', id: null }];
+export const Null: Department[] = [{ label: '없음', value: '없음', code: 'NOT_SELECTED', id: null }];
