@@ -109,6 +109,8 @@ const Info: React.FC<InfoProps> = ({ route, navigation }) => {
                 return NortheastAsia;
             case '법학부':
                 return Law;
+            case '없음':
+                return null;
         }
     };
 

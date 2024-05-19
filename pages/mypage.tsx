@@ -19,6 +19,7 @@ import Http from '../address/backend_url';
 import { getStorage, refreshAccessToken } from '../auth/asyncstorage';
 import { UserEdit, UserComment, UserInfo, UserLike } from '../data/types';
 import * as ImagePicker from 'expo-image-picker';
+import AddDepart from './modals/adddepart';
 interface MypageProps {
     navigation: NavigationProp<any>;
 }
@@ -28,7 +29,8 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [userComment, setUserComment] = useState<UserComment[]>(null);
     const [userLike, setUserLike] = useState<UserLike[]>(null);
-    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+    const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
+    const [isAddModalVisible, setIsAddModalVisible] = useState<boolean>(false);
     const [editImageOverlayVisible, setEditImageOverlayVisible] = useState<boolean>(false);
     const IMG = '../data/default.png';
     const slideAnimation = useRef(new Animated.Value(0)).current;
@@ -281,14 +283,24 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                             style: { color: '#1B1B1B', fontSize: 34, fontWeight: 'bold' },
                         }}
                         rightComponent={
-                            <TouchableOpacity onPress={() => {}}>
-                                <Icons
-                                    name="edit"
-                                    size={30}
-                                    style={{ color: '#BDBDBD' }}
-                                    onPress={() => setIsEditModalVisible(true)}
-                                />
-                            </TouchableOpacity>
+                            <View style={{ flexDirection: 'row', gap: 10 }}>
+                                <TouchableOpacity>
+                                    <Icons
+                                        name="domain-add"
+                                        size={30}
+                                        style={{ color: '#BDBDBD' }}
+                                        onPress={() => setIsAddModalVisible(true)}
+                                    />
+                                </TouchableOpacity>
+                                <TouchableOpacity>
+                                    <Icons
+                                        name="edit"
+                                        size={30}
+                                        style={{ color: '#BDBDBD' }}
+                                        onPress={() => setIsEditModalVisible(true)}
+                                    />
+                                </TouchableOpacity>
+                            </View>
                         }
                         rightContainerStyle={{ flex: 1, justifyContent: 'center' }}
                     />
@@ -299,6 +311,12 @@ const Mypage: React.FC<MypageProps> = ({ navigation }) => {
                     userInfo={userInfo}
                     onEditSuccess={() => GetInfo()}
                 />
+                <AddDepart
+                    isVisible={isAddModalVisible}
+                    onClose={() => setIsAddModalVisible(false)}
+                    userInfo={userInfo}
+                    onEditSuccess={() => GetInfo()}
+                ></AddDepart>
                 <View style={{ alignItems: 'center' }}>
                     <View style={styles.profileContainer}>
                         <TouchableOpacity

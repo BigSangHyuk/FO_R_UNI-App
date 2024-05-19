@@ -18,6 +18,7 @@ export const UNI: Department[] = [
     { label: 'LifeScience', value: '생명과학기술대학', code: null, id: null },
     { label: 'NortheastAsia', value: '동북아국제통상학부', code: null, id: null },
     { label: 'Law', value: '법학부', code: null, id: null },
+    { label: '없음', value: '없음', code: null, id: null },
 ];
 
 export const Humanity: Department[] = [
