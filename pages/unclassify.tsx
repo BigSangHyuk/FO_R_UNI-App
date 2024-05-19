@@ -78,16 +78,13 @@ const UnClassify: FC = () => {
         setIsLoading(true);
         const accessToken = await getStorage('accessToken');
         try {
-            const res = await fetch(
-                `${Http}/posts/search?keyword=${encodeURIComponent(searchKeyword)}&classified=false`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                }
-            );
+            const res = await fetch(`${Http}/posts/search?keyword=${encodeURIComponent(searchKeyword)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
 
             if (res.status === 200) {
                 const result = await res.json();
@@ -194,6 +191,7 @@ const UnClassify: FC = () => {
                     <Text style={styles.itemTitle} numberOfLines={1}>
                         {item.title}
                     </Text>
+                    <Text style={styles.itemPostedAt}>{item.postedAt}</Text>
                 </View>
             </TouchableWithoutFeedback>
         </Swipeable>
@@ -275,6 +273,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         flex: 1,
         marginRight: 10,
+    },
+    itemPostedAt: {
+        fontSize: 10,
+        marginTop: 4,
     },
     centeredView: {
         flex: 1,

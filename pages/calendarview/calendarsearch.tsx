@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, StatusBar, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native';
-import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '@react-navigation/native';
 import { getStorage } from '../../auth/asyncstorage';
 import { UnClassified } from '../../data/types';
 import Http from '../../address/backend_url';
@@ -54,16 +54,13 @@ const CalendarSearch: FC<CalendarSearchProps> = ({ navigation }) => {
         setIsLoading(true);
         const accessToken = await getStorage('accessToken');
         try {
-            const res = await fetch(
-                `${Http}/posts/search?keyword=${encodeURIComponent(searchKeyword)}&classified=true`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                }
-            );
+            const res = await fetch(`${Http}/posts/search?keyword=${encodeURIComponent(searchKeyword)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
 
             if (res.status === 200) {
                 const result = await res.json();
