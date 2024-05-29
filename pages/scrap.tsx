@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useRef, useCallback } from 'react';
+import React, { FC, useState, useEffect, useRef } from 'react';
 import {
     View,
     Text,
@@ -16,8 +16,9 @@ import { Swipeable } from 'react-native-gesture-handler';
 import { Scrapped } from '../data/types';
 import { Posts } from '../data/types';
 import Icons from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import { NavigationProp, useFocusEffect } from '@react-navigation/native';
+import { NavigationProp } from '@react-navigation/native';
 
 interface ScrapProps {
     navigation: NavigationProp<any>;
@@ -34,7 +35,11 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
     const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
     const swipeableRefs = useRef(new Map()).current;
 
-    const fetchScrapped = async (setIsLoading, setScrapped, setFilteredData) => {
+    useEffect(() => {
+        fetchScrapped();
+    }, [refreshData]);
+
+    const fetchScrapped = async () => {
         setIsLoading(true);
         const accessToken = await getStorage('accessToken');
         const res = await fetch(Http + '/posts/scrapped', {
@@ -54,17 +59,6 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
         }
         setIsLoading(false);
     };
-
-    useEffect(() => {
-        fetchScrapped(setIsLoading, setScrapped, setFilteredData);
-    }, [refreshData]);
-
-    useFocusEffect(
-        useCallback(() => {
-            fetchScrapped(setIsLoading, setScrapped, setFilteredData);
-        }, [])
-    );
-
     const fetchPostDetails = async (postId: number) => {
         setIsLoading(true);
         const accessToken = await getStorage('accessToken');
@@ -86,7 +80,7 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
     };
     const handleRefresh = async () => {
         setIsRefreshing(true);
-        await fetchScrapped(setIsLoading, setScrapped, setFilteredData);
+        await fetchScrapped();
         setIsRefreshing(false);
     };
 
@@ -115,7 +109,7 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
     };
 
     const renderEmptyComponent = () => {
-        if (!filteredData || filteredData.length === 0) {
+        if (searchInitiated) {
             return (
                 <View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>아무것도 스크랩하지 않았습니다.</Text>
@@ -146,7 +140,7 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
             swipeableItem.close();
         }
 
-        Alert.alert('스크랩 삭제하기', '스크랩한 게시물을 삭제하시겠습니까?', [
+        Alert.alert('스크랩 취소', '스크랩 취소하시겠습니까?', [
             {
                 text: '예',
                 onPress: () => unscrapPost(postId),
@@ -194,7 +188,7 @@ const Scrap: FC<ScrapProps> = ({ navigation }) => {
             ref={(ref) => handleSwipeableRef(ref, item.postId)}
             renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item.postId)}
         >
-            <TouchableWithoutFeedback onPress={() => fetchPostDetails(item.postId)}>
+            <TouchableWithoutFeedback onPress={() => handlePostPress(item.postId)}>
                 <View style={styles.item}>
                     <Text style={styles.itemTitle} numberOfLines={1}>
                         {item.title}
