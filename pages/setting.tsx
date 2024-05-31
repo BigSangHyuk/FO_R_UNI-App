@@ -44,12 +44,10 @@ const Setting: FC<SettingProps> = ({ handleLogOut }) => {
     };
 
     const toggleDarkModeSwitch = () => {
-        // setDarkModeEnabled((prevState) => !prevState);
         Alert.alert('준비중22~');
     };
 
     const toggleEnglishSwitch = () => {
-        // setEnglish((prevState) => !prevState);
         Alert.alert('준비중~');
     };
 
